@@ -1,0 +1,355 @@
+body,table,thead,tbody,th,tr,td,form {
+    font-family: Verdana, Arial, sans-serif;
+	font-size: 100%;
+	margin: 0;
+	padding: 0;
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+#index {
+    margin: 30px;
+}
+
+h1 {
+	text-align: center;
+}
+
+#questForm {
+	border: black solid 1px;
+	padding: 1em;
+	background: #f8f8f8;
+}
+
+#questForm .label {
+	text-align: right;
+}
+
+#questForm .field {
+	text-align: left;
+}
+
+:lang(he) {
+	font-family: Arial, sans-serif;
+	font-size: 120%;
+}
+
+body {
+	color: #000000;
+	position: relative;
+	overflow-x: hidden;
+	font-size: 10pt;
+}
+
+/* Erel: All containers are not used in asyncBidding.jsp : */
+#loginContainer {
+	margin: 0 auto;
+	width: 600px;
+}
+
+#mainMenuContainer {
+	margin: 0 auto;
+	width: 600px;
+}
+
+#biddingContainer {
+	margin: 0 auto;
+	width: 1300px;
+}
+
+#analysisContainer {
+	margin: 0 auto;
+	width: 1000px;
+}
+
+#userContainer {
+	margin: 0 auto;
+	width: 600px;
+}
+
+#prefElicitationContainer {
+	margin: 0 auto;
+	width: 600px;
+}
+
+input,select,textarea {
+	border-color: #84A5CE #C1D2E7 #C1D2E7 #84A5CE;
+	border-style: solid;
+	border-width: 1px;
+	color: #444444;
+	font-size: 80%;
+}
+
+input.button {
+	padding: 1px 2px;
+	margin: 2px;
+	overflow: visible;
+}
+
+table.help {
+	width: 380px;
+	background-color: #fafafa;
+	border: 1px #000000 solid;
+	border-collapse: collapse;
+	border-spacing: 0px;
+}
+
+th.help {
+	background-color: #FFFF66;
+	border: 1px #000000 solid;
+	/*font-family: Verdana;*/
+	color: #404040;
+	text-align: left
+}
+
+td.help {
+	border: 1px #000000 solid;
+	/*font-family: Verdana;*/
+	color: #404040;
+	text-align: left
+}
+
+/* Erel: prefElicit is not used in asyncBidding.jsp: */
+table.prefElicitIssue {
+	width: auto;
+	background-color: #fafafa;
+	border: 1px #000000 solid;
+	border-collapse: collapse;
+	border-spacing: 0px;
+}
+
+th.prefElicitIssue {
+	background-color: #99CCCC;
+	border: 1px #000000 solid;
+	/*font-family: Verdana;*/
+	font-weight: bold;
+	color: #404040;
+	text-align: left
+}
+
+td.prefElicitIssue { /*font-family: Verdana;*/
+	color: #404040;
+	text-align: left
+}
+
+table.prefElicitEval {
+	width: auto;
+	background-color: #fafafa;
+	border: 1px #000000 solid;
+	border-collapse: collapse;
+	border-spacing: 0px;
+}
+
+th.prefElicitEval {
+	background-color: #FFFF66;
+	border: 1px #000000 solid;
+	/*font-family: Verdana;*/
+	font-weight: bold;
+	color: #404040;
+	text-align: left
+}
+
+td.prefElicitEval {
+	border: 1px #000000 solid;
+	/*font-family: Verdana;*/
+	color: #404040;
+	text-align: left
+}
+
+table.contacts {
+	background-color: #fafafa;
+	border: 1px #000000 solid;
+	border-collapse: collapse;
+	border-spacing: 0px;
+	margin: auto;
+}
+
+table#mainPanel {
+	background-color: #fafafa;
+	border: 1px #000000 solid;
+	border-collapse: collapse;
+	border-spacing: 0px;
+	margin: auto;
+}
+
+th.index {
+	background-color: #99CCCC;
+	border: 1px #000000 solid;
+	/*font-family: Verdana;*/
+	font-weight: bold;
+	color: #404040;
+}
+
+td.contact {
+	border-bottom: 1px #6699CC dotted;
+	padding: 0px 3px;
+}
+
+body.utilityBody {
+	text-align: left;
+	padding-left: 10px;
+}
+
+table.utility {
+	background-color: #fafafa;
+	border: 1px #000000 solid;
+	border-collapse: collapse;
+	border-spacing: 1px;
+	text-align: left;
+	font-weight: normal;
+	width: 380px;
+}
+
+table.utility td, table.utility th {
+    border: solid 1px black;
+}
+
+th.utility {
+	background-color: #99CCCC;
+	font-weight: bold;
+	text-align: center;
+	color: #404040;
+	padding: 4px 2px 4px 2px;
+}
+
+td.utilityValue {
+	color: #404040;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-left: 15px;
+	padding-right: 0px;
+}
+
+td.utilityUtil {
+	text-align: center;
+	/*font-family: Verdana, sans-serif, Arial;*/
+	font-weight: normal;
+	color: #404040;
+}
+
+tr.utilityIssue {
+	border-bottom: 1px #6699CC dotted;
+	text-align: center;
+	/*font-family: Verdana, sans-serif, Arial;*/
+	font-weight: bold;
+	color: #404040;
+	background-color: #fafafa;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	padding-left: 8px;
+	padding-right: 0px;
+}
+
+.hidden {
+	display: none;
+}
+
+.newTurn {
+	background-color: black;
+	color: white;
+}
+
+div.mainSection {
+	border: 3px solid #008;
+	margin: 5px auto 5px auto;
+	width: 800px;
+	padding: 2px;
+}
+
+#mainTitleRow {
+	text-align: center;
+	border: none;
+	font-weight: bold;
+	color: #404040;
+	font-size: larger
+}
+
+#mainStatusRow {
+	border-color: #808;
+	font-weight: bold;
+}
+
+#mainStatusRow table {
+	width: 100%;
+}
+
+#mainStatusRow #btnUtility {
+	width: 170px;
+}
+
+#mainStatusRow #btnOppUtility {
+	width: 250px;
+}
+
+#mainStatusRow #btnHelp {
+	width: 60px;
+}
+
+#mainStatusRow #phase {
+	width: 450px;
+}
+
+#mainStatusRow #remainingTime {
+	width: 180px;
+}
+
+#mainChatRow {
+	border-color: #0c8;
+	font-size: 16px;
+}
+
+#mainChatRow input {
+	width: 80%
+}
+
+#mainChatRow #btnSendChat {
+	width: 100px
+}
+
+#mainDetailsRow {
+	border-color: #448;
+}
+
+#mainHistoryRow {
+	border-color: #088;
+}
+
+#chosenOfferTable {
+	width: 100%;
+}
+
+#chosenOfferTable tbody tr td {
+	padding-bottom: 4px;
+	padding-right: 15px;
+	white-space: nowrap;
+}
+
+#tblhistory {
+	width: 100%;
+}
+
+#AMTStatus {
+	font-size: 10px;
+	font-style: italic;
+	border-top: 1px solid black;
+	margin-top: 1em;
+}
+
+.left {
+	text-align: left;
+}
+
+.right {
+	text-align: right;
+}
+
+table.gamedata {
+    font-size:16px;
+    margin:auto;
+    border-collapse: collapse;
+}
+
+table.gamedata td, table.gamedata th {
+    border: 1px solid black;
+    padding: 6px;
+}

@@ -1,4 +1,2 @@
-aimnegochat
-===========
+experiments in negotiation and chat.
 
-AIM Lab Nego chat

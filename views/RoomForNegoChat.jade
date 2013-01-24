@@ -1,0 +1,67 @@
+extends layout
+block title
+  title#title Chat Room 
+block body
+  script(src='./socket.io/socket.io.js')
+
+  script(src='./javascripts/yahoo_yui_2.8.1/yahoo-dom-event/yahoo-dom-event.js')
+  script(src='./javascripts/yahoo_yui_2.8.1/element/element-min.js')
+  script(src='./javascripts/yahoo_yui_2.8.1/datasource/datasource-min.js')
+  script(src='./javascripts/yahoo_yui_2.8.1/datatable/datatable-min.js')
+  script(src='./javascripts/datatable.js')
+
+  script(src='./javascripts/RoomForNegoChat.js')
+
+  div#mainPanel
+    div.mainSection#mainTitleRow <!-- row #1: title row -->
+      p Negotiations Simulation
+    div.mainSection#mainStatusRow <!-- row #2: status and buttons -->
+      table
+        tr
+          td#phase
+            span.value Status: Connecting...
+          td
+            input.button#btnUtility(type="button",value="Show your scores",onclick="javascript:window.open('/UtilityOfCurrent/#{role}','my_utility', 'left=50,top=50,toolbar=no,location=no,status=no,directories=no,dependent=yes,menubar=no, width=400,height=600,scrollbars=yes');")
+          td
+            input.button#btnOppUtility(type="button",value="Show partner's scores",onclick="javascript:window.open('/UtilityOfPartner/#{role}','opp_utility', 'left=50,top=50,toolbar=no,location=no,status=no,directories=no,dependent=yes,menubar=no, width=400,height=600,scrollbars=yes');")
+          //td
+            input.button#btnHelp(type="button",value="Help")
+
+        tr
+          td#remainingTime
+            span.key Remaining time:
+            span.value
+
+    if (agent)
+     div.mainSection <!-- row #3: explanations to the user; possible values and utils -->
+      p Your role: <b>#{role}</b>. Try to get the deal with the best score. 
+      p Click the buttons above to see the scores for both you and your partner.
+
+      if gametype=='negochat'
+       p Use the menus below as a draft, to track the issues you agreed so far.
+       p This draft is <b>not binding</b> until both of you sign it.  
+       include GeniusMenus
+       p
+        button(id='signAgreement',disabled='disabled') Sign the agreement
+      if gametype=='chat'
+       include GeniusIssuesAndValues
+
+    div#mainChatRow.mainSection <!-- row #4: chat -->
+      p <b>Please write a complete, grammatically correct English sentence. Write 'bye' to quit.</b>
+      p <b>You say</b>:
+        input#chatMessage(value="hi",disabled="disabled")
+      p
+        input.button#btnSendChat(type="button",value="Send",disabled="disabled")
+
+    div.mainSection#mainHistoryRow.yui-skin-sam <!-- row #5: history -->
+      table#tblhistory
+        thead
+          tr
+            th(align="center",width="100%") History of actions
+        tbody
+          tr
+            td(valign="top",align="center",style="font-size: 8pt;")
+              div#tblHistoryContainer"
+  
+    form#nextAction(action="#{next_action}",method="get",style='display:none')
+

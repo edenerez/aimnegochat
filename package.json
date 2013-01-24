@@ -1,0 +1,21 @@
+{
+  "name": "negochat",
+  "version": "0.0.2",
+  "private": true,
+  "scripts": {
+    "start": "node server"
+  },
+  "dependencies": {
+    "connect": "*",
+    "express": "3.x",
+    "jade": "*",
+    "socket.io": "*",
+    "forms": "*",
+    "fs": "*",
+    "xtend": "*",
+    "sprintf": "*",
+    "session.socket.io": "*",
+    "xml2js": "*",
+    "json-ref": "*"
+  }
+}

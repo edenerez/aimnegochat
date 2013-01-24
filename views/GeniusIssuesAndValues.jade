@@ -1,0 +1,11 @@
+//- required variables: 
+//-   agent.utility_space_object, of type genius.UtilitySpace
+table#chosenOfferTable
+   thead
+    tr
+     th.left Issue
+     th.left Possible Values
+    for issue in agent.utility_space_object.issueByIndex
+     tr
+      td #{issue.name}
+      td [#{issue.values.join(", ")}]

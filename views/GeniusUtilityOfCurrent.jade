@@ -1,0 +1,38 @@
+// required variables: 
+//   agent.utility_space_object, of type genius.UtilitySpace
+//   turnLengthInSeconds
+extends layout
+block title
+  title Your score table
+block body
+ table#utilityTable.utility
+   caption
+    em Your score table
+   tr
+    th.utility Values
+    th.utility Scores
+   for issue in agent.utility_space_object.issueByIndex
+    tr.utilityIssue
+     td(colspan="2") #{issue.name}
+    for item in issue.itemByIndex
+     tr
+      td.utilityValue #{item.value}
+      td.utilityUtil #{sprintf(format,item.evaluation * issue.weight * agent.utility_space_object.weightmultiplyer)}
+
+   tr.utilityIssue
+    td(colspan="2") Time Effect
+   tr
+    td.utilityValue Score decrease per #{turnLengthInSeconds} sec:
+    td.utilityUtil #{sprintf(format, 1*agent.utility_space_object.timeeffect)}
+
+   tr.utilityIssue
+    td(colspan="2") Opt-out Score
+   tr
+    td.utilityValue Your score if you opt-out of the negotiation:
+    td.utilityUtil #{sprintf(format, 1*agent.utility_space_object.optout)}
+
+   tr.utilityIssue
+    td(colspan="2") Status Quo Score
+   tr
+    td.utilityValue Your score if the negotiation times out:
+    td.utilityUtil #{sprintf(format, 1*agent.utility_space_object.reservation)}

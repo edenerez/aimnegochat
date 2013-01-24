@@ -1,0 +1,44 @@
+// required variables: 
+//   agents[0,1,2...].utility_space_object, of type genius.UtilitySpace
+//   turnLengthInSeconds
+extends layout
+block title
+  title Partner's score table
+block body
+ table#utilityTable.utility
+   caption
+    em Partner's score table
+   tr
+    th.utility Values
+    for agent in agents
+     th.utility #{agent.personality}
+    
+   for issue in agents[0].utility_space_object.issueByIndex
+    tr.utilityIssue
+     td(colspan="#{1+agents.length}") #{issue.name}
+    for item in issue.itemByIndex
+     tr
+      td.utilityValue #{item.value}
+      for agent in agents
+       td.utilityUtil #{sprintf(format, agent.utility_space_object.issueByIndex[issue.index].itemByIndex[item.index].evaluation * agent.utility_space_object.issueByIndex[issue.index].weight * agent.utility_space_object.weightmultiplyer)}
+
+   tr.utilityIssue
+    td(colspan="#{1+agents.length}") Time Effect
+   tr
+    td.utilityValue Score decrease per #{turnLengthInSeconds} sec:
+     for agent in agents
+      td.utilityUtil #{sprintf(format, 1*agent.utility_space_object.timeeffect)}
+
+   tr.utilityIssue
+    td(colspan="#{1+agents.length}") Opt-out Score
+   tr
+    td.utilityValue Your score if you opt-out of the negotiation:
+     for agent in agents
+      td.utilityUtil #{sprintf(format, 1*agent.utility_space_object.optout)}
+
+   tr.utilityIssue
+    td(colspan="#{1+agents.length}") Status Quo Score
+   tr
+    td.utilityValue Your score if the negotiation times out:
+     for agent in agents
+      td.utilityUtil #{sprintf(format, 1*agent.utility_space_object.reservation)}

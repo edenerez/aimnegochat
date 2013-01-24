@@ -1,0 +1,66 @@
+extends layout
+block title
+  title Post-Game Feedback Questionnaire
+block body
+  div#analysisContainer
+    form#questForm(action="#{action}",method="get",onsubmit="return ValidateRequiredFields();")
+      h1 Post-negotiation questionnaire
+      p Please give us some feedback about the experiment!
+      p We would appreciate your answers to the following:
+
+      input(type="hidden", name="next_action",  value="#{next_action}")
+
+      table
+        tr
+          td.left How <u> happy </u> are you with the end result? (1 - not happy, 5 - very happy)
+          td.field
+            select(name='happy')
+              option(value='') -- select --
+              for v in [1, 2, 3, 4, 5]
+                option(value='#{v}') #{v}
+        tr
+          td.left Were the <u>instructions</u> of the game explained clearly in the tutorial? (1 - not clear, 5 - very clear)
+          td.field
+            select(name='instructions')
+              option(value='') -- select --
+              for v in [1, 2, 3, 4, 5]
+                option(value='#{v}') #{v}
+        tr
+          td.left How do you evaluate the <u>fairness</u> of the end result? (1 - not fair, 5 - very fair)
+          td.field
+            select(name='fairness')
+              option(value='') -- select --
+              for v in [1, 2, 3, 4, 5]
+                option(value='#{v}') #{v}
+        tr
+           td.left Can you estimate the type of person you've negotiated with?
+           td.field
+            select(name='type')
+              option(value='') -- select --
+              for v in ['Short-term', 'Compromise', 'Long-term']
+                option(value='#{v}') #{v}
+        tr
+           td.left How likely is it that the negotiation partner was from the <u>same country</u> as you are? (1 - not likely, 5 - very likely)
+           td.field
+            select(name='same_country')
+              option(value='') -- select --
+              for v in [1, 2, 3, 4, 5]
+                option(value='#{v}') #{v}
+        tr
+           td.left How likely is it that the negotiation partner was a <u>computer program</u>? (1 - not likely, 5 - very likely)
+           td.field
+            select(name='computer_program')
+              option(value='') -- select --
+              for v in [1, 2, 3, 4, 5]
+                option(value='#{v}') #{v}
+        tr
+           td.label General feedback:
+           td.field
+              textarea(name='feedback',rows='10',cols='40')
+
+        tr
+           td
+           td.right
+             input(type="submit", class="button", value="Continue")
+
+      h1 Thank you for your time
