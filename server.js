@@ -275,6 +275,8 @@ app.get('/VerifyQuestionnaire', function(req,res) {
 });
 
 app.get('/Play', function(req,res) {
+    if (!req.session.query) return;
+    
     var gameServer = gameServers[req.session.query.gametype];
     res.render(gameServer.roomTemplateName,  {
         gametype: req.session.query.gametype, 
@@ -336,7 +338,8 @@ function message(socket, game, action, user, data) {
 //var socketPath = '/negochat';  // should match the path in the Javascript .connect call
 new SessionSockets(io, sessionStore, cookieParser).on('connection', function (err,socket,session) {
   if (err) {console.dir(err); return;}
-
+  if (!session.query) return;  // may happen with old windows
+  
   var gameServer = gameServers[session.query.gametype];
   
   var agent = actualAgents[session.query.role];
@@ -412,11 +415,11 @@ new SessionSockets(io, sessionStore, cookieParser).on('connection', function (er
     messageLog(socket, game, "Change", session.query, data);
     game.playerChangesValue(session.query.role, data.issue, data.value);
     var currentIssueAgreed = game.arePlayerValuesEqual(data.issue);
-    io.sockets.in(game.gameid).emit('status', {key: data.issue+"_agreed", value: (currentIssueAgreed? 'yes': 'no')});
-    if (currentIssueAgreed) {
-      var allIssuesAgreed = game.arePlayerValuesToAllIssuesEqual(allIssues);
-      io.sockets.in(game.gameid).emit('allIssuesAgreed', allIssuesAgreed);
-    }
+    //io.sockets.in(game.gameid).emit('status', {key: data.issue+"_agreed", value: (currentIssueAgreed? 'yes': 'no')});
+    io.sockets.in(game.gameid).emit('issueAgreed', {issue: data.issue, agreed: currentIssueAgreed});
+    
+    var allIssuesAgreed = game.arePlayerValuesToAllIssuesEqual(allIssues);
+    io.sockets.in(game.gameid).emit('allIssuesAgreed', allIssuesAgreed);
   });
   
   // A user finished playing (e.g. by clicking a "finish" button):
@@ -432,7 +435,7 @@ new SessionSockets(io, sessionStore, cookieParser).on('connection', function (er
       utilityWithDiscount:     utilityWithDiscount
     };
     game.mapRoleToFinalResult[session.query.role] = finalResult;
-    message(socket, game, "Sign", session.query, finalResult);
+    message(socket, game, "Sign", session.query, JSON.stringify(finalResult.agreement));
   });
 
   // A user disconnected - closed the window, unplugged the chord, etc..

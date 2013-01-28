@@ -5,14 +5,14 @@ table#chosenOfferTable
     tr
      th.left Issue
      th.left #{role} draft
-     th.left Agreed?
+     // th.left Agreed?
     for issue in agent.utility_space_object.issueByIndex
      tr
-      td #{issue.name}
+      td(id="#{issue.name.replace(/[^a-z]/gi,'_')}_label",title="This issue is green when your draft on this issue is consistent with your partner's draft") #{issue.name}: &nbsp; 
       td
        select.issue(title="#{issue.name}")
         option(value="") -- select --
         for value in issue.values
          option(value="#{value}") #{value}
-      td(id="#{issue.name.replace(/[^a-z]/gi,'_')}_agreed")
+      //- td(id="#{issue.name.replace(/[^a-z]/gi,'_')}_agreed")
        div.value no

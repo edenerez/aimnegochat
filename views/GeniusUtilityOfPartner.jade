@@ -11,7 +11,7 @@ block body
    tr
     th.utility Values
     for agent in agents
-     th.utility #{agent.personality}
+     th.utility #{agent.personality.replace(/-/,"- ")}
     
    for issue in agents[0].utility_space_object.issueByIndex
     tr.utilityIssue
@@ -24,21 +24,19 @@ block body
 
    tr.utilityIssue
     td(colspan="#{1+agents.length}") Time Effect
+    
    tr
-    td.utilityValue Score decrease per #{turnLengthInSeconds} sec:
-     for agent in agents
+    td.utilityValue Decrease per #{turnLengthInSeconds} sec:
+    for agent in agents
       td.utilityUtil #{sprintf(format, 1*agent.utility_space_object.timeeffect)}
 
-   tr.utilityIssue
-    td(colspan="#{1+agents.length}") Opt-out Score
    tr
-    td.utilityValue Your score if you opt-out of the negotiation:
-     for agent in agents
+    td.utilityValue(colspan="1",title="Your score if you opt-out of the negotiation") Opt-out Score:
+    for agent in agents
       td.utilityUtil #{sprintf(format, 1*agent.utility_space_object.optout)}
 
-   tr.utilityIssue
-    td(colspan="#{1+agents.length}") Status Quo Score
    tr
-    td.utilityValue Your score if the negotiation times out:
-     for agent in agents
+    td.utilityValue(colspan="1",title="Your score if the negotiation times out") Status Quo Score:
+    for agent in agents
       td.utilityUtil #{sprintf(format, 1*agent.utility_space_object.reservation)}
+

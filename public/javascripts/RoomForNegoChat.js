@@ -14,7 +14,9 @@ $(function() {
     var socket = io.connect('/')
       , chatMessage = $('#chatMessage')
       , btnSendChat = $('#btnSendChat')
-      ;
+      , role = $("#role").html();
+      ;	utilityDiv = $("<div/>");
+      
     setUpHistoryTable(null);  // in datatable.js
 
     function bye() {
@@ -69,8 +71,22 @@ $(function() {
             agreement[$(this).attr('title')] = $(this).val();
         });
         socket.emit('sign', agreement);
-        bye();
+        //bye();
     });
+    
+    
+    $("#btnUtility").click(function() {
+    	var utilityUrl = '/UtilityOfCurrent/'+role;
+		//window.open(utilityUrl,'my_utility', 'left=50,top=50,toolbar=no,location=no,status=no,directories=no,dependent=yes,menubar=no, width=400,height=600,scrollbars=yes');
+		// http://stackoverflow.com/questions/14565310/create-a-window-that-always-remains-on/14565487#14565487
+    	utilityDiv.load(utilityUrl, function() { utilityDiv.dialog(); }); 
+    });
+		
+    $("#btnOppUtility").click(function() {
+    	var utilityUrl = '/UtilityOfPartner/'+role;
+		//window.open(utilityUrl,'opp_utility', 'left=50,top=50,toolbar=no,location=no,status=no,directories=no,dependent=yes,menubar=no, width=400,height=600,scrollbars=yes');
+    	utilityDiv.load(utilityUrl, function() { utilityDiv.dialog(); }); 
+	});  
     
 
 
@@ -116,6 +132,16 @@ $(function() {
 			answered: "no"
          });
        }
+    });
+
+    socket.on('issueAgreed', function (data) {
+      var pathToIssue = "#"+data.issue.replace(/[^a-z]/ig,"_") + "_label";
+      var element = $(pathToIssue);
+      if (data.agreed) {
+         element.css("color","green");
+      } else {
+         element.css("color","");
+      }
     });
 
     socket.on('allIssuesAgreed', function (areAllIssuesAgreed) {

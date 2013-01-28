@@ -87,7 +87,7 @@ input.button {
 }
 
 table.help {
-	width: 380px;
+	/*width: 380px; */
 	background-color: #fafafa;
 	border: 1px #000000 solid;
 	border-collapse: collapse;
@@ -197,7 +197,7 @@ table.utility {
 	border-spacing: 1px;
 	text-align: left;
 	font-weight: normal;
-	width: 380px;
+	/*width: 380px; */
 }
 
 table.utility td, table.utility th {
@@ -216,7 +216,7 @@ td.utilityValue {
 	color: #404040;
 	padding-top: 2px;
 	padding-bottom: 2px;
-	padding-left: 15px;
+	padding-left: 8px;
 	padding-right: 0px;
 }
 
@@ -315,7 +315,7 @@ div.mainSection {
 }
 
 #chosenOfferTable {
-	width: 100%;
+	/*width: 100%;*/
 }
 
 #chosenOfferTable tbody tr td {

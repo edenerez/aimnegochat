@@ -21,18 +21,15 @@ block body
 
    tr.utilityIssue
     td(colspan="2") Time Effect
+    
    tr
-    td.utilityValue Score decrease per #{turnLengthInSeconds} sec:
+    td.utilityValue Decrease per #{turnLengthInSeconds} sec:
     td.utilityUtil #{sprintf(format, 1*agent.utility_space_object.timeeffect)}
 
-   tr.utilityIssue
-    td(colspan="2") Opt-out Score
    tr
-    td.utilityValue Your score if you opt-out of the negotiation:
+    td.utilityValue(colspan="1",title="Your score if you opt-out of the negotiation") Opt-out Score:
     td.utilityUtil #{sprintf(format, 1*agent.utility_space_object.optout)}
 
-   tr.utilityIssue
-    td(colspan="2") Status Quo Score
    tr
-    td.utilityValue Your score if the negotiation times out:
+    td.utilityValue(colspan="1",title="Your score if the negotiation times out") Status Quo Score:
     td.utilityUtil #{sprintf(format, 1*agent.utility_space_object.reservation)}

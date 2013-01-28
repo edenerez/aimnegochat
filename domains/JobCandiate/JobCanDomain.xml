@@ -2,10 +2,10 @@
 
 <utility_space number_of_issues="0">
 
-<agent utility_space="Side_ACompromise.xml" owner="employer" personality="compromise"></agent> 
+<agent utility_space="Side_ACompromise.xml" owner="employer" personality="comp-romise"></agent> 
 <agent utility_space="Side_ALongTerm.xml" owner="employer" personality="long-term"></agent> 
 <agent utility_space="Side_AShortTerm.xml" owner="employer" personality="short-term"></agent> 
-<agent utility_space="Side_BCompromise.xml" owner="candidate" personality="compromise"></agent> 
+<agent utility_space="Side_BCompromise.xml" owner="candidate" personality="comp-romise"></agent> 
 <agent utility_space="Side_BLongTerm.xml" owner="candidate" personality="long-term"></agent> 
 <agent utility_space="Side_BShortTerm.xml" owner="candidate" personality="short-term"></agent>
 
