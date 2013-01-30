@@ -13,11 +13,12 @@
  * @param roles the required roles, e.g. ['Employer', 'Candidate']
  * @param maxTimeSeconds the max time for each game episode, in seconds.
  */ 
-exports.GameServer = function(gametype, roomTemplateName, requiredRoles, maxTimeSeconds) {
+exports.GameServer = function(gametype, roomTemplateName, requiredRoles, maxTimeSeconds, events) {
   this.gametype = gametype;
   this.roomTemplateName = roomTemplateName;
   this.requiredRolesArray = requiredRoles;
   this.maxTimeSeconds = maxTimeSeconds;
+  this.events = events;
   this.games = [];
   this.totalNumberOfStartingPlayers = 0;   // The total number of players that started the process (including questionnaires etc.) since the server started.
 

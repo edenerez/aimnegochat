@@ -164,13 +164,13 @@ table.contacts {
 	margin: auto;
 }
 
-table#mainPanel {
+/*table#mainPanel {
 	background-color: #fafafa;
 	border: 1px #000000 solid;
 	border-collapse: collapse;
 	border-spacing: 0px;
 	margin: auto;
-}
+}*/
 
 th.index {
 	background-color: #99CCCC;
@@ -251,8 +251,8 @@ tr.utilityIssue {
 
 div.mainSection {
 	border: 3px solid #008;
-	margin: 5px auto 5px auto;
-	width: 800px;
+	margin: 5px 5px 5px 5px;
+	width: 650px;
 	padding: 2px;
 }
 
@@ -303,7 +303,7 @@ div.mainSection {
 }
 
 #mainChatRow #btnSendChat {
-	width: 100px
+	width: auto;
 }
 
 #mainDetailsRow {
@@ -352,4 +352,17 @@ table.gamedata {
 table.gamedata td, table.gamedata th {
     border: 1px solid black;
     padding: 6px;
+}
+
+/* for the utility dialogs: */
+.ui-dialog {
+	border: dashed 2px #888;	
+}
+
+#signatures {
+	border-top: dashed black 1px;
+	margin-top: 6px;
+	padding-top: 6px;
+	font-style: italic;
+	text-align:center;
 }

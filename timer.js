@@ -3,6 +3,7 @@
 exports.Timer = function(startTimeSeconds, stepSeconds, endTimeSeconds, callback) {
     if (stepSeconds===0)
       throw "Cannot start a timer with a zero step";
+    this.startTimeSeconds = startTimeSeconds;
     this.currentTimeSeconds = startTimeSeconds;
     
     // make sure the step is in the right direction, to prevent endless loop:
@@ -20,6 +21,10 @@ exports.Timer = function(startTimeSeconds, stepSeconds, endTimeSeconds, callback
 
 exports.Timer.prototype.remainingTimeSeconds = function() {
   return this.currentTimeSeconds;
+}
+
+exports.Timer.prototype.timeFromStartSeconds = function() {
+  return this.startTimeSeconds - this.currentTimeSeconds;
 }
 
 exports.Timer.prototype.isRunning = function() {

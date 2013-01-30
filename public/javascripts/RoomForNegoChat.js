@@ -15,7 +15,6 @@ $(function() {
       , chatMessage = $('#chatMessage')
       , btnSendChat = $('#btnSendChat')
       , role = $("#role").html();
-      ;	utilityDiv = $("<div/>");
       
     setUpHistoryTable(null);  // in datatable.js
 
@@ -74,18 +73,28 @@ $(function() {
         //bye();
     });
     
-    
+
+    //var utilityPosition = $("#mainStatusRow").position();
+    //utilityPosition = [utilityPosition.top, utilityPosition.left]; 
+    //alert(utilityPosition);
+    var utilityDiv = $("<div/>");
+    var utilityOptions = {
+    };
+    var utilityPosition = {
+      my: "left top",
+      at: "right top",
+      of: $("#mainStatusRow")};
     $("#btnUtility").click(function() {
     	var utilityUrl = '/UtilityOfCurrent/'+role;
 		//window.open(utilityUrl,'my_utility', 'left=50,top=50,toolbar=no,location=no,status=no,directories=no,dependent=yes,menubar=no, width=400,height=600,scrollbars=yes');
 		// http://stackoverflow.com/questions/14565310/create-a-window-that-always-remains-on/14565487#14565487
-    	utilityDiv.load(utilityUrl, function() { utilityDiv.dialog(); }); 
+    	utilityDiv.load(utilityUrl, function() { utilityDiv.dialog(utilityOptions).dialog('widget').position(utilityPosition); }); 
     });
 		
     $("#btnOppUtility").click(function() {
     	var utilityUrl = '/UtilityOfPartner/'+role;
 		//window.open(utilityUrl,'opp_utility', 'left=50,top=50,toolbar=no,location=no,status=no,directories=no,dependent=yes,menubar=no, width=400,height=600,scrollbars=yes');
-    	utilityDiv.load(utilityUrl, function() { utilityDiv.dialog(); }); 
+    	utilityDiv.load(utilityUrl, function() { utilityDiv.dialog(utilityOptions).dialog('widget').position(utilityPosition); }); 
 	});  
     
 
@@ -93,11 +102,7 @@ $(function() {
     // Socket.io listeners
     // --------------------
     
-    //###message
-    // A new message has been received, the data comes through as a JSON object with 
-    // two attributes, an `id` of the client who sent the message, as well as a `msg` 
-    // with the actual text of the message, add it to the DOM message container
-    socket.on('message', function (data) {
+    var showMessage = function (data) {
         addDataToHistoryTable({            // in datatable.js
             proposerClass: data.id + (data.you? " You": " Partner"),
 			proposer: data.id + (data.you? " (You)": ""),
@@ -107,6 +112,33 @@ $(function() {
 			content: data.msg, 
 			answered: "no"
 		});
+        if (!data.you) {  // another player connects - enable chat buttons
+          $('#btnSendChat').removeAttr('disabled');
+          $('#chatMessage').removeAttr('disabled');
+        }
+    };  
+    
+    //###message
+    // A new message has been received, the data comes through as a JSON object with 
+    // two attributes, an `id` of the client who sent the message, as well as a `msg` 
+    // with the actual text of the message, add it to the DOM message container
+    socket.on('message', function (data) {
+        var messageData = {            
+            proposerClass: data.id + (data.you? " You": " Partner"),
+			proposer: data.id + (data.you? " (You)": ""),
+			action: data.action,
+			bid: data.msg,
+			util: "",
+			//content: data.msg,
+			answered: "no"
+		};
+		
+        if (data.action=='Sign' || data.action=='signed') {   
+           messageData.bid = "Signing the following agreement: "+JSON.stringify(data.msg.agreement);
+           $("<div>Signed by "+messageData.proposer+"</div>").appendTo("#signatures"); 
+        }
+
+        addDataToHistoryTable(messageData);            // in datatable.js
         if (!data.you) {  // another player connects - enable chat buttons
           $('#btnSendChat').removeAttr('disabled');
           $('#chatMessage').removeAttr('disabled');
@@ -149,9 +181,14 @@ $(function() {
          $("#signAgreement").removeAttr('disabled');
       } else {
          $("#signAgreement").attr('disabled', 'disabled');
+         $("#signatures").html(""); // all signatures are void
       }
     });
 
+    socket.on('signed', function(signatureData) {
+    signatureData
+    });
+    
     socket.on('title', function (value) {
         var element = $('title').text(value);
     });

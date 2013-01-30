@@ -22,10 +22,6 @@ if (!fs.appendFile) {
   console.log("Congratulations! you have Node "+process.version+", that supports appendFile.");
 }
 
-function fullPathToLog(logFileName) {
-    return 
-}
-
 /**
  * reads a log file, where each line is an object in JSON format.
  * @return an array of all objects in the file.
@@ -39,7 +35,10 @@ exports.readJsonLogSync = function(pathToLog) {
 
 var cleanPathToLog = function(logFileName) {
     var cleanLogFileName = logFileName.replace(/:/g,'-');
-    return path.join(__dirname, "logs", cleanLogFileName);
+    var cleanpath = path.join(__dirname, "logs", cleanLogFileName);
+    //if (!fs.existsSync(cleanpath))
+    //fs.mkdirSync(cleanpath);
+    return cleanpath;
 }
 
 /**
