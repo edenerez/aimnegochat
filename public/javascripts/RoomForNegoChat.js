@@ -102,22 +102,8 @@ $(function() {
     // Socket.io listeners
     // --------------------
     
-    var showMessage = function (data) {
-        addDataToHistoryTable({            // in datatable.js
-            proposerClass: data.id + (data.you? " You": " Partner"),
-			proposer: data.id + (data.you? " (You)": ""),
-			action: data.action,
-			bid: data.msg, 
-			util: "", 
-			content: data.msg, 
-			answered: "no"
-		});
-        if (!data.you) {  // another player connects - enable chat buttons
-          $('#btnSendChat').removeAttr('disabled');
-          $('#chatMessage').removeAttr('disabled');
-        }
-    };  
-    
+    var partiesThatSigned = {};
+ 
     //###message
     // A new message has been received, the data comes through as a JSON object with 
     // two attributes, an `id` of the client who sent the message, as well as a `msg` 
@@ -133,9 +119,12 @@ $(function() {
 			answered: "no"
 		};
 		
-        if (data.action=='Sign' || data.action=='signed') {   
+        if (data.action=='Sign') {   
            messageData.bid = "Signing the following agreement: "+JSON.stringify(data.msg.agreement);
-           $("<div>Signed by "+messageData.proposer+"</div>").appendTo("#signatures"); 
+           $("<div>Signed by "+messageData.proposer+"</div>").appendTo("#signatures");
+           partiesThatSigned[messageData.proposer] = true;
+           if (Object.keys(partiesThatSigned).length>=2)
+             bye();
         }
 
         addDataToHistoryTable(messageData);            // in datatable.js
@@ -165,7 +154,11 @@ $(function() {
          });
        }
     });
-
+    
+    socket.on('yourUtility', function (utility) {
+      $("#utility").html(utility);
+    });
+    
     socket.on('issueAgreed', function (data) {
       var pathToIssue = "#"+data.issue.replace(/[^a-z]/ig,"_") + "_label";
       var element = $(pathToIssue);
@@ -174,10 +167,7 @@ $(function() {
       } else {
          element.css("color","");
       }
-    });
-
-    socket.on('allIssuesAgreed', function (areAllIssuesAgreed) {
-      if (areAllIssuesAgreed) {
+      if (data.allAgreed) {
          $("#signAgreement").removeAttr('disabled');
       } else {
          $("#signAgreement").attr('disabled', 'disabled');

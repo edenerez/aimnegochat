@@ -15,21 +15,27 @@ exports.add = function(socket, game, session, io, message, messageLog, applocals
     messageLog(socket, game, "Change", session.query, data);
     game.playerChangesValue(session.query.role, data.issue, data.value);
     var currentIssueAgreed = game.arePlayerValuesEqual(data.issue);
-    //io.sockets.in(game.gameid).emit('status', {key: data.issue+"_agreed", value: (currentIssueAgreed? 'yes': 'no')});
-    io.sockets.in(game.gameid).emit('issueAgreed', {issue: data.issue, agreed: currentIssueAgreed});
-    
     var allIssuesAgreed = game.arePlayerValuesToAllIssuesEqual(allIssues);
-    io.sockets.in(game.gameid).emit('allIssuesAgreed', allIssuesAgreed);
+    io.sockets.in(game.gameid).emit('issueAgreed', {issue: data.issue, agreed: currentIssueAgreed, allAgreed: allIssuesAgreed});
+    agreement = game.valuesOfPlayer(session.query.role);
+
+    // calculate new utility for the player:
+    var utilityWithoutDiscount = Math.round(agent.utility_space_object.getUtilityWithoutDiscount(agreement));
+    var timeFromStart = game.timer? game.timer.timeFromStartSeconds(): 0;
+    var roundsFromStart = Math.floor(timeFromStart / applocals.turnLengthInSeconds);
+    var utilityWithDiscount = Math.round(agent.utility_space_object.getUtilityWithDiscount(utilityWithoutDiscount, roundsFromStart))
+    socket.emit('yourUtility', utilityWithDiscount);
   });
-  
+
   // A user finished playing (e.g. by clicking a "finish" button):
   socket.on('sign', function (agreement) {
-    var utilityWithoutDiscount = agent.utility_space_object.getUtilityWithoutDiscount(agreement);
-    var timeFromStart = game.timer.timeFromStartSeconds();
-    var roundsFromStart = Math.floor(timeFromStart/applocals.turnLengthInSeconds);
-    var utilityWithDiscount = agent.utility_space_object.getUtilityWithDiscount(utilityWithoutDiscount, roundsFromStart)
+    var utilityWithoutDiscount = Math.round(agent.utility_space_object.getUtilityWithoutDiscount(agreement));
+    var timeFromStart = game.timer? game.timer.timeFromStartSeconds(): 0;
+    var roundsFromStart = Math.floor(timeFromStart / applocals.turnLengthInSeconds);
+    var utilityWithDiscount = Math.round(agent.utility_space_object.getUtilityWithDiscount(utilityWithoutDiscount, roundsFromStart))
     var finalResult = {
       agreement: agreement,
+      timeFromStart:           timeFromStart,
       roundsFromStart:         roundsFromStart,
       utilityWithoutDiscount:  utilityWithoutDiscount,
       utilityWithDiscount:     utilityWithDiscount

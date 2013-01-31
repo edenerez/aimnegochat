@@ -157,6 +157,10 @@ Game.prototype.playerChangesValue = function(role, issue, value) {
     map[issue] = value;
 }
 
+Game.prototype.valuesOfPlayer = function(role) {
+    return this.mapRoleToMapIssueToValue[role];
+}
+
 /**
  * @return true iff ALL required players have a value for this issue, and ALL values are equal.
  */
