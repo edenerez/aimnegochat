@@ -13,6 +13,8 @@ exports.Timer = function(startTimeSeconds, stepSeconds, endTimeSeconds, callback
     var theTimerObject = this;
     this.interval = setInterval(function() {
         theTimerObject.currentTimeSeconds += stepSeconds;
+        if (theTimerObject.currentTimeSeconds<0)
+          theTimerObject.currentTimeSeconds = 0;
         if ((endTimeSeconds>theTimerObject) != (stepSeconds>0))
           theTimerObject.stop();
         callback(theTimerObject.currentTimeSeconds);

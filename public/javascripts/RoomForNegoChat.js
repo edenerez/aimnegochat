@@ -86,17 +86,20 @@ $(function() {
       of: $("#mainStatusRow")};
     $("#btnUtility").click(function() {
     	var utilityUrl = '/UtilityOfCurrent/'+role;
-		//window.open(utilityUrl,'my_utility', 'left=50,top=50,toolbar=no,location=no,status=no,directories=no,dependent=yes,menubar=no, width=400,height=600,scrollbars=yes');
 		// http://stackoverflow.com/questions/14565310/create-a-window-that-always-remains-on/14565487#14565487
     	utilityDiv.load(utilityUrl, function() { utilityDiv.dialog(utilityOptions).dialog('widget').position(utilityPosition); }); 
     });
-		
     $("#btnOppUtility").click(function() {
     	var utilityUrl = '/UtilityOfPartner/'+role;
-		//window.open(utilityUrl,'opp_utility', 'left=50,top=50,toolbar=no,location=no,status=no,directories=no,dependent=yes,menubar=no, width=400,height=600,scrollbars=yes');
     	utilityDiv.load(utilityUrl, function() { utilityDiv.dialog(utilityOptions).dialog('widget').position(utilityPosition); }); 
 	});  
     
+
+    $("#btnOptOut").click(function() {
+    	if (confirm("Are you sure you want to leave the negotiation without an agreement?")) {
+    		bye();
+    	}
+	});  
 
 
     // Socket.io listeners

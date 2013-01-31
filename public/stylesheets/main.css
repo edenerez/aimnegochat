@@ -86,6 +86,13 @@ input.button {
 	overflow: visible;
 }
 
+button {
+	font-size:14px;
+	padding: 0; 
+	margin: 0; 
+	font-weight: bold;
+}
+
 table.help {
 	/*width: 380px; */
 	background-color: #fafafa;
@@ -273,29 +280,18 @@ div.mainSection {
 	width: 100%;
 }
 
-#mainStatusRow #btnUtility {
-	width: 170px;
-}
-
-#mainStatusRow #btnOppUtility {
-	width: 250px;
-}
-
-#mainStatusRow #btnHelp {
-	width: 60px;
-}
-
-#mainStatusRow #phase {
-	width: 450px;
-}
-
-#mainStatusRow #remainingTime {
-	width: 180px;
+#mainStatusRow td {
+	padding: 0 4px;
+	border-right: dashed 1px #888; 
 }
 
 #mainChatRow {
 	border-color: #0c8;
 	font-size: 16px;
+}
+
+#mainOptOutRow {
+	border-color: #444;
 }
 
 #mainChatRow input {

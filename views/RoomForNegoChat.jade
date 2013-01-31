@@ -18,41 +18,42 @@ block body
     div.mainSection#mainStatusRow <!-- row #2: status and buttons -->
       table
         tr
+          td Your role: <b id='role'>#{role}</b>.
           td#phase
             span.value Status: Connecting...
-          td
-            input.button#btnUtility(type="button",value="Show your scores")
-          td
-            input.button#btnOppUtility(type="button",value="Show partner's scores")
-          //td
-            input.button#btnHelp(type="button",value="Help")
-
-        tr
           td#remainingTime
             span.key Remaining time:
             span.value
+          td
+            button#btnUtility Your scores
+          td
+            button#btnOppUtility Partner's scores
 
     if (agent)
      div.mainSection <!-- row #3: explanations to the user; possible values and utils -->
-      p Your role: <b id='role'>#{role}</b>. Try to get the deal with the best score. 
-      p Click the buttons above to see the scores for both you and your partner.
-
       if gametype=='negochat'
-       p Use the menus below as a draft, to track the issues you agreed so far.
-       p This draft is <b>not binding</b> until both of you sign it.  
+       div Use the menus below as a draft, to track the issues you agreed so far.
+       div This draft is <b>not binding</b> until both of you sign it.
+       div &nbsp;  
        include GeniusMenus
-       p
+       div
         button(id='signAgreement',disabled='disabled',title="The sign button is enabled only when your draft is consistent with your partner's draft on all issues") Sign the agreement
       if gametype=='chat'
        include GeniusIssuesAndValues
 
     div#mainChatRow.mainSection <!-- row #4: chat -->
-      p <b>Please write a complete, grammatically correct English sentence. Say 'bye' to quit.</b>
+      p <b>Please write a complete, grammatically correct English sentence.</b>
       p 
         input#chatMessage(value="hi",disabled="disabled")
         input.button#btnSendChat(type="button",value="Say",disabled="disabled")
 
-    div.mainSection#mainHistoryRow.yui-skin-sam <!-- row #5: history -->
+    div#mainOptOutRow.mainSection <!-- row #5: opt-out -->
+      p 
+       b Click here to quit the negotiation without an agreement:
+       button#btnOptOut Opt Out
+       
+
+    div.mainSection#mainHistoryRow.yui-skin-sam <!-- row #6: history -->
       table#tblhistory
         thead
           tr
