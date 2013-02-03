@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -323,7 +322,11 @@ var io = require('socket.io').listen(httpserver)
   , SessionSockets = require('session.socket.io')
   ;
 
-io.set('log level', 1);
+io.configure(function () { 
+  io.set('log level', 1);
+  io.set("transports", ["xhr-polling"]); 
+  io.set("polling duration", 10); 
+});
 
 function messageLog(socket, game, action, user, data) {
     logger.writeJsonLog('actions_'+game.gameid, 
