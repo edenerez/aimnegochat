@@ -82,7 +82,7 @@ gameServers['negochat'] = new multiplayer.GameServer(
     'negochat',
     /*roomTemplateName=*/'RoomForNegoChat',
     /*requiredRoles=*/['Employer', 'Candidate'], 
-    /*maxTimeSeconds=*/60,
+    /*maxTimeSeconds=*/30*60,
     /*events=*/require('./EventsForNegoChat')
     );
 
@@ -100,7 +100,7 @@ actualAgents['Candidate'] = domain.agentOfRoleAndPersonality('candidate', 'short
 otherAgents['Candidate']  = domain.agentsOfOtherRole('candidate');
 
 // Variables that will be available to all JADE templates:
-app.locals.turnLengthInSeconds = 10;
+app.locals.turnLengthInSeconds = 2*60;
 app.locals.sprintf = require('sprintf').sprintf;
 app.locals.format = "%+1.0f";
 app.locals.actualAgents = actualAgents;
