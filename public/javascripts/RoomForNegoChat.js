@@ -34,6 +34,18 @@ $(function() {
     };
 
 
+	$('#btnSendChat').attr('disabled','disabled');
+	$('#chatMessage').attr('disabled','disabled');
+	//$('select.issue').attr('disabled','disabled');
+	//$('#btnOptOut').attr('disabled','disabled');
+	
+	var enableGUI  = function() {
+		$('#btnSendChat').removeAttr('disabled');
+		$('#chatMessage').removeAttr('disabled');
+		//$('select.issue').removeAttr('disabled');
+		//$('#btnOptOut').removeAttr('disabled');
+	}
+
     // User interaction
     // ----------------
     
@@ -72,7 +84,6 @@ $(function() {
         socket.emit('sign', agreement);
         //bye();
     });
-    
 
     //var utilityPosition = $("#mainStatusRow").position();
     //utilityPosition = [utilityPosition.top, utilityPosition.left]; 
@@ -111,9 +122,9 @@ $(function() {
     // A new message has been received, the data comes through as a JSON object with 
     // two attributes, an `id` of the client who sent the message, as well as a `msg` 
     // with the actual text of the message, add it to the DOM message container
-    socket.on('message', function (data) {
-        var messageData = {            
-            proposerClass: data.id + (data.you? " You": " Partner"),
+	socket.on('message', function (data) {
+		var messageData = {            
+			proposerClass: data.id + (data.you? " You": " Partner"),
 			proposer: data.id + (data.you? " (You)": ""),
 			action: data.action,
 			bid: data.msg,
@@ -121,43 +132,42 @@ $(function() {
 			//content: data.msg,
 			answered: "no"
 		};
-		
-        if (data.action=='Sign') {   
-           messageData.bid = "Signing the following agreement: "+JSON.stringify(data.msg.agreement);
-           $("<div>Signed by "+messageData.proposer+"</div>").appendTo("#signatures");
-           partiesThatSigned[messageData.proposer] = true;
-           if (Object.keys(partiesThatSigned).length>=2)
-             bye();
-        }
 
-        addDataToHistoryTable(messageData);            // in datatable.js
-        if (!data.you) {  // another player connects - enable chat buttons
-          $('#btnSendChat').removeAttr('disabled');
-          $('#chatMessage').removeAttr('disabled');
-        }
-    });
-    
-    //###status
-    // The server asks to change a status variable, with key and value
-    // Change the html of the relevant DOM element
-    socket.on('status', function (keyvalue) {
-        var pathToValue = "#"+keyvalue.key.replace(/[^a-z]/ig,"_")+" .value";
-        var element = $(pathToValue);
-        if (element) {
-          element.html(keyvalue.value);
-        } else {
-          addDataToHistoryTable({
-            proposerClass: 'Secretary',
-			proposer: 'Secretary',
-			action: 'Announcement',
-			bid: keyvalue.key+" is now :"+keyvalue.value, 
-			util: "", 
-			content: "", 
-			answered: "no"
-         });
-       }
-    });
-    
+		if (data.action=='Sign') {
+			messageData.bid = "Signing the following agreement: "+JSON.stringify(data.msg.agreement);
+			$("<div>Signed by "+messageData.proposer+"</div>").appendTo("#signatures");
+			partiesThatSigned[messageData.proposer] = true;
+			if (Object.keys(partiesThatSigned).length>=2)
+			bye();
+		}
+
+		addDataToHistoryTable(messageData);            // in datatable.js
+	});
+
+	//###status
+	// The server asks to change a status variable, with key and value
+	// Change the html of the relevant DOM element
+	socket.on('status', function (keyvalue) {
+		var pathToValue = "#"+keyvalue.key.replace(/[^a-z]/ig,"_")+" .value";
+		var element = $(pathToValue);
+		if (element) {
+			element.html(keyvalue.value);
+		} else {
+			addDataToHistoryTable({
+				proposerClass: 'Secretary',
+				proposer: 'Secretary',
+				action: 'Announcement',
+				bid: keyvalue.key+" is now :"+keyvalue.value, 
+				util: "", 
+				content: "", 
+				answered: "no"
+			});
+		}
+		
+		if (keyvalue.key=='phase' && keyvalue.value=='') // game started
+			enableGUI();
+	});
+
     socket.on('yourUtility', function (utility) {
       $("#utility").html(utility);
     });

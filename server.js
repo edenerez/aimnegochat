@@ -157,7 +157,7 @@ app.get('/:gametype/watchgame/:gameid', function(req,res) {
     setSessionForNewUser(req);  
     console.log('Watch mode start. session = '+JSON.stringify(req.session.query));
     extend(req.session.query, {role: 'Watcher', gameid: req.params.gameid, silentEntry: true});
-    res.redirect('/Play');   // requires :gametype param in the session
+    res.redirect('/'+req.params.gametype+'/play');
 });
 
 
@@ -178,7 +178,7 @@ app.get('/entergame', function(req,res) {
       }
       session.query.gameid = game.gameid;
     }
-    res.redirect('/Play');
+    res.redirect('/'+req.session.query.gametype+"/play");
 });
 
 app.get('/:gametype/listactive', function(req,res) {
@@ -255,7 +255,7 @@ app.get('/LogToXml/:logFileName', function(req,res) {
 app.get('/PreQuestionnaireExam', function(req,res) {
     res.render("PreQuestionnaireExam",  {
         action:'/VerifyQuestionnaire',
-        next_action:'/Play',
+        next_action:'/entergame',
         mistake: req.query.mistake,
         role: req.session.query.role,
         AMTStatus: JSON.stringify(req.session.query)});
@@ -276,10 +276,12 @@ app.get('/VerifyQuestionnaire', function(req,res) {
     res.redirect(nextAction);
 });
 
-app.get('/Play', function(req,res) {
-    if (!req.session.query) return;
-    
-    var gameServer = gameServers[req.session.query.gametype];
+app.get('/:gametype/play', function(req,res) {
+    if (!req.session.query) {
+        res.redirect("/"+req.params.gametype+"/advanced");
+        return;
+    }
+    var gameServer = gameServers[req.params.gametype];
     res.render(gameServer.roomTemplateName,  {
         gametype: req.session.query.gametype, 
         role: req.session.query.role,
@@ -324,7 +326,7 @@ var io = require('socket.io').listen(httpserver)
 
 io.configure(function () { 
   io.set('log level', 1);
-  io.set("transports", ["xhr-polling"]); 
+  io.set("transports", ["xhr-polling"]);   // for IE 9-10 on Azure
   io.set("polling duration", 10); 
 });
 
@@ -373,7 +375,6 @@ new SessionSockets(io, sessionStore, cookieParser).on('connection', function (er
     io.sockets.in(game.gameid).emit('status', {key: 'phase', value: 'Status: Waiting for '+game.missingRolesArray.join(' and ')+'...'});
     io.sockets.in(game.gameid).emit('status', {key: 'remainingTime', value: '-'});
   } else {               // game started!
-  
     if (!game.startLogged) {
       logger.writeJsonLog("games", {
         gametype: session.query.gametype,

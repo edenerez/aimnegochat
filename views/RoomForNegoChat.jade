@@ -2,15 +2,15 @@ extends layout
 block title
   title#title Chat Room 
 block body
-  script(src='./socket.io/socket.io.js')
+  script(src='/socket.io/socket.io.js')
 
-  script(src='./javascripts/yahoo_yui_2.8.1/yahoo-dom-event/yahoo-dom-event.js')
-  script(src='./javascripts/yahoo_yui_2.8.1/element/element-min.js')
-  script(src='./javascripts/yahoo_yui_2.8.1/datasource/datasource-min.js')
-  script(src='./javascripts/yahoo_yui_2.8.1/datatable/datatable-min.js')
-  script(src='./javascripts/datatable.js')
+  script(src='/javascripts/yahoo_yui_2.8.1/yahoo-dom-event/yahoo-dom-event.js')
+  script(src='/javascripts/yahoo_yui_2.8.1/element/element-min.js')
+  script(src='/javascripts/yahoo_yui_2.8.1/datasource/datasource-min.js')
+  script(src='/javascripts/yahoo_yui_2.8.1/datatable/datatable-min.js')
+  script(src='/javascripts/datatable.js')
 
-  script(src='./javascripts/RoomForNegoChat.js')
+  script(src='/javascripts/RoomForNegoChat.js')
 
   div#mainPanel
     div.mainSection#mainTitleRow <!-- row #1: title row -->
@@ -44,14 +44,14 @@ block body
     div#mainChatRow.mainSection <!-- row #4: chat -->
       p <b>Please write a complete, grammatically correct English sentence.</b>
       p 
-        input#chatMessage(value="hi",disabled="disabled")
-        input.button#btnSendChat(type="button",value="Say",disabled="disabled")
+        input#chatMessage(value="hi")
+        button#btnSendChat Say
 
     div#mainOptOutRow.mainSection <!-- row #5: opt-out -->
       p 
        b Click here to quit the negotiation without an agreement:
        button#btnOptOut Opt Out
-       
+
 
     div.mainSection#mainHistoryRow.yui-skin-sam <!-- row #6: history -->
       table#tblhistory
