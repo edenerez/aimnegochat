@@ -98,6 +98,7 @@ actualAgents['Employer']  = domain.agentOfRoleAndPersonality('employer', 'short-
 otherAgents['Employer']  = domain.agentsOfOtherRole('employer');
 actualAgents['Candidate'] = domain.agentOfRoleAndPersonality('candidate', 'short-term');
 otherAgents['Candidate']  = domain.agentsOfOtherRole('candidate');
+actualAgents['Previewer'] =  actualAgents['Employer'];
 
 // Variables that will be available to all JADE templates:
 app.locals.turnLengthInSeconds = 10;
@@ -135,7 +136,7 @@ app.get('/:gametype/beginner', function(req,res) {
     }
     setSessionForNewUser(req);
     if (amt.isPreview(req.session.query)) {
-       res.redirect('/AmtPreview');
+       res.redirect('/'+req.params.gametype+'/preview');
     } else {
       extend(req.session.query, gameServer.roleWaitingForPlayer(req.session.query.userid));
       res.redirect('/PreQuestionnaireDemography');
@@ -145,12 +146,8 @@ app.get('/:gametype/beginner', function(req,res) {
 app.get('/:gametype/advanced', function(req,res) {
     var gameServer = gameServers[req.params.gametype];
     setSessionForNewUser(req);
-    if (amt.isPreview(req.query)) {
-       res.redirect('/AmtPreview');
-    } else {
-      extend(req.session.query, gameServer.roleWaitingForPlayer(req.session.query.userid));
-      res.redirect('/entergame');
-    }
+    extend(req.session.query, gameServer.roleWaitingForPlayer(req.session.query.userid));
+    res.redirect('/entergame');
 });
 
 app.get('/:gametype/watchgame/:gameid', function(req,res) {
@@ -204,12 +201,6 @@ app.get('/:gametype/listlogs', function(req,res) {
         show_unverified_games: !pretty,
         games: games});
     });
-});
-
-app.get('/AmtPreview', function(req,res) {
-    var gameServer = gameServers[req.session.query.gametype];
-    res.render("AmtPreview",  {
-        AMTStatus: JSON.stringify(req.session.query)});
 });
 
 app.get('/PreQuestionnaireDemography', function(req,res) {
@@ -283,11 +274,22 @@ app.get('/:gametype/play', function(req,res) {
     }
     var gameServer = gameServers[req.params.gametype];
     res.render(gameServer.roomTemplateName,  {
-        gametype: req.session.query.gametype, 
+        gametype: req.params.gametype, 
         role: req.session.query.role,
         agent: actualAgents[req.session.query.role],
         AMTStatus: JSON.stringify(req.session.query),
         next_action:'/PostQuestionnaire'});
+});
+
+app.get('/:gametype/preview', function(req,res) {
+    var gameServer = gameServers[req.params.gametype];
+    res.render(gameServer.roomTemplateName,  {
+        preview: true,
+        gametype: req.params.gametype, 
+        role: 'Previewer',
+        agent: actualAgents['Previewer'],
+        AMTStatus: JSON.stringify(req.session.query),
+        next_action: ''});
 });
 
 app.get('/PostQuestionnaire', function(req,res) {

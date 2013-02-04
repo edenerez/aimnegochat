@@ -2,25 +2,24 @@ extends layout
 block title
   title#title Chat Room 
 block body
-  script(src='/socket.io/socket.io.js')
-
+  if (!locals.preview)
+    script(src='/socket.io/socket.io.js')
   script(src='/javascripts/yahoo_yui_2.8.1/yahoo-dom-event/yahoo-dom-event.js')
   script(src='/javascripts/yahoo_yui_2.8.1/element/element-min.js')
   script(src='/javascripts/yahoo_yui_2.8.1/datasource/datasource-min.js')
   script(src='/javascripts/yahoo_yui_2.8.1/datatable/datatable-min.js')
   script(src='/javascripts/datatable.js')
 
-  script(src='/javascripts/RoomForNegoChat.js')
+  if (!locals.preview)
+    script(src='/javascripts/RoomForNegoChat.js')
 
   div#mainPanel
-    div.mainSection#mainTitleRow <!-- row #1: title row -->
-      p Negotiations Simulation
     div.mainSection#mainStatusRow <!-- row #2: status and buttons -->
       table
         tr
           td Your role: <b id='role'>#{role}</b>.
           td#phase
-            span.value Status: Connecting...
+            span.value Status: #{locals.preview? "This is a preview only!": "Connecting..."}
           td#remainingTime
             span.key Remaining time:
             span.value
@@ -47,13 +46,7 @@ block body
         input#chatMessage(value="hi")
         button#btnSendChat Say
 
-    div#mainOptOutRow.mainSection <!-- row #5: opt-out -->
-      p 
-       b Click here to quit the negotiation without an agreement:
-       button#btnOptOut Opt Out
-
-
-    div.mainSection#mainHistoryRow.yui-skin-sam <!-- row #6: history -->
+    div.mainSection#mainHistoryRow.yui-skin-sam <!-- row #5: history -->
       table#tblhistory
         thead
           tr
@@ -63,5 +56,10 @@ block body
             td(valign="top",align="center",style="font-size: 8pt;")
               div#tblHistoryContainer"
   
+    div#mainOptOutRow.mainSection <!-- row #6: opt-out -->
+      p 
+       b Click here to quit the negotiation without an agreement:
+       button#btnOptOut Opt Out
+
     form#nextAction(action="#{next_action}",method="get",style='display:none')
 
