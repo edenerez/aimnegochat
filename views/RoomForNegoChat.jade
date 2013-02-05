@@ -3,7 +3,7 @@ block title
   title#title Chat Room 
 block body
   if (locals.preview)
-    div#noJavascriptSupport Sorry, your browser doesn't support Javascript, so you cannot play the game!
+    div.mainSection#noJavascriptSupport Sorry, your browser doesn't support Javascript, so you cannot play the game!
       script $("div#noJavascriptSupport").hide();
   if (!locals.preview)
     script(src='/socket.io/socket.io.js')
