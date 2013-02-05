@@ -276,6 +276,11 @@ div.mainSection {
 	font-weight: bold;
 }
 
+#noJavascriptSupport {
+	border-color: #F00;
+	font-weight: bold;
+}
+
 #mainStatusRow table {
 	width: 100%;
 }
