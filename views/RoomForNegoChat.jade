@@ -2,9 +2,8 @@ extends layout
 block title
   title#title Chat Room 
 block body
-  if (locals.preview)
-    div.mainSection#noJavascriptSupport Sorry, your browser doesn't support Javascript, so you cannot play the game!
-      script $("div#noJavascriptSupport").hide();
+  div.mainSection#noJavascriptSupport Sorry, your browser doesn't support Javascript, so you cannot play the game!
+    script $("div#noJavascriptSupport").hide();
   if (!locals.preview)
     script(src='/socket.io/socket.io.js')
   script(src='/javascripts/yahoo_yui_2.8.1/yahoo-dom-event/yahoo-dom-event.js')
