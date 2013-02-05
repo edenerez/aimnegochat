@@ -33,11 +33,18 @@ block body
               for v in [1, 2, 3, 4, 5]
                 option(value='#{v}') #{v}
         tr
-           td.left Can you estimate the type of person you've negotiated with?
+           td.left Can you estimate the <b>type</b> of person you've negotiated with?
            td.field
             select(name='type')
               option(value='') -- select --
               for v in ['Short-term', 'Compromise', 'Long-term']
+                option(value='#{v}') #{v}
+        tr
+           td.left Can you estimate the <b>gender</b> of person you've negotiated with?
+           td.field
+            select(name='gender')
+              option(value='') -- select --
+              for v in ['Male', 'Female']
                 option(value='#{v}') #{v}
         tr
            td.left How likely is it that the negotiation partner was from the <u>same country</u> as you are? (1 - not likely, 5 - very likely)
