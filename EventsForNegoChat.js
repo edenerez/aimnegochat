@@ -1,23 +1,23 @@
-exports.add = function(socket, game, session, io, message, messageLog, applocals) {
+exports.add = function(socket, game, session_data, io, message, messageLog, applocals) {
 
-  var agent = applocals.actualAgents[session.query.role];
+  var agent = applocals.actualAgents[session_data.role];
   if (agent)
     var allIssues = agent.utility_space_object.issueByIndex;
 
   // A user sent a chat message - just send this message to all other users:
   socket.on('message', function (data) {
-    message(socket, game, "Message", session.query, data);
+    message(socket, game, "Message", session_data, data);
   });
 
   
   // A user changed the value for one of his issues:
   socket.on('change', function (data) {
-    messageLog(socket, game, "Change", session.query, data);
-    game.playerChangesValue(session.query.role, data.issue, data.value);
+    messageLog(socket, game, "Change", session_data, data);
+    game.playerChangesValue(session_data.role, data.issue, data.value);
     var currentIssueAgreed = game.arePlayerValuesEqual(data.issue);
     var allIssuesAgreed = game.arePlayerValuesToAllIssuesEqual(allIssues);
     io.sockets.in(game.gameid).emit('issueAgreed', {issue: data.issue, agreed: currentIssueAgreed, allAgreed: allIssuesAgreed});
-    agreement = game.valuesOfPlayer(session.query.role);
+    agreement = game.valuesOfPlayer(session_data.role);
 
     // calculate new utility for the player:
     var utilityWithoutDiscount = Math.round(agent.utility_space_object.getUtilityWithoutDiscount(agreement));
@@ -40,8 +40,8 @@ exports.add = function(socket, game, session, io, message, messageLog, applocals
       utilityWithoutDiscount:  utilityWithoutDiscount,
       utilityWithDiscount:     utilityWithDiscount
     };
-    //messageLog(socket, game, "Sign", session.query, finalResult);
-    game.mapRoleToFinalResult[session.query.role] = finalResult;
-    message(socket, game, "Sign", session.query, finalResult);
+    //messageLog(socket, game, "Sign", session_data, finalResult);
+    game.mapRoleToFinalResult[session_data.role] = finalResult;
+    message(socket, game, "Sign", session_data, finalResult);
   });
 }

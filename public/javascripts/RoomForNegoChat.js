@@ -17,6 +17,10 @@ $(function() {
       , role = $("#role").html();
       
     setUpHistoryTable(null);  // in datatable.js
+    
+    if (session_data) {
+      socket.emit('start_session', session_data);
+    }
 
     function bye() {
          window.location = $("form#nextAction").attr("action");
@@ -96,9 +100,16 @@ $(function() {
       at: "right top",
       of: $("#mainStatusRow")};
     $("#btnUtility").click(function() {
-    	var utilityUrl = '/UtilityOfCurrent/'+role;
+    	var utilityUrl = 'http://localhost:4000/UtilityOfCurrent/'+role;
+    	console.log(utilityUrl);
 		// http://stackoverflow.com/questions/14565310/create-a-window-that-always-remains-on/14565487#14565487
-    	utilityDiv.load(utilityUrl, function() { utilityDiv.dialog(utilityOptions).dialog('widget').position(utilityPosition); }); 
+    	utilityDiv.load(utilityUrl, function() {
+    		console.log(1);
+    		var d =  utilityDiv.dialog(utilityOptions);
+    		//console.dir(utilityDiv);
+    		console.log(2);
+    		//utilityDiv.dialog(utilityOptions).dialog('widget').position(utilityPosition); 
+    	}); 
     });
     $("#btnOppUtility").click(function() {
     	var utilityUrl = '/UtilityOfPartner/'+role;

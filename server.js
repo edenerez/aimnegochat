@@ -3,22 +3,22 @@
  */
 
 var express = require('express')
-  , http = require('http')
-  , path = require('path')
-  , url = require('url')
-  , fs = require('fs')
-  , util = require('util')
-  , extend = require('xtend')
-  , amt = require('./amazonturk')
-  , multiplayer = require('./multiplayer')
-  , logger = require('./logger')
-  , timer = require('./timer')
-  ;
+	, http = require('http')
+	, path = require('path')
+	, url = require('url')
+	, fs = require('fs')
+	, util = require('util')
+	, extend = require('xtend')
+	, amt = require('./amazonturk')
+	, multiplayer = require('./multiplayer')
+	, logger = require('./logger')
+	, timer = require('./timer')
+	;
 
 
 var cookieParser = express.cookieParser('biuailab')
-  , sessionStore = new express.session.MemoryStore()
-  ;
+	, sessionStore = new express.session.MemoryStore()
+	;
 
 
 //
@@ -27,41 +27,41 @@ var cookieParser = express.cookieParser('biuailab')
 
 var app = express();
 app.configure(function(){
-  // Settings:
-  app.set('port', process.env.PORT || 4000);
-  app.set('views', path.join(__dirname, 'views'));    // The view directory path
-  app.set('view engine', 'jade');            // The default engine extension to use when omitted
-  app.set('case sensitive routing', false);  // Enable case sensitivity, disabled by default, treating "/Foo" and "/foo" as same
+	// Settings:
+	app.set('port', process.env.PORT || 4000);
+	app.set('views', path.join(__dirname, 'views'));		// The view directory path
+	app.set('view engine', 'jade');						// The default engine extension to use when omitted
+	app.set('case sensitive routing', false);	// Enable case sensitivity, disabled by default, treating "/Foo" and "/foo" as same
 
-  // Middleware - order is important!
-  app.use(express.favicon());
-  
-  //app.use(express.logger({format:'default', stream: fs.createWriteStream(accessLog, {flags: 'a'}) }));
-  //app.use(express.logger({format:'dev'})); // log to console, in development format (with colors)
-  
-  app.use(function(req,res,next) {
-      if (!/\/stylesheets\//.test(req.url) && !/\/javascripts\//.test(req.url)) 
-        logger.writeEventLog("events", req.method+" "+req.url, extend({remoteAddress: req.connection.remoteAddress}, req.headers));
-      next();
-  });
-  
-  app.use(express.bodyParser());             // Request body parsing middleware supporting JSON, urlencoded, and multipart requests. This middleware is simply a wrapper the json(), urlencoded(), and multipart() middleware
-  app.use(cookieParser);
-  app.use(express.session({store:  sessionStore, secret: 'biuailab'}));
-  app.use(express.methodOverride());
-  //app.use(express.basicAuth(function(user, pass){
-  //  return 'manager' == user & 'ssqqll' == pass;
-  //}));
-  
-  app.use(app.router);
-  app.use(express.static(path.join(__dirname, 'public')));
-  
-  // Application local variables are provided to all templates rendered within the application:
-  app.locals.pretty = true;
+	// Middleware - order is important!
+	app.use(express.favicon());
+	
+	//app.use(express.logger({format:'default', stream: fs.createWriteStream(accessLog, {flags: 'a'}) }));
+	//app.use(express.logger({format:'dev'})); // log to console, in development format (with colors)
+	
+	app.use(function(req,res,next) {
+			if (!/\/stylesheets\//.test(req.url) && !/\/javascripts\//.test(req.url)) 
+				logger.writeEventLog("events", req.method+" "+req.url, extend({remoteAddress: req.connection.remoteAddress}, req.headers));
+			next();
+	});
+	
+	app.use(express.bodyParser());						 // Request body parsing middleware supporting JSON, urlencoded, and multipart requests. This middleware is simply a wrapper the json(), urlencoded(), and multipart() middleware
+	app.use(cookieParser);
+	app.use(express.session({store:	sessionStore, secret: 'biuailab'}));
+	app.use(express.methodOverride());
+	//app.use(express.basicAuth(function(user, pass){
+	//	return 'manager' == user & 'ssqqll' == pass;
+	//}));
+	
+	app.use(app.router);
+	app.use(express.static(path.join(__dirname, 'public')));
+	
+	// Application local variables are provided to all templates rendered within the application:
+	app.locals.pretty = true;
 });
 
 app.configure('development', function(){
-  app.use(express.errorHandler());
+	app.use(express.errorHandler());
 });
 
 
@@ -72,19 +72,19 @@ app.configure('development', function(){
 
 var gameServers = {};
 gameServers['chat'] = new multiplayer.GameServer(
-    'chat',
-    /*roomTemplateName=*/'RoomForNegoChat',
-    /*requiredRoles=*/['Employer', 'Candidate'], 
-    /*maxTimeSeconds=*/60,
-    /*events=*/require('./EventsForChat')
-    );
+		'chat',
+		/*roomTemplateName=*/'RoomForNegoChat',
+		/*requiredRoles=*/['Employer', 'Candidate'], 
+		/*maxTimeSeconds=*/60,
+		/*events=*/require('./EventsForChat')
+		);
 gameServers['negochat'] = new multiplayer.GameServer(
-    'negochat',
-    /*roomTemplateName=*/'RoomForNegoChat',
-    /*requiredRoles=*/['Employer', 'Candidate'], 
-    /*maxTimeSeconds=*/30*60,
-    /*events=*/require('./EventsForNegoChat')
-    );
+		'negochat',
+		/*roomTemplateName=*/'RoomForNegoChat',
+		/*requiredRoles=*/['Employer', 'Candidate'], 
+		/*maxTimeSeconds=*/30*60,
+		/*events=*/require('./EventsForNegoChat')
+		);
 
 //
 // Step 2.5: GENIUS related variables:
@@ -94,11 +94,11 @@ var genius = require('./genius');
 var domain = new genius.Domain(path.join(__dirname,'domains','JobCandiate','JobCanDomain.xml'));
 var actualAgents = {};
 var otherAgents = {};
-actualAgents['Employer']  = domain.agentOfRoleAndPersonality('employer', 'short-term');
-otherAgents['Employer']  = domain.agentsOfOtherRole('employer');
+actualAgents['Employer']	= domain.agentOfRoleAndPersonality('employer', 'short-term');
+otherAgents['Employer']	= domain.agentsOfOtherRole('employer');
 actualAgents['Candidate'] = domain.agentOfRoleAndPersonality('candidate', 'short-term');
-otherAgents['Candidate']  = domain.agentsOfOtherRole('candidate');
-actualAgents['Previewer'] =  actualAgents['Employer'];
+otherAgents['Candidate']	= domain.agentsOfOtherRole('candidate');
+actualAgents['Previewer'] =	actualAgents['Employer'];
 
 // Variables that will be available to all JADE templates:
 app.locals.turnLengthInSeconds = 2*60;
@@ -108,201 +108,202 @@ app.locals.actualAgents = actualAgents;
 
 
 function setSessionForNewUser(req) {
-    if (req.session.query)
-      logger.writeEventLog("events", "OLDSESSION", req.session);
-    req.session.query = req.query;
-    req.session.query.userid = new Date().toISOString();
-    req.session.query.gametype = req.params.gametype;
-    logger.writeEventLog("events", "NEWSESSION",   req.session);
+		if (req.session.data)
+			logger.writeEventLog("events", "OLDSESSION", req.session);
+		req.session.data = req.query;
+		req.session.data.userid = new Date().toISOString();
+		req.session.data.gametype = req.params.gametype;
+		logger.writeEventLog("events", "NEWSESSION",	 req.session);
 }
 
 //
 // Step 3: Define the routing with EXPRESS
 //
 app.get('/', express.basicAuth('biu','biu'), function(req,res) {
-    res.render("index",  {gametypes: Object.keys(gameServers)});
+		res.render("index",	{gametypes: Object.keys(gameServers)});
 });
 
 app.get('/:gametype/beginner', function(req,res) {
-    var gameServer = gameServers[req.params.gametype];
-    var alwaysStartNewSession = true;
-    if (!alwaysStartNewSession && req.session.query) {
-        var game = gameServer.gameWithUser(req.session.query.userid, req.session.query.role);
-        if (game && !game.endTime) { // if there is a game, and it is not ended
-            logger.writeEventLog("events", "RECONNECT", req.session);
-            res.redirect('/entergame');
-            return;
-        } 
-    }
-    setSessionForNewUser(req);
-    if (amt.isPreview(req.session.query)) {
-       res.redirect('/'+req.params.gametype+'/preview');
-    } else {
-      extend(req.session.query, gameServer.roleWaitingForPlayer(req.session.query.userid));
-      res.redirect('/PreQuestionnaireDemography');
-    }
+		var gameServer = gameServers[req.params.gametype];
+		var alwaysStartNewSession = true;
+		if (!alwaysStartNewSession && req.session.data) {
+				var game = gameServer.gameWithUser(req.session.data.userid, req.session.data.role);
+				if (game && !game.endTime) { // if there is a game, and it is not ended
+						logger.writeEventLog("events", "RECONNECT", req.session);
+						res.redirect('/entergame');
+						return;
+				} 
+		}
+		setSessionForNewUser(req);
+		if (amt.isPreview(req.session.data)) {
+			 res.redirect('/'+req.params.gametype+'/preview');
+		} else {
+			extend(req.session.data, gameServer.roleWaitingForPlayer(req.session.data.userid));
+			res.redirect('/PreQuestionnaireDemography');
+		}
 });
 
 app.get('/:gametype/advanced', function(req,res) {
-    var gameServer = gameServers[req.params.gametype];
-    setSessionForNewUser(req);
-    extend(req.session.query, gameServer.roleWaitingForPlayer(req.session.query.userid));
-    res.redirect('/entergame');
+		var gameServer = gameServers[req.params.gametype];
+		setSessionForNewUser(req);
+		extend(req.session.data, gameServer.roleWaitingForPlayer(req.session.data.userid));
+		res.redirect('/entergame');
 });
 
 app.get('/:gametype/watchgame/:gameid', function(req,res) {
-    setSessionForNewUser(req);  
-    console.log('Watch mode start. session = '+JSON.stringify(req.session.query));
-    extend(req.session.query, {role: 'Watcher', gameid: req.params.gameid, silentEntry: true});
-    res.redirect('/'+req.params.gametype+'/play');
+		setSessionForNewUser(req);	
+		console.log('Watch mode start. session = '+JSON.stringify(req.session.data));
+		extend(req.session.data, {role: 'Watcher', gameid: req.params.gameid, silentEntry: true});
+		res.redirect('/'+req.params.gametype+'/play');
 });
 
 
 app.get('/entergame', function(req,res) {
-    var gameServer = gameServers[req.session.query.gametype];
-    console.log('Enter game. session = '+JSON.stringify(req.session.query));
-    var session = req.session;
+		var gameServer = gameServers[req.session.data.gametype];
+		console.log('Enter game. session = '+JSON.stringify(req.session.data));
+		var session = req.session;
 
-    var game;
-    if (session.query.gameid) { // gameid already exists - a watcher is entering an existing game, or a player is re-entering after disconnection
-      console.log("--- gameid already set: "+session.query.gameid);
-    } else {
-      console.log("--- Searching for game with "+session.query.role+" played by "+session.query.userid);
-      game = gameServer.gameWithUser(session.query.userid, session.query.role);
-      if (!game) {
-        console.log("--- Searching for game waiting for "+session.query.role);
-        game = gameServer.gameWaitingForRole(session.query.role);
-      }
-      session.query.gameid = game.gameid;
-    }
-    res.redirect('/'+req.session.query.gametype+"/play");
+		var game;
+		if (session.data.gameid) { // gameid already exists - a watcher is entering an existing game, or a player is re-entering after disconnection
+			console.log("--- gameid already set: "+session.data.gameid);
+		} else {
+			console.log("--- Searching for game with "+session.data.role+" played by "+session.data.userid);
+			game = gameServer.gameWithUser(session.data.userid, session.data.role);
+			if (!game) {
+				console.log("--- Searching for game waiting for "+session.data.role);
+				game = gameServer.gameWaitingForRole(session.data.role);
+			}
+			session.data.gameid = game.gameid;
+		}
+		res.redirect('/'+req.session.data.gametype+"/play");
 });
 
 app.get('/:gametype/listactive', function(req,res) {
-    var gameServer = gameServers[req.params.gametype];
-    res.render("MultiplayerGames",  {
-        title: 'Games on active server',
-        show_unverified_games: true,
-        timeToString: timer.timeToString, 
-        games: gameServer.getGames()});
+		var gameServer = gameServers[req.params.gametype];
+		res.render("MultiplayerGames",	{
+				title: 'Games on active server',
+				show_unverified_games: true,
+				timeToString: timer.timeToString, 
+				games: gameServer.getGames()});
 });
 
 app.get('/:gametype/listlogs', function(req,res) {
-    var gameServer = gameServers[req.params.gametype];
-    var pretty = req.query.pretty;
-    logger.readJsonLog('games.json', function(games) {
-      if (games.readFileError) {
-          res.contentType('text/xml');
-          res.render("LogToXml",  {log: games});
-      }
-      else                     res.render("MultiplayerGames",  {
-        title: 'Games in log',
-        timeToString: timer.timeToString, 
-        show_unverified_games: !pretty,
-        games: games});
-    });
+		var gameServer = gameServers[req.params.gametype];
+		var pretty = req.query.pretty;
+		logger.readJsonLog('games.json', function(games) {
+			if (games.readFileError) {
+					res.contentType('text/xml');
+					res.render("LogToXml",	{log: games});
+			}
+			else										 res.render("MultiplayerGames",	{
+				title: 'Games in log',
+				timeToString: timer.timeToString, 
+				show_unverified_games: !pretty,
+				games: games});
+		});
 });
 
 app.get('/PreQuestionnaireDemography', function(req,res) {
-    res.render("PreQuestionnaireDemography",  {
-        action:'/WriteQuestionnaireAnswers/PreQuestionnaireDemography',
-        next_action:'/PreQuestionnaireExam',
-        AMTStatus: JSON.stringify(req.session.query)});
+		res.render("PreQuestionnaireDemography",	{
+				action:'/WriteQuestionnaireAnswers/PreQuestionnaireDemography',
+				next_action:'/PreQuestionnaireExam',
+				AMTStatus: JSON.stringify(req.session.data)});
 });
 
 app.get('/UtilityOfCurrent/:role', function(req,res) {
-    res.render("GeniusUtilityOfCurrent",  {
-        agent: actualAgents[req.params.role]/*,
-        AMTStatus: JSON.stringify(req.session.query)*/});
+		res.render("GeniusUtilityOfCurrent",	{
+				agent: actualAgents[req.params.role]/*,
+				AMTStatus: JSON.stringify(req.session.data)*/});
 });
 
 app.get('/UtilityOfPartner/:role', function(req,res) {
-    res.render("GeniusUtilityOfPartner",  {
-        agents: otherAgents[req.params.role]/*,
-        AMTStatus: JSON.stringify(req.session.query)*/});
+		res.render("GeniusUtilityOfPartner",	{
+				agents: otherAgents[req.params.role]/*,
+				AMTStatus: JSON.stringify(req.session.data)*/});
 });
 
 app.get('/WriteQuestionnaireAnswers/:logFileName', function(req,res) {
-    var nextAction = req.query.next_action;  delete req.query.next_action;
-    if (!req.session.query.alreadyLogged) {
-      logger.writeJsonLog('user_'+req.session.query.userid, 
-        {user: req.session.query});
-      req.session.query.alreadyLogged = true;
-    }
-    logger.writeJsonLog(req.params.logFileName, 
-      {user: req.session.query, answers: req.query});
-    logger.writeJsonLog('user_'+req.session.query.userid, 
-      {questionnaire: req.params.logFileName, answers: req.query});
-    res.redirect(nextAction);
+		var nextAction = req.query.next_action;	delete req.query.next_action;
+		if (!req.session.data.alreadyLogged) {
+			logger.writeJsonLog('user_'+req.session.data.userid, 
+				{user: req.session.data});
+			req.session.data.alreadyLogged = true;
+		}
+		logger.writeJsonLog(req.params.logFileName, 
+			{user: req.session.data, answers: req.query});
+		logger.writeJsonLog('user_'+req.session.data.userid, 
+			{questionnaire: req.params.logFileName, answers: req.query});
+		res.redirect(nextAction);
 });
 
 app.get('/LogToXml/:logFileName', function(req,res) {
-    res.contentType('text/xml');
-    logger.readJsonLog(req.params.logFileName+".json", function(object) {
-      res.render("LogToXml",  {log: object});
-    });
+		res.contentType('text/xml');
+		logger.readJsonLog(req.params.logFileName+".json", function(object) {
+			res.render("LogToXml",	{log: object});
+		});
 });
 
 app.get('/PreQuestionnaireExam', function(req,res) {
-    res.render("PreQuestionnaireExam",  {
-        action:'/VerifyQuestionnaire',
-        next_action:'/entergame',
-        mistake: req.query.mistake,
-        role: req.session.query.role,
-        AMTStatus: JSON.stringify(req.session.query)});
+		res.render("PreQuestionnaireExam",	{
+				action:'/VerifyQuestionnaire',
+				next_action:'/entergame',
+				mistake: req.query.mistake,
+				role: req.session.data.role,
+				AMTStatus: JSON.stringify(req.session.data)});
 });
 
 app.get('/VerifyQuestionnaire', function(req,res) {
-    var nextAction = req.query.next_action;  delete req.query.next_action;
+		var nextAction = req.query.next_action;	delete req.query.next_action;
 
-    for (var key in req.query) {
-      if (key.indexOf("question")===0) {
+		for (var key in req.query) {
+			if (key.indexOf("question")===0) {
 		var value = req.query[key];
 		if (value != "correct") {
 			res.redirect("/PreQuestionnaireExam?mistake=1");
-            return;
+						return;
 		}
-      }
+			}
 	}
-    res.redirect(nextAction);
+		res.redirect(nextAction);
 });
 
 app.get('/:gametype/play', function(req,res) {
-    if (!req.session.query) {
-        res.redirect("/"+req.params.gametype+"/advanced");
-        return;
-    }
-    var gameServer = gameServers[req.params.gametype];
-    res.render(gameServer.roomTemplateName,  {
-        gametype: req.params.gametype, 
-        role: req.session.query.role,
-        agent: actualAgents[req.session.query.role],
-        AMTStatus: JSON.stringify(req.session.query),
-        next_action:'/PostQuestionnaire'});
+		if (!req.session.data) {
+				res.redirect("/"+req.params.gametype+"/advanced");
+				return;
+		}
+		var gameServer = gameServers[req.params.gametype];
+		res.render(gameServer.roomTemplateName,	{
+				gametype: req.params.gametype, 
+				role: req.session.data.role,
+				agent: actualAgents[req.session.data.role],
+				session_data: req.session.data,
+				AMTStatus: JSON.stringify(req.session.data),
+				next_action:'/PostQuestionnaire'});
 });
 
 app.get('/:gametype/preview', function(req,res) {
-    var gameServer = gameServers[req.params.gametype];
-    res.render(gameServer.roomTemplateName,  {
-        preview: true,
-        gametype: req.params.gametype, 
-        role: 'Previewer',
-        agent: actualAgents['Previewer'],
-        AMTStatus: JSON.stringify(req.session.query),
-        next_action: ''});
+		var gameServer = gameServers[req.params.gametype];
+		res.render(gameServer.roomTemplateName,	{
+				preview: true,
+				gametype: req.params.gametype, 
+				role: 'Previewer',
+				agent: actualAgents['Previewer'],
+				AMTStatus: JSON.stringify(req.session.data),
+				next_action: ''});
 });
 
 app.get('/PostQuestionnaire', function(req,res) {
-    res.render("PostQuestionnaire",  {
-        action:'/WriteQuestionnaireAnswers/PostQuestionnaire',
-        next_action:'/ThankYou',
-        AMTStatus: JSON.stringify(req.session.query)});
+		res.render("PostQuestionnaire",	{
+				action:'/WriteQuestionnaireAnswers/PostQuestionnaire',
+				next_action:'/ThankYou',
+				AMTStatus: JSON.stringify(req.session.data)});
 });
 
 app.get('/ThankYou', function(req,res) {
-    res.render("ThankYou",  {
-        user: req.session.query,
-        AMTStatus: JSON.stringify(req.session.query)});
+		res.render("ThankYou",	{
+				user: req.session.data,
+				AMTStatus: JSON.stringify(req.session.data)});
 });
 
 
@@ -313,7 +314,7 @@ app.get('/ThankYou', function(req,res) {
 var httpserver = http.createServer(app);
 
 httpserver.listen(app.get('port'), function(){
-  logger.writeEventLog("events", "START", {port:app.get('port')});
+	logger.writeEventLog("events", "START", {port:app.get('port')});
 });
 
 
@@ -323,100 +324,109 @@ httpserver.listen(app.get('port'), function(){
 //
 
 var io = require('socket.io').listen(httpserver)
-  , SessionSockets = require('session.socket.io')
-  ;
+	//, SessionSockets = require('session.socket.io')
+	;
 
 io.configure(function () { 
-  io.set('log level', 1);
-  io.set("transports", ["xhr-polling"]);   // for IE 9-10 on Azure
-  io.set("polling duration", 10); 
+	io.set('log level', 1);
+	io.set("transports", ["xhr-polling"]);	 // for IE 9-10 on Azure
+	io.set("polling duration", 10); 
 });
 
 function messageLog(socket, game, action, user, data) {
-    logger.writeJsonLog('actions_'+game.gameid, 
-      {role: user.role, remainingTime: game.timer? game.timer.remainingTimeSeconds(): "-", user: (action=='Connect'? user: user.userid), action: action, data: data});
-    logger.writeEventLog('events', action+" '"+JSON.stringify(data)+"'", user);
+	logger.writeJsonLog('actions_'+game.gameid, 
+		{role: user.role, remainingTime: game.timer? game.timer.remainingTimeSeconds(): "-", user: (action=='Connect'? user: user.userid), action: action, data: data});
+	logger.writeEventLog('events', action+" '"+JSON.stringify(data)+"'", user);
 }
 
 function message(socket, game, action, user, data) {
-    socket.emit('message', {action: action, id: user.role, msg: data, you: true});
-    socket.broadcast.to(game.gameid).emit('message', {action: action, id: user.role,  msg: data, you: false});    
-    messageLog(socket, game, action, user, data);
+	socket.emit('message', {action: action, id: user.role, msg: data, you: true});
+	socket.broadcast.to(game.gameid).emit('message', {action: action, id: user.role,	msg: data, you: false});		
+	messageLog(socket, game, action, user, data);
 }
 
 
-//var socketPath = '/negochat';  // should match the path in the Javascript .connect call
-new SessionSockets(io, sessionStore, cookieParser).on('connection', function (err,socket,session) {
-  if (err) {console.dir(err); return;}
-  if (!session.query) return;  // may happen with old windows
-  
-  var gameServer = gameServers[session.query.gametype];
-
-  var game;
-  if (session.query.gameid) { // gameid is given - a watcher is entering an existing game, or a player is re-entering after disconnection
-    //console.log("--- Searching for game with id "+session.query.gameid);
-    game = gameServer.gameById(session.query.gameid);
-    if (!game) {
-      socket.emit('status', {key: 'phase', value: 'Status: Game over! No body is here!'});
-      return; // throw an exception?!
-    }
-    //console.log('--- We are in the chat room, with socket.io connected! session = '+JSON.stringify(session.query));
-  } else {
-    console.error("--- no game id found - exiting! session = "+JSON.stringify(session.query));
-    return;
-  }
-  console.dir(game.mapRoleToUserid);
-  game.playerEntersGame(session.query.userid, session.query.role);
-  socket.join(game.gameid);
-
-  if (!session.query.silentEntry)
-    message(socket, game, "Connect", session.query, "");
-  socket.emit('title', 'Room for '+session.query.gametype+" "+game.gameid+' - '+session.query.role);
-
-  if (!game.startTime) { // game not started
-    io.sockets.in(game.gameid).emit('status', {key: 'phase', value: 'Status: Waiting for '+game.missingRolesArray.join(' and ')+'...'});
-    io.sockets.in(game.gameid).emit('status', {key: 'remainingTime', value: '-'});
-  } else {               // game started!
-    if (!game.startLogged) {
-      logger.writeJsonLog("games", {
-        gametype: session.query.gametype,
-        gameid: game.gameid,
-        startTime: game.startTime,
-        unverified: true,
-        mapRoleToUserid: game.mapRoleToUserid
-      });  // adds the 'timestamp' field
-      game.startLogged = true;
-    }
-    io.sockets.in(game.gameid).emit('status', {key: 'phase', value: ''});
-    if (!game.timer)
-      game.timer = new timer.Timer(gameServer.maxTimeSeconds, -1, 0, function(time) {
-        io.sockets.in(game.gameid).emit('status', {key: 'remainingTime', value: timer.timeToString(time)});
-        if (time<=1) {
-          game.endGame();
-          if (!game.endLogged) {
-            logger.writeJsonLog("games",  {
-              gametype: session.query.gametype,
-              gameid: game.gameid,
-              startTime: game.startTime,
-              endTime: game.endTime,
-              unverified: true,
-              mapRoleToUserid: game.mapRoleToUserid,
-              mapRoleToFinalResult: game.mapRoleToFinalResult
-           });
-            game.endLogged = true;
-          }
-        }
-      });
-  }
-
-  // A user disconnected - closed the window, unplugged the chord, etc..
-  socket.on('disconnect', function () {
-    message(socket, game, "Disconnect", session.query, "");
-    socket.leave(game.gameid);
-    game.playerLeavesGame(session.query.userid, session.query.role);
-  });
-
-  gameServer.events.add(socket, game, session, io, message, messageLog, app.locals);
+//new SessionSockets(io, sessionStore, cookieParser).on('connection', function (err, socket, session) {
+io.sockets.on('connection', function (socket) {
+	/*if (err) {
+		console.dir(err);
+		if (err.error==='could not look up session by key: connect.sid') {	// session not found
+			console.dir(socket);
+		}
+		return;
+	}*/
+	
+	socket.on('start_session', function (session_data) {
+		console.log("New client starts session: ");
+		console.dir(session_data);
+		var session = {data: session_data};
+		var gameServer = gameServers[session.data.gametype];
+	
+		var game;
+		if (session.data.gameid) { // gameid is given - a watcher is entering an existing game, or a player is re-entering after disconnection
+			//console.log("--- Searching for game with id "+session.data.gameid);
+			game = gameServer.gameById(session.data.gameid);
+			if (!game) {
+				socket.emit('status', {key: 'phase', value: 'Status: Game over! No body is here!'});
+				return; // throw an exception?!
+			}
+			//console.log('--- We are in the chat room, with socket.io connected! session = '+JSON.stringify(session.data));
+		} else {
+			console.error("--- no game id found - exiting! session = "+JSON.stringify(session.data));
+			return;
+		}
+		game.playerEntersGame(session.data.userid, session.data.role);
+		socket.join(game.gameid);
+	
+		if (!session.data.silentEntry)
+			message(socket, game, "Connect", session.data, "");
+		socket.emit('title', 'Room for '+session.data.gametype+" "+game.gameid+' - '+session.data.role);
+	
+		if (!game.startTime) { // game not started
+			io.sockets.in(game.gameid).emit('status', {key: 'phase', value: 'Status: Waiting for '+game.missingRolesArray.join(' and ')+'...'});
+			io.sockets.in(game.gameid).emit('status', {key: 'remainingTime', value: '-'});
+		} else {							 // game started!
+			if (!game.startLogged) {
+				logger.writeJsonLog("games", {
+					gametype: session.data.gametype,
+					gameid: game.gameid,
+					startTime: game.startTime,
+					unverified: true,
+					mapRoleToUserid: game.mapRoleToUserid
+				});	// adds the 'timestamp' field
+				game.startLogged = true;
+			}
+			io.sockets.in(game.gameid).emit('status', {key: 'phase', value: ''});
+			if (!game.timer)
+				game.timer = new timer.Timer(gameServer.maxTimeSeconds, -1, 0, function(time) {
+					io.sockets.in(game.gameid).emit('status', {key: 'remainingTime', value: timer.timeToString(time)});
+					if (time<=1) {
+						game.endGame();
+						if (!game.endLogged) {
+							logger.writeJsonLog("games",	{
+								gametype: session.data.gametype,
+								gameid: game.gameid,
+								startTime: game.startTime,
+								endTime: game.endTime,
+								unverified: true,
+								mapRoleToUserid: game.mapRoleToUserid,
+								mapRoleToFinalResult: game.mapRoleToFinalResult
+						 });
+							game.endLogged = true;
+						}
+					}
+				});
+		}
+	
+		// A user disconnected - closed the window, unplugged the chord, etc..
+		socket.on('disconnect', function () {
+			message(socket, game, "Disconnect", session.data, "");
+			socket.leave(game.gameid);
+			game.playerLeavesGame(session.data.userid, session.data.role);
+		});
+	
+		gameServer.events.add(socket, game, session.data, io, message, messageLog, app.locals);
+	});  // end of identify event
 });
 
 
@@ -426,6 +436,6 @@ new SessionSockets(io, sessionStore, cookieParser).on('connection', function (er
 //
  
 process.on('exit', function (){
-  logger.writeEventLog("events", "END", {port:app.get('port')});
-  console.log('Goodbye!');
+	logger.writeEventLog("events", "END", {port:app.get('port')});
+	console.log('Goodbye!');
 });
