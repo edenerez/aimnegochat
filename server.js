@@ -158,10 +158,14 @@ app.get('/:gametype/watchgame/:gameid', function(req,res) {
 });
 
 
-app.get('/entergame', function(req,res) {
-		var gameServer = gameServers[req.session.data.gametype];
-		console.log('Enter game. session = '+JSON.stringify(req.session.data));
-		var session = req.session;
+/**
+ * The user with the given session wants to enter a new or existing game.
+ * Find a game that matches the user, insert the user into the game, and put the gameid of the user into the session.
+ * @param session includes data of a new user.
+ */
+function entergame(session) {
+		var gameServer = gameServers[session.data.gametype];
+		console.log('Enter game. session = '+JSON.stringify(session.data));
 
 		var game;
 		if (session.data.gameid) { // gameid already exists - a watcher is entering an existing game, or a player is re-entering after disconnection
@@ -174,8 +178,13 @@ app.get('/entergame', function(req,res) {
 				game = gameServer.gameWaitingForRole(session.data.role);
 			}
 			session.data.gameid = game.gameid;
+			console.log("--- Entered game: "+session.data.gameid);
 		}
-		res.redirect('/'+req.session.data.gametype+"/play");
+}
+
+app.get('/entergame', function(req,res) {
+	entergame(req.session);  // sets req.session.data.gameid
+	res.redirect('/'+req.session.data.gametype+"/play");
 });
 
 app.get('/:gametype/listactive', function(req,res) {
@@ -323,13 +332,14 @@ httpserver.listen(app.get('port'), function(){
 // Step 5: define a SOCKET.IO server that listens to the http server:
 //
 
-var io = require('socket.io').listen(httpserver)
-	//, SessionSockets = require('session.socket.io')
-	;
+var io = require('socket.io').listen(httpserver);
+
+var supportInternetExplorerOnAzure = true;
 
 io.configure(function () { 
 	io.set('log level', 1);
-	io.set("transports", ["xhr-polling"]);	 // for IE 9-10 on Azure
+	if (supportInternetExplorerOnAzure)
+		io.set("transports", ["xhr-polling"]);
 	io.set("polling duration", 10); 
 });
 
@@ -346,35 +356,25 @@ function message(socket, game, action, user, data) {
 }
 
 
-//new SessionSockets(io, sessionStore, cookieParser).on('connection', function (err, socket, session) {
 io.sockets.on('connection', function (socket) {
-	/*if (err) {
-		console.dir(err);
-		if (err.error==='could not look up session by key: connect.sid') {	// session not found
-			console.dir(socket);
-		}
-		return;
-	}*/
-	
+	console.log("SOCKETIO: New client connects");
 	socket.on('start_session', function (session_data) {
-		console.log("New client starts session: ");
+		console.log("SOCKETIO: New client starts session: ");
 		console.dir(session_data);
 		var session = {data: session_data};
 		var gameServer = gameServers[session.data.gametype];
 	
 		var game;
-		if (session.data.gameid) { // gameid is given - a watcher is entering an existing game, or a player is re-entering after disconnection
-			//console.log("--- Searching for game with id "+session.data.gameid);
-			game = gameServer.gameById(session.data.gameid);
-			if (!game) {
+		if (!session.data.gameid) {
+			entergame(session);
+		}
+		
+		game = gameServer.gameById(session.data.gameid);
+		if (!game) {
 				socket.emit('status', {key: 'phase', value: 'Status: Game over! No body is here!'});
 				return; // throw an exception?!
-			}
-			//console.log('--- We are in the chat room, with socket.io connected! session = '+JSON.stringify(session.data));
-		} else {
-			console.error("--- no game id found - exiting! session = "+JSON.stringify(session.data));
-			return;
 		}
+
 		game.playerEntersGame(session.data.userid, session.data.role);
 		socket.join(game.gameid);
 	
