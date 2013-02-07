@@ -7,7 +7,7 @@ block body
       h1 Negotiation tutorial
       p 
         b #{(mistake? 'Wrong answer! Please try again.': '')}
-      p Please read the <a target='_blank' href='https://docs.google.com/presentation/d/1o4MaB_UAsspU54b9mxcjAY4GKWGxBW3N-1wOIz6qH6c/edit'>tutorial presentation</a> (opens in a new window), then answer the questions below:
+      p Please read the <a target='_blank' href='#{role=="Employer"? "http://biu-ai.com/ChatEmployer/": "http://biu-ai.com/ChatCandidate/"}'>tutorial presentation</a> (opens in a new window), then answer the questions below:
 
       input(type="hidden", name="next_action", value="#{next_action}")
 
