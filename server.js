@@ -266,13 +266,13 @@ app.get('/VerifyQuestionnaire', function(req,res) {
 
 		for (var key in req.query) {
 			if (key.indexOf("question")===0) {
-		var value = req.query[key];
-		if (value != "correct") {
-			res.redirect("/PreQuestionnaireExam?mistake=1");
-						return;
-		}
+				var value = req.query[key];
+				if (value != "correct") {
+					res.redirect("/PreQuestionnaireExam?mistake=1");
+					return;
+				}
 			}
-	}
+		}
 		res.redirect(nextAction);
 });
 
