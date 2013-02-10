@@ -256,24 +256,30 @@ app.get('/PreQuestionnaireExam', function(req,res) {
 		res.render("PreQuestionnaireExam",	{
 				action:'/VerifyQuestionnaire',
 				next_action:'/entergame',
-				mistake: req.query.mistake,
+				query: req.query,
 				role: req.session.data.role,
 				AMTStatus: JSON.stringify(req.session.data)});
 });
 
-app.get('/VerifyQuestionnaire', function(req,res) {
-		var nextAction = req.query.next_action;	delete req.query.next_action;
-
-		for (var key in req.query) {
-			if (key.indexOf("question")===0) {
-				var value = req.query[key];
-				if (value != "correct") {
-					res.redirect("/PreQuestionnaireExam?mistake=1");
-					return;
-				}
+app.get('/VerifyQuestionnaire', function (req, res) {
+	var nextAction = req.query.next_action; delete req.query.next_action;
+	var wrong = "";
+	for (var key in req.query) {
+		if (key.indexOf("question") === 0) {
+			var value = req.query[key];
+			if (value != "correct") {
+				wrong += key + " ";
 			}
 		}
+	}
+	if (wrong != "")
+	{
+		res.redirect("/PreQuestionnaireExam?mistake=1&wrong=" + wrong);
+		return;
+	}
+	else{
 		res.redirect(nextAction);
+	}
 });
 
 app.get('/:gametype/play', function(req,res) {
