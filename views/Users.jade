@@ -1,0 +1,22 @@
+//- required variables: 
+//-   users - a map from userid to session
+extends layout
+block title
+ title Active user sessions
+block body
+ h1 Active user sessions
+ table.userdata
+  tr
+   th user id
+   th urls
+   th gametype
+   th role
+   th gameid
+  each session, userid in users
+   tr
+    td
+     a(href='/LogToXml/user_#{userid}') #{userid}
+    td !{session.urls.join("<br/>\n")}
+    td #{session.gametype}
+    td #{session.role}
+    td #{session.gameid}

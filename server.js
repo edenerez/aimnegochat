@@ -22,6 +22,26 @@ var cookieParser = express.cookieParser('biuailab')
 
 
 //
+// Step 0: Users and sessions:
+//
+
+var users = {}; 
+
+function setSessionForNewUser(req) {
+	if (req.session && req.session.data) {
+		logger.writeEventLog("events", "OLDSESSION", req.session);
+		users[req.session.data.userid].urls.pop();
+	}
+	req.session.data = req.query;  // for Amazon Turk users, the query contains the hit id, assignment id and worker id. 
+	req.session.data.userid = req.connection.remoteAddress + ":" + new Date().toISOString();
+	req.session.data.gametype = req.params.gametype;
+	users[req.session.data.userid] = req.session.data;
+	users[req.session.data.userid].urls = [req.url.substr(0,60)];
+	logger.writeEventLog("events", "NEWSESSION",	 req.session);
+}
+
+
+//
 // Step 1: Configure an application with EXPRESS
 //
 
@@ -36,23 +56,23 @@ app.configure(function(){
 	// Middleware - order is important!
 	app.use(express.favicon());
 	
-	//app.use(express.logger({format:'default', stream: fs.createWriteStream(accessLog, {flags: 'a'}) }));
-	//app.use(express.logger({format:'dev'})); // log to console, in development format (with colors)
-	
-	app.use(function(req,res,next) {
-			if (!/\/stylesheets\//.test(req.url) && !/\/javascripts\//.test(req.url)) 
-				logger.writeEventLog("events", req.method+" "+req.url, extend({remoteAddress: req.connection.remoteAddress}, req.headers));
-			next();
-	});
-	
-	app.use(express.bodyParser());						 // Request body parsing middleware supporting JSON, urlencoded, and multipart requests. This middleware is simply a wrapper the json(), urlencoded(), and multipart() middleware
+	app.use(express.bodyParser());	 // Request body parsing middleware supporting JSON, urlencoded, and multipart requests. This middleware is simply a wrapper the json(), urlencoded(), and multipart() middleware
 	app.use(cookieParser);
 	app.use(express.session({store:	sessionStore, secret: 'biuailab'}));
 	app.use(express.methodOverride());
-	//app.use(express.basicAuth(function(user, pass){
-	//	return 'manager' == user & 'ssqqll' == pass;
-	//}));
 	
+	// Define tasks to do for ANY url:
+	app.use(function(req,res,next) {
+		if (!/\/stylesheets\//.test(req.url) && !/\/javascripts\//.test(req.url)) {
+			// task 1 - logging the URL: 
+			logger.writeEventLog("events", req.method+" "+req.url, extend({remoteAddress: req.connection.remoteAddress}, req.headers));
+			// task 2 - remembering the user's location:
+			if (req.session.data && req.session.data.userid && users[req.session.data.userid])
+				users[req.session.data.userid].urls.push(req.url.substr(0,60));
+		}
+		next(); // go to the next task - routing:
+	});
+
 	app.use(app.router);
 	app.use(express.static(path.join(__dirname, 'public')));
 	
@@ -107,21 +127,19 @@ app.locals.format = "%+1.0f";
 app.locals.actualAgents = actualAgents;
 
 
-function setSessionForNewUser(req) {
-		if (req.session.data)
-			logger.writeEventLog("events", "OLDSESSION", req.session);
-		req.session.data = req.query;
-		req.session.data.userid = new Date().toISOString();
-		req.session.data.gametype = req.params.gametype;
-		logger.writeEventLog("events", "NEWSESSION",	 req.session);
-}
 
 //
 // Step 3: Define the routing with EXPRESS
 //
+
 app.get('/', express.basicAuth('biu','biu'), function(req,res) {
 		res.render("index",	{gametypes: Object.keys(gameServers)});
 });
+
+app.get('/users', function(req,res) {
+		res.render("Users",	{users:users});
+});
+
 
 app.get('/:gametype/beginner', function(req,res) {
 		var gameServer = gameServers[req.params.gametype];

@@ -355,6 +355,17 @@ table.gamedata td, table.gamedata th {
     padding: 6px;
 }
 
+table.userdata {
+    font-size:16px;
+    margin:auto;
+    border-collapse: collapse;
+}
+
+table.userdata td, table.userdata th {
+    border: 1px solid black;
+    padding: 6px;
+}
+
 /* for the utility dialogs: */
 .ui-dialog {
 	border: dashed 2px #888;	
