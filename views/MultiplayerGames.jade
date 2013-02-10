@@ -1,12 +1,13 @@
 //- required variables: 
 //-   games - an array of Game objects.
-//-   timeToString - a function for convertimg time in seconds to string.
+//-   timeToString - a function for converting time in seconds to string.
 extends layout
 block body
  h1 #{games.length} #{title}
  table.gamedata
   tr
-   th game id
+   th game
+   th gameid
    th players
    th started at
    th ended at
@@ -17,7 +18,8 @@ block body
   each game, index in games
    if (show_unverified_games || !game.unverified) 
     tr
-     td #{game.gametype} #{game.gameid}
+     td #{game.gametype}
+     td #{game.gameid}
       div.center
        a(href='/LogToXml/actions_#{game.gameid}') Log
        if (show_unverified_games)

@@ -7,14 +7,20 @@ root
     if (key1!='timestamp' && val1)
      #{key1}
       if typeof(val1)=='object'
-       each val2, key2 in val1
-        if (val2)
-         #{key2} 
-          if typeof(val2)=='object'
-           each val3, key3 in val2
-            if (val3)
-             #{key3.replace(/[^a-z]/ig,"_")} #{val3}
-          else
+       if Array.isArray(val1)
+        | #{val1.join(" ")}
+       else
+        each val2, key2 in val1
+         if (val2)
+          #{key2} 
+           if typeof(val2)=='object'
+            if Array.isArray(val2)
+             | #{val2.join(" ")}
+            else
+             each val3, key3 in val2
+              if (val3)
+               #{key3.replace(/[^a-z]/ig,"_")} #{val3}
+           else
             | #{val2}
       else
-        | #{val1}
+       | #{val1}
