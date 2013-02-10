@@ -33,7 +33,7 @@ function setSessionForNewUser(req) {
 		users[req.session.data.userid].urls.pop();
 	}
 	req.session.data = req.query;  // for Amazon Turk users, the query contains the hit id, assignment id and worker id. 
-	req.session.data.userid = req.connection.remoteAddress + ":" + new Date().toISOString();
+	req.session.data.userid = req.ip + ":" + new Date().toISOString();
 	req.session.data.gametype = req.params.gametype;
 	users[req.session.data.userid] = req.session.data;
 	users[req.session.data.userid].urls = [req.url.substr(0,60)];
@@ -65,7 +65,7 @@ app.configure(function(){
 	app.use(function(req,res,next) {
 		if (!/\/stylesheets\//.test(req.url) && !/\/javascripts\//.test(req.url)) {
 			// task 1 - logging the URL: 
-			logger.writeEventLog("events", req.method+" "+req.url, extend({remoteAddress: req.connection.remoteAddress}, req.headers));
+			logger.writeEventLog("events", req.method+" "+req.url, extend({remoteAddress: req.ip}, req.headers));
 			// task 2 - remembering the user's location:
 			if (req.session.data && req.session.data.userid && users[req.session.data.userid])
 				users[req.session.data.userid].urls.push(req.url.substr(0,60));
