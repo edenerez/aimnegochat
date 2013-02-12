@@ -151,10 +151,20 @@ Game.prototype.playerEntersGame = function(userid, role) {
     }
 };
 
+/**
+ * The player with the given role changes the given issue to the given value.
+ * @return true if changed, false if not.
+ */
 Game.prototype.playerChangesValue = function(role, issue, value) {
     var map = this.mapRoleToMapIssueToValue[role];
-    //console.dir(map);
+    if (map[issue]===value)
+      return false;
+   
+    if (!map[issue] && !value)
+      return false;
+
     map[issue] = value;
+    return true;
 }
 
 Game.prototype.valuesOfPlayer = function(role) {

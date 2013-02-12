@@ -12,8 +12,10 @@ exports.add = function(socket, game, session_data, io, message, messageLog, appl
   
   // A user changed the value for one of his issues:
   socket.on('change', function (data) {
+    var changed = game.playerChangesValue(session_data.role, data.issue, data.value);
+    if (!changed) return;
+
     messageLog(socket, game, "Change", session_data, data);
-    game.playerChangesValue(session_data.role, data.issue, data.value);
     var currentIssueAgreed = game.arePlayerValuesEqual(data.issue);
     var allIssuesAgreed = game.arePlayerValuesToAllIssuesEqual(allIssues);
     io.sockets.in(game.gameid).emit('issueAgreed', {issue: data.issue, agreed: currentIssueAgreed, allAgreed: allIssuesAgreed});

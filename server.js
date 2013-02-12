@@ -392,10 +392,11 @@ io.sockets.on('connection', function (socket) {
 		var gameServer = gameServers[session.data.gametype];
 	
 		var game;
-		if (!session.data.gameid) {
+		if (!users[session.data.userid])
+			users[session.data.userid] = session.data;
+		if (!session.data.gameid) 
 			entergame(session);
-		}
-		
+
 		game = gameServer.gameById(session.data.gameid);
 		if (!game) {
 				socket.emit('status', {key: 'phase', value: 'Status: Game over! No body is here!'});
