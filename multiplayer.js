@@ -10,21 +10,21 @@
 /**
  * Initialize a game-server.
  * @param roomTemplateName name of the JADE template for rendering the room for this game. Defines the GUI.
- * @param roles the required roles, e.g. ['Employer', 'Candidate']
+ * @param requiredRolesArray the required roles, e.g. ['Employer', 'Candidate']
  * @param maxTimeSeconds the max time for each game episode, in seconds.
  */ 
-exports.GameServer = function(gametype, roomTemplateName, requiredRoles, maxTimeSeconds, events) {
+exports.GameServer = function(gametype, roomTemplateName, requiredRolesArray, maxTimeSeconds, events) {
   this.gametype = gametype;
   this.roomTemplateName = roomTemplateName;
-  this.requiredRolesArray = requiredRoles;
+  this.requiredRolesArray = requiredRolesArray;
   this.maxTimeSeconds = maxTimeSeconds;
   this.events = events;
   this.games = [];
   this.totalNumberOfStartingPlayers = 0;   // The total number of players that started the process (including questionnaires etc.) since the server started.
 
   this.requiredRoles = {};
-  for (var i=0; i<requiredRoles.length; ++i)
-    this.requiredRoles[requiredRoles[i]] = true;
+  for (var i=0; i<requiredRolesArray.length; ++i)
+    this.requiredRoles[requiredRolesArray[i]] = true;
 };
 
 exports.GameServer.prototype.getRequiredRoles = function() { return this.requiredRoles; };
@@ -35,18 +35,15 @@ exports.GameServer.prototype.getGames = function() { return this.games; };
 
 
 /**
- * Get a new role for the given player.
+ * Get the next role for this game, by cycling through the required roles.
  * 
  * Call this function when a new player starts his way to the game (before he fills the questionnaires).
- * @return an object with one field:
- *   * role - the role of the new player.
+ * @return the role.
  */
-exports.GameServer.prototype.roleWaitingForPlayer = function(userid) {
-  if (!userid)
-    throw "userid must be non-zero";
+exports.GameServer.prototype.nextRole = function() {
   var newPlayerRole = this.requiredRolesArray[this.totalNumberOfStartingPlayers % this.requiredRolesArray.length];
   this.totalNumberOfStartingPlayers++;
-  return {role: newPlayerRole};
+  return newPlayerRole;
 };
 
 

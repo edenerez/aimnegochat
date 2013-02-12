@@ -156,37 +156,55 @@ app.get('/users', function(req,res) {
 });
 
 
+// This is the entry point for an Amazon Turker with no role:
+//    It will select his role, then lead him to the preview or to the pre-questionnaire:
 app.get('/:gametype/beginner', function(req,res) {
 		var gameServer = gameServers[req.params.gametype];
-		var alwaysStartNewSession = true;
-		if (!alwaysStartNewSession && req.session.data) {
-				var game = gameServer.gameWithUser(req.session.data.userid, req.session.data.role);
-				if (game && !game.endTime) { // if there is a game, and it is not ended
-						logger.writeEventLog("events", "RECONNECT", req.session);
-						res.redirect('/entergame');
-						return;
-				} 
-		}
 		setSessionForNewUser(req);
-		if (amt.isPreview(req.session.data)) {
+		if (amt.isPreview(req.query.data)) {
 			 res.redirect('/'+req.params.gametype+'/preview');
 		} else {
-			extend(req.session.data, gameServer.roleWaitingForPlayer(req.session.data.userid));
+			req.session.data.role = gameServer.nextRole();
 			res.redirect('/PreQuestionnaireDemography');
 		}
 });
 
+// This is the entry point for an Amazon Turker with a pre-specified role:
+//    It will lead him to the preview or to the pre-questionnaire:
+app.get('/:gametype/beginner/:role', function(req,res) {
+		setSessionForNewUser(req);
+		if (amt.isPreview(req.query.data)) {
+			 res.redirect('/'+req.params.gametype+'/preview');
+		} else {
+			req.session.data.role = req.params.role;
+			res.redirect('/PreQuestionnaireDemography');
+		}
+});
+
+// This is the entry point for a developer with no role:
+//    It will select his role, then lead him directly to the game.
 app.get('/:gametype/advanced', function(req,res) {
 		var gameServer = gameServers[req.params.gametype];
 		setSessionForNewUser(req);
-		extend(req.session.data, gameServer.roleWaitingForPlayer(req.session.data.userid));
+		req.session.data.role = gameServer.nextRole();
+		res.redirect('/entergame');
+});
+
+// This is the entry point for a developer with a pre-specified role:
+//    It will lead him directly to the game.
+app.get('/:gametype/advanced/:role', function(req,res) {
+		var gameServer = gameServers[req.params.gametype];
+		setSessionForNewUser(req);
+		req.session.data.role = req.params.role;
 		res.redirect('/entergame');
 });
 
 app.get('/:gametype/watchgame/:gameid', function(req,res) {
 		setSessionForNewUser(req);	
 		console.log('Watch mode start. session = '+JSON.stringify(req.session.data));
-		extend(req.session.data, {role: 'Watcher', gameid: req.params.gameid, silentEntry: true});
+		req.session.data.role = 'Watcher';
+		ret.session.data.gameid = req.params.gameid;
+		req.session.data.silentEntry = true;
 		res.redirect('/'+req.params.gametype+'/play');
 });
 
@@ -204,14 +222,14 @@ function entergame(session) {
 		if (session.data.gameid) { // gameid already exists - a watcher is entering an existing game, or a player is re-entering after disconnection
 			console.log("--- gameid already set: "+session.data.gameid);
 		} else {
-			console.log("--- Searching for game with "+session.data.role+" played by "+session.data.userid);
+			console.log("--- Searching for "+session.data.gametype+" game with "+session.data.role+" played by "+session.data.userid);
 			game = gameServer.gameWithUser(session.data.userid, session.data.role);
 			if (!game) {
-				console.log("--- Searching for game waiting for "+session.data.role);
+				console.log("--- Searching for "+session.data.gametype+" game waiting for "+session.data.role);
 				game = gameServer.gameWaitingForRole(session.data.role);
 			}
 			session.data.gameid = game.gameid;
-			console.log("--- Entered game: "+session.data.gameid);
+			console.log("--- Entered "+session.data.gametype+" game: "+session.data.gameid);
 		}
 		users[session.data.userid].gameid = session.data.gameid;
 }
@@ -377,7 +395,7 @@ httpserver.listen(app.get('port'), function(){
 
 var io = require('socket.io').listen(httpserver);
 
-var supportInternetExplorerOnAzure = true;
+var supportInternetExplorerOnAzure = (process.argv.length>=3 && process.argv[2] !== 'supportJava');
 
 io.configure(function () { 
 	io.set('log level', 1);
