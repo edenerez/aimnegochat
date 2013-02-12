@@ -1,0 +1,50 @@
+//- requires blocks: roomScripts, previewNotes, mainGui
+extends layout
+block title
+  title#title Chat Room 
+block body
+  script(src='/javascripts/yahoo_yui_2.8.1/yahoo-dom-event/yahoo-dom-event.js')
+  script(src='/javascripts/yahoo_yui_2.8.1/element/element-min.js')
+  script(src='/javascripts/yahoo_yui_2.8.1/datasource/datasource-min.js')
+  script(src='/javascripts/yahoo_yui_2.8.1/datatable/datatable-min.js')
+  script(src='/javascripts/datatable.js')
+  if (!locals.preview)
+    script(src='/socket.io/socket.io.js')
+    script(src='/javascripts/CommonSocketEvents.js')
+    block roomScripts
+
+  div#mainPanel
+    if (locals.preview)
+      block previewNotes
+    div.mainSection#mainStatusRow <!-- row #2: status and buttons -->
+      table
+        tr
+          td Your role: <b id='role'>#{role}</b>.
+          td#phase
+            span.value Status: #{locals.preview? "This is a preview only!": "Connecting..."}
+          td#remainingTime
+            span.key Remaining time:
+            span.value
+          td
+            button#btnUtility Your scores
+          td
+            button#btnOppUtility Partner's scores
+
+    block mainGui
+
+    div.mainSection#mainHistoryRow.yui-skin-sam <!-- row #5: history -->
+      table#tblhistory
+        thead
+          tr
+            th(align="center",width="100%") History of actions
+        tbody
+          tr
+            td(valign="top",align="center",style="font-size: 8pt;")
+              div#tblHistoryContainer"
+
+    div#mainOptOutRow.mainSection <!-- row #6: opt-out -->
+      p 
+       b Click here to quit the negotiation without an agreement:
+       button#btnOptOut Opt Out
+
+    script function bye() {  window.location = '!{next_action}'; }

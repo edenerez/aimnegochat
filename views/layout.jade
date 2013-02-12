@@ -12,5 +12,5 @@ html
     div.mainSection#noJavascriptSupport Sorry, your browser doesn't support Javascript, so you cannot play the game!
       script $("div#noJavascriptSupport").hide();
     block body
-    if (typeof(AMTStatus)!=='undefined')
+    if (locals.AMTStatus)
       div#AMTStatus #{AMTStatus}

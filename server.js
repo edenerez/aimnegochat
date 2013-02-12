@@ -91,12 +91,27 @@ app.configure('development', function(){
 // 
 
 var gameServers = {};
-gameServers['chat'] = new multiplayer.GameServer(
-		'chat',
-		/*roomTemplateName=*/'RoomForNegoChat',
-		/*requiredRoles=*/['Employer', 'Candidate'], 
-		/*maxTimeSeconds=*/60,
-		/*events=*/require('./EventsForChat')
+//gameServers['chat'] = new multiplayer.GameServer(
+//		'chat',
+//		/*roomTemplateName=*/'RoomForChat',
+//		/*requiredRoles=*/['Employer', 'Candidate'], 
+//		/*maxTimeSeconds=*/60,
+//		/*events=*/require('./EventsForChat')
+//		);
+
+gameServers['menus_humanvshuman'] = new multiplayer.GameServer(
+		'menus_humanvshuman',
+		/*roomTemplateName=*/'RoomForNegoMenus',
+		/*requiredRoles=*/['Employer','Candidate'], 
+		/*maxTimeSeconds=*/30*60,
+		/*events=*/require('./EventsForNegoMenus')
+		);
+gameServers['menus_humanvsagent'] = new multiplayer.GameServer(
+		'menus_humanvsagent',
+		/*roomTemplateName=*/'RoomForNegoMenus',
+		/*requiredRoles=*/['Employer'], 
+		/*maxTimeSeconds=*/30*60,
+		/*events=*/require('./EventsForNegoMenus')
 		);
 gameServers['negochat'] = new multiplayer.GameServer(
 		'negochat',
@@ -302,7 +317,8 @@ app.get('/VerifyQuestionnaire', function (req, res) {
 });
 
 app.get('/:gametype/play', function(req,res) {
-		if (!req.session.data) {
+		if (!req.session.data || req.session.data.gametype!=req.params.gametype) {  
+			// start a new session:
 				res.redirect("/"+req.params.gametype+"/advanced");
 				return;
 		}
@@ -361,7 +377,7 @@ httpserver.listen(app.get('port'), function(){
 
 var io = require('socket.io').listen(httpserver);
 
-var supportInternetExplorerOnAzure = true;
+var supportInternetExplorerOnAzure = false;
 
 io.configure(function () { 
 	io.set('log level', 1);

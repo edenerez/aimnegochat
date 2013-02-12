@@ -30,23 +30,12 @@ exports.add = function(socket, game, session_data, io, message, messageLog, appl
   });
 
   // A user finished playing (e.g. by clicking a "finish" button):
-  socket.on('sign', function (agreement) {
+  socket.on('offer', function (agreement) {
     var utilityWithoutDiscount = Math.round(agent.utility_space_object.getUtilityWithoutDiscount(agreement));
     var timeFromStart = game.timer? game.timer.timeFromStartSeconds(): 0;
     var roundsFromStart = Math.floor(timeFromStart / applocals.turnLengthInSeconds);
     var utilityWithDiscount = Math.round(agent.utility_space_object.getUtilityWithDiscount(utilityWithoutDiscount, roundsFromStart))
-    var finalResult = {
-      agreement: agreement,
-      
-      timeFromStart:           timeFromStart,
-      roundsFromStart:         roundsFromStart,
-      utilityWithoutDiscount:  utilityWithoutDiscount,
-      utilityWithDiscount:     utilityWithDiscount
-    };
-    //messageLog(socket, game, "Sign", session_data, finalResult);
-    game.mapRoleToFinalResult[session_data.role] = finalResult;
-    message(socket, game, "Sign", session_data, "Signing the following agreement: "+JSON.stringify(agreement));
-	socket.emit('sign', {id: session_data.role, you: true});
-    socket.broadcast.to(game.gameid).emit('sign', {id: session_data.role, you: false});
+    message(socket, game, "Offer", session_data, "I offer: "+JSON.stringify(agreement));
+    socket.broadcast.to(game.gameid).emit('offer', agreement);
   });
 }
