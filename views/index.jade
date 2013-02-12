@@ -4,6 +4,7 @@ block title
 block body
  div#index
   h1 BIU AI lab gametype server - Main Page
+  h2 Server started at GMT <b>#{serverStartTime.toISOString().replace(/[ZT]/g," ")}</b>
   h4: a(href='/users') Active users
   for gametype in gametypes
    div(style='background-color:#eee')

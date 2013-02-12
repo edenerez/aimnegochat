@@ -133,7 +133,7 @@ app.locals.actualAgents = actualAgents;
 //
 
 app.get('/', express.basicAuth('biu','biu'), function(req,res) {
-		res.render("index",	{gametypes: Object.keys(gameServers)});
+		res.render("index",	{serverStartTime: serverStartTime, gametypes: Object.keys(gameServers)});
 });
 
 app.get('/users', function(req,res) {
@@ -346,9 +346,11 @@ app.get('/ThankYou', function(req,res) {
 //
 
 var httpserver = http.createServer(app);
+var serverStartTime = null;
 
 httpserver.listen(app.get('port'), function(){
 	logger.writeEventLog("events", "START", {port:app.get('port')});
+	serverStartTime = new Date();
 });
 
 
