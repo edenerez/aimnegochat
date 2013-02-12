@@ -377,7 +377,7 @@ httpserver.listen(app.get('port'), function(){
 
 var io = require('socket.io').listen(httpserver);
 
-var supportInternetExplorerOnAzure = false;
+var supportInternetExplorerOnAzure = true;
 
 io.configure(function () { 
 	io.set('log level', 1);
