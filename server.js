@@ -460,9 +460,16 @@ io.sockets.on('connection', function (socket) {
 			}
 			io.sockets.in(game.gameid).emit('status', {key: 'phase', value: ''});
 			if (!game.timer)
-				game.timer = new timer.Timer(gameServer.maxTimeSeconds, -1, 0, function(time) {
-					io.sockets.in(game.gameid).emit('status', {key: 'remainingTime', value: timer.timeToString(time)});
-					if (time<=1) {
+				game.timer = new timer.Timer(gameServer.maxTimeSeconds, -1, 0, function(remainingTimeSeconds) {
+					io.sockets.in(game.gameid).emit('status', {key: 'remainingTime', value: timer.timeToString(remainingTimeSeconds)});
+
+					game.turnsFromStart = 1+Math.floor(game.timer.timeFromStartSeconds() / app.locals.turnLengthInSeconds);
+					if (!game.lastReportedTurnsFromStart || game.lastReportedTurnsFromStart!=game.turnsFromStart) {
+						io.sockets.in(game.gameid).emit('EndTurn', game.turnsFromStart);
+						game.lastReportedTurnsFromStart = game.turnsFromStart;
+					}
+
+					if (remainingTimeSeconds<=1) {
 						game.endGame();
 						if (!game.endLogged) {
 							logger.writeJsonLog("games",	{
@@ -473,7 +480,7 @@ io.sockets.on('connection', function (socket) {
 								unverified: true,
 								mapRoleToUserid: game.mapRoleToUserid,
 								mapRoleToFinalResult: game.mapRoleToFinalResult
-						 });
+							});
 							game.endLogged = true;
 						}
 					}

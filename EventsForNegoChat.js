@@ -24,8 +24,8 @@ exports.add = function(socket, game, session_data, io, message, messageLog, appl
     // calculate new utility for the player:
     var utilityWithoutDiscount = Math.round(agent.utility_space_object.getUtilityWithoutDiscount(agreement));
     var timeFromStart = game.timer? game.timer.timeFromStartSeconds(): 0;
-    var roundsFromStart = Math.floor(timeFromStart / applocals.turnLengthInSeconds);
-    var utilityWithDiscount = Math.round(agent.utility_space_object.getUtilityWithDiscount(utilityWithoutDiscount, roundsFromStart))
+    var turnsFromStart = game.turnsFromStart? game.turnsFromStart: 0;
+    var utilityWithDiscount = Math.round(agent.utility_space_object.getUtilityWithDiscount(utilityWithoutDiscount, turnsFromStart))
     socket.emit('yourUtility', utilityWithDiscount);
   });
 
@@ -33,13 +33,13 @@ exports.add = function(socket, game, session_data, io, message, messageLog, appl
   socket.on('sign', function (agreement) {
     var utilityWithoutDiscount = Math.round(agent.utility_space_object.getUtilityWithoutDiscount(agreement));
     var timeFromStart = game.timer? game.timer.timeFromStartSeconds(): 0;
-    var roundsFromStart = Math.floor(timeFromStart / applocals.turnLengthInSeconds);
-    var utilityWithDiscount = Math.round(agent.utility_space_object.getUtilityWithDiscount(utilityWithoutDiscount, roundsFromStart))
+    var turnsFromStart = game.turnsFromStart? game.turnsFromStart: 0;
+    var utilityWithDiscount = Math.round(agent.utility_space_object.getUtilityWithDiscount(utilityWithoutDiscount, turnsFromStart))
     var finalResult = {
       agreement: agreement,
       
       timeFromStart:           timeFromStart,
-      roundsFromStart:         roundsFromStart,
+      turnsFromStart:          turnsFromStart,
       utilityWithoutDiscount:  utilityWithoutDiscount,
       utilityWithDiscount:     utilityWithDiscount
     };

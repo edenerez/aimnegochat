@@ -29,13 +29,22 @@ exports.add = function(socket, game, session_data, io, message, messageLog, appl
     socket.emit('yourUtility', utilityWithDiscount);
   });
 
-  // A user finished playing (e.g. by clicking a "finish" button):
-  socket.on('offer', function (agreement) {
-    var utilityWithoutDiscount = Math.round(agent.utility_space_object.getUtilityWithoutDiscount(agreement));
-    var timeFromStart = game.timer? game.timer.timeFromStartSeconds(): 0;
-    var roundsFromStart = Math.floor(timeFromStart / applocals.turnLengthInSeconds);
-    var utilityWithDiscount = Math.round(agent.utility_space_object.getUtilityWithDiscount(utilityWithoutDiscount, roundsFromStart))
-    message(socket, game, "Offer", session_data, "I offer: "+JSON.stringify(agreement));
-    socket.broadcast.to(game.gameid).emit('offer', agreement);
+  // A player sent an offer:
+  socket.on('offer', function (bid) {
+    message(socket, game, "Offer", session_data, JSON.stringify(bid));
+    socket.broadcast.to(game.gameid).emit('offer', bid);
   });
+  
+  // A player accepted an offer:
+  socket.on('accept', function (bid) {
+    message(socket, game, "Accept", session_data, JSON.stringify(bid));
+    socket.broadcast.to(game.gameid).emit('accept', bid);
+  });
+  
+  // A player accepted an offer:
+  socket.on('reject', function (bid) {
+    message(socket, game, "Reject", session_data, JSON.stringify(bid));
+    socket.broadcast.to(game.gameid).emit('reject', bid);
+  });
+  
 }
