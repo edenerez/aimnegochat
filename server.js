@@ -99,17 +99,10 @@ var gameServers = {};
 //		/*events=*/require('./EventsForChat')
 //		);
 
-gameServers['menus_humanvshuman'] = new multiplayer.GameServer(
-		'menus_humanvshuman',
+gameServers['negomenus'] = new multiplayer.GameServer(
+		'negomenus',
 		/*roomTemplateName=*/'RoomForNegoMenus',
 		/*requiredRoles=*/['Employer','Candidate'], 
-		/*maxTimeSeconds=*/30*60,
-		/*events=*/require('./EventsForNegoMenus')
-		);
-gameServers['menus_humanvsagent'] = new multiplayer.GameServer(
-		'menus_humanvsagent',
-		/*roomTemplateName=*/'RoomForNegoMenus',
-		/*requiredRoles=*/['Employer'], 
 		/*maxTimeSeconds=*/30*60,
 		/*events=*/require('./EventsForNegoMenus')
 		);
@@ -250,13 +243,14 @@ app.get('/:gametype/listactive', function(req,res) {
 
 app.get('/:gametype/listlogs', function(req,res) {
 		var gameServer = gameServers[req.params.gametype];
-		var pretty = req.query.pretty;
+		var pretty = req.query.pretty; // true to show only verified games
+		var finished = req.query.finished; // true to show only finished games
 		logger.readJsonLog('games.json', function(games) {
 			if (games.readFileError) {
 					res.contentType('text/xml');
 					res.render("LogToXml",	{log: games});
 			}
-			else										 res.render("MultiplayerGames",	{
+			else res.render(finished? "MultiplayerFinishedGames": "MultiplayerGames",	{
 				title: 'Games in log',
 				timeToString: timer.timeToString, 
 				show_unverified_games: !pretty,

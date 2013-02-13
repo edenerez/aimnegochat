@@ -10,19 +10,14 @@ block body
    th players
    th started at
    th ended at
-   if (show_unverified_games)
-    th roles missing
-    th remaining time
    th final result
   each game, index in games
-   if (show_unverified_games || !game.unverified) 
+   if (game.startTime && game.endTime && (show_unverified_games || !game.unverified)) 
     tr
      td #{game.gametype} #{game.gameid}
       div.center
        a(href='/LogToXml/actions_#{game.gameid}') Log
        if (show_unverified_games)
-        | &nbsp;&nbsp;
-        a(href='/#{game.gametype}/watchgame/#{game.gameid}') Watch
         | &nbsp;&nbsp;
         | #{game.unverified? 'unverified': 'verified'}
      td 
@@ -31,10 +26,7 @@ block body
         each userid, role in game.mapRoleToUserid
          li <b>#{role}</b> is player 
           a(href='/LogToXml/user_#{userid}') #{userid} 
-     td #{game.startTime? game.startTime.toString().replace(/T/,' ').replace(/Z/,' UTC'): '-'}
-     td #{game.endTime? game.endTime.toString().replace(/T/,' ').replace(/Z/,' UTC'): '-'}
-     if (show_unverified_games)
-      td <b>#{!game.endTime && game.missingRolesArray? game.missingRolesArray.join(", "): "-"}</b>
-      td #{!game.endTime && game.timer? timeToString(game.timer.currentTimeSeconds): '-'}
+     td #{game.startTime.toString().replace(/T/,' ').replace(/Z/,' UTC')}
+     td #{game.endTime.toString().replace(/T/,' ').replace(/Z/,' UTC')}
      td #{game.mapRoleToFinalResult? JSON.stringify(game.mapRoleToFinalResult): '-'}
       
