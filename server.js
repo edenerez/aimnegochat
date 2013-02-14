@@ -100,14 +100,14 @@ var gameServers = {};
 //		);
 
 gameServers['negomenus'] = new multiplayer.GameServer(
-		'negomenus',
+		/*gametype=*/'negomenus',
 		/*roomTemplateName=*/'RoomForNegoMenus',
 		/*requiredRoles=*/['Employer','Candidate'], 
 		/*maxTimeSeconds=*/30*60,
 		/*events=*/require('./EventsForNegoMenus')
 		);
 gameServers['negochat'] = new multiplayer.GameServer(
-		'negochat',
+		/*gametype=*/'negochat',
 		/*roomTemplateName=*/'RoomForNegoChat',
 		/*requiredRoles=*/['Employer', 'Candidate'], 
 		/*maxTimeSeconds=*/30*60,
