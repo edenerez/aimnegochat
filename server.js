@@ -55,12 +55,12 @@ app.configure(function(){
 
 	// Middleware - order is important!
 	app.use(express.favicon());
-	
+
 	app.use(express.bodyParser());	 // Request body parsing middleware supporting JSON, urlencoded, and multipart requests. This middleware is simply a wrapper the json(), urlencoded(), and multipart() middleware
 	app.use(cookieParser);
 	app.use(express.session({store:	sessionStore, secret: 'biuailab'}));
 	app.use(express.methodOverride());
-	
+
 	// Define tasks to do for ANY url:
 	app.use(function(req,res,next) {
 		if (!/\/stylesheets\//.test(req.url) && !/\/javascripts\//.test(req.url)) {
@@ -75,7 +75,7 @@ app.configure(function(){
 
 	app.use(app.router);
 	app.use(express.static(path.join(__dirname, 'public')));
-	
+
 	// Application local variables are provided to all templates rendered within the application:
 	app.locals.pretty = true;
 });
@@ -418,6 +418,10 @@ io.sockets.on('connection', function (socket) {
 		console.dir(session_data);
 		var session = {data: session_data};
 		var gameServer = gameServers[session.data.gametype];
+		if (!gameServer) {
+			console.error("Can't find game server "+session.data.gametype);
+			return;
+		} 
 	
 		var game;
 		if (!users[session.data.userid])
