@@ -1,0 +1,25 @@
+extends layout
+
+block content
+ h1= title
+ br
+
+
+ form(action="/completetask", method="post")
+   table(class="table table-striped table-bordered")
+     tr
+       td Name
+       td Category
+       td Date
+       td Complete
+     each task in tasks
+       tr
+         td #{task.name}
+         td #{task.category}
+         - var day   = task.Timestamp.getDate();
+         - var month = task.Timestamp.getMonth() + 1;
+         - var year  = task.Timestamp.getFullYear();
+         td #{month + "/" + day + "/" + year}
+         td
+           input(type="checkbox", name="#{task.RowKey}", value="#{!task.itemCompleted}", checked=task.itemCompleted)
+   button(type="submit", class="btn") Update tasks

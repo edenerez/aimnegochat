@@ -4,13 +4,10 @@ html
     block title
       title #{title}
     link(rel='stylesheet', href='/stylesheets/main.css')
-    link(rel='stylesheet', href='/stylesheets/datatable.css')
     script(src='http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.js')
-    script(src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js')
-    script var session_data = !{locals.session_data? JSON.stringify(session_data): "null"}; 
+    
   body
     div.mainSection#noJavascriptSupport Sorry, your browser doesn't support Javascript, so you cannot play the game!
       script $("div#noJavascriptSupport").hide();
     block body
-    if (locals.AMTStatus)
-      div#AMTStatus #{AMTStatus}
+    

@@ -3,11 +3,16 @@ extends layout
 block title
   title#title Chat Room 
 block body
+  link(rel='stylesheet', href='/stylesheets/datatable.css')
+  script(src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/jquery-ui.min.js')
   script(src='/javascripts/yahoo_yui_2.8.1/yahoo-dom-event/yahoo-dom-event.js')
   script(src='/javascripts/yahoo_yui_2.8.1/element/element-min.js')
   script(src='/javascripts/yahoo_yui_2.8.1/datasource/datasource-min.js')
   script(src='/javascripts/yahoo_yui_2.8.1/datatable/datatable-min.js')
+  script var session_data = !{locals.session_data? JSON.stringify(session_data): "null"};
   script(src='/javascripts/datatable.js')
+
+
   if (!locals.preview)
     script(src='/socket.io/socket.io.js')
     script(src='/javascripts/CommonSocketEvents.js')
@@ -48,3 +53,5 @@ block body
        button#btnOptOut Opt Out
 
     script function bye() {  window.location = '!{next_action}'; }
+    if (locals.AMTStatus)
+      div#AMTStatus #{AMTStatus}
