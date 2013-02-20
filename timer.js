@@ -15,7 +15,7 @@ exports.Timer = function(startTimeSeconds, stepSeconds, endTimeSeconds, callback
         theTimerObject.currentTimeSeconds += stepSeconds;
         if (theTimerObject.currentTimeSeconds<0)
           theTimerObject.currentTimeSeconds = 0;
-        if ((endTimeSeconds>theTimerObject) != (stepSeconds>0))
+        if ((endTimeSeconds>=theTimerObject) != (stepSeconds>0))
           theTimerObject.stop();
         callback(theTimerObject.currentTimeSeconds);
     }, Math.abs(stepSeconds)*1000);

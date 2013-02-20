@@ -154,7 +154,7 @@ app.get('/users', function(req,res) {
 app.get('/:gametype/beginner', function(req,res) {
 		var gameServer = gameServers[req.params.gametype];
 		setSessionForNewUser(req);
-		if (amt.isPreview(req.query.data)) {
+		if (amt.isPreview(req.query)) {
 			 res.redirect('/'+req.params.gametype+'/preview');
 		} else {
 			req.session.data.role = gameServer.nextRole();
@@ -166,7 +166,7 @@ app.get('/:gametype/beginner', function(req,res) {
 //    It will lead him to the preview or to the pre-questionnaire:
 app.get('/:gametype/beginner/:role', function(req,res) {
 		setSessionForNewUser(req);
-		if (amt.isPreview(req.query.data)) {
+		if (amt.isPreview(req.query)) {
 			 res.redirect('/'+req.params.gametype+'/preview');
 		} else {
 			req.session.data.role = req.params.role;

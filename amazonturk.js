@@ -3,7 +3,7 @@
 // workerId, hitId, assignmentId, turkSubmitTo
 
 exports.isPreview = function(query) {
-    return (query.assignmentId == "ASSIGNMENT_ID_NOT_AVAILABLE");
+    return (query.assignmentId=="ASSIGNMENT_ID_NOT_AVAILABLE");
 };
 
 exports.isLive = function(query) {

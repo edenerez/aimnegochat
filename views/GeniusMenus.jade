@@ -5,7 +5,6 @@ table#chosenOfferTable
     tr
      th.left Issue
      th.left #{role} draft
-     // th.left Agreed?
     for issue in agent.utility_space_object.issueByIndex
      tr
       td(id="#{issue.name.replace(/[^a-z]/gi,'_')}_label",title="This issue is green when your draft on this issue is consistent with your partner's draft") #{issue.name}: &nbsp; 
@@ -14,8 +13,13 @@ table#chosenOfferTable
         option(value="") -- select --
         for value in issue.values
          option(value="#{value}") #{value}
-      //- td(id="#{issue.name.replace(/[^a-z]/gi,'_')}_agreed")
-       div.value no
+        //- option(value="DummyValue") DummyValue
+    //- tr
+     td(id="Dummy",title="This is a dummy issue") Dummy 
+     td
+      select.issue(title="Dummy")
+       option(value="") -- select --
+       option(value="123") 123
     tr
      td <b>Your score:</b>
      td#utility 0
