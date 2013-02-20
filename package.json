@@ -16,6 +16,10 @@
     "sprintf": "*",
     "session.socket.io": "*",
     "xml2js": "*",
-    "json-ref": "*"
+    "json-ref": "*",
+    "node-uuid": "~1.4.0",
+    "async": "~0.2.5",
+    "nconf": "~0.6.7",
+    "azure": "~0.6.10"
   }
 }

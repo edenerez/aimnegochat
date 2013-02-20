@@ -1,0 +1,6 @@
+{
+    "STORAGE_NAME": "encourager",
+    "STORAGE_KEY": "QIM1B060/OpNkGuFcSF1Z72SuT4pp+AQ4FlXbf0tBqnFKnl11wSvlMfAwAvdhr2SGkRWelMhUNKSGojc404FuQ==",
+    "PARTITION_KEY": "mytasks",
+    "TABLE_NAME": "tasks"
+}

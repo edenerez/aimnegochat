@@ -21,10 +21,21 @@ var cookieParser = express.cookieParser('biuailab')
 	;
 
 
+//windows azure definitions 
+var azure = require('azure')
+, nconf = require('nconf');
+nconf.env()
+.file({ file: 'config.json'});
+var partitionKey = nconf.get("PARTITION_KEY")
+, accountName = nconf.get("STORAGE_NAME")
+, accountKey = nconf.get("STORAGE_KEY");
+
+
+
 //
 // Step 0: Users and sessions:
 //
-
+//ariel
 var users = {}; 
 
 function setSessionForNewUser(req) {
@@ -144,6 +155,7 @@ app.get('/', express.basicAuth('biu','biu'), function(req,res) {
 		res.render("index",	{serverStartTime: serverStartTime, gametypes: Object.keys(gameServers)});
 });
 
+//ariel
 app.get('/users', function(req,res) {
 		res.render("Users",	{users:users});
 });
@@ -240,7 +252,7 @@ app.get('/:gametype/listactive', function(req,res) {
 				timeToString: timer.timeToString, 
 				games: gameServer.getGames()});
 });
-
+//ariel
 app.get('/:gametype/listlogs', function(req,res) {
 		var gameServer = gameServers[req.params.gametype];
 		var pretty = req.query.pretty; // true to show only verified games
@@ -257,6 +269,28 @@ app.get('/:gametype/listlogs', function(req,res) {
 				games: games});
 		});
 });
+
+
+//////////////////
+// Questionnaire 
+///////////////////
+
+var Questionnaire = require('./routes/questionnaire');
+var QuestionnaireModel = require('./models/questionnaireModel');
+var questionnaireModel = new QuestionnaireModel(
+    azure.createTableService(accountName, accountKey)
+    , 'Questionnaire'
+    , partitionKey);
+var questionnaire = new Questionnaire(questionnaireModel);
+
+
+app.get('/listAll', questionnaire.listAll.bind(questionnaire));
+app.get('/prequestionnaireA', questionnaire.demographyQuestionnaire.bind(questionnaire));
+app.post('/addquestionnaire', questionnaire.addQuestionnaire.bind(questionnaire));
+//app.post('/completetask', taskList.completeTask.bind(taskList));
+
+/////////////////////////////////////////////////////
+
 
 app.get('/PreQuestionnaireDemography', function(req,res) {
 		res.render("PreQuestionnaireDemography",	{
@@ -276,7 +310,7 @@ app.get('/UtilityOfPartner/:role', function(req,res) {
 				agents: otherAgents[req.params.role]/*,
 				AMTStatus: JSON.stringify(req.session.data)*/});
 });
-
+//ariel
 app.get('/WriteQuestionnaireAnswers/:logFileName', function(req,res) {
 		var nextAction = req.query.next_action;	delete req.query.next_action;
 		if (!req.session.data.alreadyLogged) {

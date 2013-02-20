@@ -1,0 +1,40 @@
+extends layout
+block title
+  title Demographic Questionnaire
+block body
+  div#analysisContainer
+    form#questForm(action="/addquestionnaire", method="post", onsubmit="return ValidateRequiredFields();")
+      h1 Pre-negotiation questionnaire
+      p The experiment will begin with a questionnaire. Please answer the questions on this page. Press Continue when finished.
+
+      table
+        tr
+          td.label Gender:
+          td.field
+            select(name='item[gender]')
+              option(value='') -- select --
+              for v in ['Male', 'Female']
+                option(value='#{v}') #{v}
+        tr
+          td.label Age range:
+          td.field
+            select(name='item[age]')
+              option(value='') -- select --
+              for v in ['11-20', '21-30', '31-40', '41-50', '51-up']
+                option(value='#{v}') #{v}
+        tr
+          td.label Education:
+          td.field
+            select(name='item[education]')
+              option(value='') -- select --
+              for v in ['Elementary school', 'Jr. High school', 'High school', 'Bachelor degree', 'PhD']
+                option(value='#{v}') #{v}
+        tr
+           td.label In case you have a university degree, in which field?
+           td.field
+             input(name='item[field]')
+        tr
+           td.label Country of birth:
+           td.field
+              input(name='item[birth_country]')
+      input(type="submit", class="button", value="Continue")
