@@ -15,17 +15,17 @@ Questionnaire.prototype = {
     var query = azure.TableQuery
       .select()
       .from(self.questionnaireModel.tableName);
-      //.where('completed eq ?', 'false');
+      //.where('datastatus eq ?', 0);
     self.questionnaireModel.find(query, function itemsFound(err, items) {
-      res.render('researcheData',{title: 'Questionnaire List', QuestionnaireList: items});
+      res.render('researcheData',{title: 'Questionnaire List', questionnaireList: items});
     });
   },
 
 
   addQuestionnaire: function(req,res) {
-    var self = this      
+    var self = this;      
     var item = req.body.item;
-    self.questionnaireModel.addItem(item, function itemAdded(err) {
+    self.questionnaireModel.add(item, function itemAdded(err) {
       if(err) {
         throw err;
       }
@@ -34,19 +34,23 @@ Questionnaire.prototype = {
   },
   
   demographyQuestionnaire: function(req,res) {
-    res.render("PreQuestionnaireDemographyA",  {
-        action:'/WriteQuestionnaireAnswers/PreQuestionnaireDemography',
-        next_action:'/PreQuestionnaireExam',
-        AMTStatus: JSON.stringify(req.session.data)});
+    res.render("PreQuestionnaireDemographyA");
+  },
+
+  deleteQuestionnaireTable: function(req,res) {
+    var self = this;
+    self.questionnaireModel.deleteTable();
+    
+    res.redirect('/listAllQuestionnaire');
   },
 
 
-/*
-  completeTask: function(req,res) {
+
+  activeQuestionnaire: function(req,res) {
     var self = this;
-    var completedTasks = Object.keys(req.body);
-    async.forEach(completedTasks, function taskIterator(completedTask, callback){
-      self.task.updateItem(completedTask, function itemsUpdated(err){
+    var activeQuestionnairs = Object.keys(req.body);
+    async.forEach(activeQuestionnairs, function taskIterator(activeQuestionnaire, callback){
+      self.questionnaireModel.updateItem(activeQuestionnaire, function itemsUpdated(err){
         if(err){
           callback(err);
         } else {
@@ -57,9 +61,9 @@ Questionnaire.prototype = {
       if(err) {
         throw err;
       } else {
-       res.redirect('/');
+       res.redirect('/listAllQuestionnaire');
       }
     });
   }
-  */
+
 }

@@ -284,10 +284,11 @@ var questionnaireModel = new QuestionnaireModel(
 var questionnaire = new Questionnaire(questionnaireModel);
 
 
-app.get('/listAll', questionnaire.listAll.bind(questionnaire));
+app.get('/listAllQuestionnaire', questionnaire.listAll.bind(questionnaire));
 app.get('/prequestionnaireA', questionnaire.demographyQuestionnaire.bind(questionnaire));
 app.post('/addquestionnaire', questionnaire.addQuestionnaire.bind(questionnaire));
-//app.post('/completetask', taskList.completeTask.bind(taskList));
+app.post('/deleteQuestionnaireTable', questionnaire.deleteQuestionnaireTable.bind(questionnaire));
+app.post('/activeQuestionnaire', questionnaire.activeQuestionnaire.bind(questionnaire));
 
 /////////////////////////////////////////////////////
 

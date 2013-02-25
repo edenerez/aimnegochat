@@ -24,6 +24,7 @@ QuestionnaireModel.prototype.add = function(item, callback) {
   item.PartitionKey = self.partitionKey;
   item.datastatus = 0;
   item.completed = false;
+  item.active = true;
   self.storageClient.insertEntity(self.tableName, item, 
     function entityInserted(error) {
       if(error){  
@@ -33,7 +34,16 @@ QuestionnaireModel.prototype.add = function(item, callback) {
     });
 };
 
-QuestionnaireModel.prototype.find = function(item, callback) {
+QuestionnaireModel.prototype.deleteTable = function() {
+  self = this;
+  self.storageClient.deleteTable(self.tableName, function(error){
+    if(!error){
+        // Table deleted
+    }
+  });
+};
+
+QuestionnaireModel.prototype.find = function(query, callback) {
 	self = this;
   self.storageClient.queryEntities(query, 
     function entitiesQueried(err, entities){
@@ -52,8 +62,7 @@ QuestionnaireModel.prototype.updateItem = function(item, callback) {
      if(err) {
         callback(err);
       }
-      //entity.datastatus = 0;
-      //item.completed = false;
+      entity.active = false;
       self.storageClient.updateEntity(self.tableName, entity,
         function entityUpdated(err) {
           if(err) {
