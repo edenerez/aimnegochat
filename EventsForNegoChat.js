@@ -45,7 +45,9 @@ exports.add = function(socket, game, session_data, io, message, messageLog, appl
 		};
 		//messageLog(socket, game, "Sign", session_data, finalResult);
 		game.mapRoleToFinalResult[session_data.role] = finalResult;
-		message(socket, game, "Sign", session_data, "Signing the following agreement: "+JSON.stringify(agreement));
+		socket.emit('message', {action: "Sign", id: session_data.role, msg: "Signing the following agreement: "+JSON.stringify(agreement), you: true});
+		socket.broadcast.to('message', {action: "Sign", id: session_data.role, msg: "Signing the following agreement: "+JSON.stringify(agreement), you: false});
+		messageLog(socket, game, "Sign", session_data, finalResult);
 	socket.emit('sign', {id: session_data.role, you: true});
 		socket.broadcast.to(game.gameid).emit('sign', {id: session_data.role, you: false});
 	});
