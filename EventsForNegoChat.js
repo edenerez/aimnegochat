@@ -11,7 +11,7 @@ exports.add = function(socket, game, session_data, io, announcement, messageLog,
 		var allIssues = agent.utility_space_object.issueByIndex;
 		
 	var misunderstanding = function(message) {
-		socket.emit('announcement', {action: "Misunderstanding", id: session_data.role, you: false, msg: message});
+		socket.emit('announcement', {action: "Misunderstanding", id: "Translator", you: false, msg: message});
 	}
 
 	var onNegoActions = function (actions, announce) {
@@ -20,10 +20,13 @@ exports.add = function(socket, game, session_data, io, announcement, messageLog,
 			return;
 		}
 		var mergedAction = deepmerge.deepMergeArray(actions);
+
 		socket.broadcast.to(game.gameid).emit('negoactions', mergedAction); // forward the offer to the other player
-		if (announce)
-			for (var key in mergedAction)
-				announcement(socket, game, key, session_data, mergedAction[key]); // send ALL players a textual description of the offer
+		if (announce) {
+			for (var key in mergedAction) {
+				announcement(socket, game, key, session_data, JSON.stringify(mergedAction[key])); // send ALL players a textual description of the offer
+			}
+		}
 	};
 
 	// An agent or a human menu-player sent a list of negotiation actions:
@@ -32,7 +35,7 @@ exports.add = function(socket, game, session_data, io, announcement, messageLog,
 		onNegoActions(actions, true);
 	});
 
-	// A player sent an informative - just send it to all other users
+	// A player sent an informative message - just send it to all other users
 	socket.on('message', function (text) {
 		announcement(socket, game, "Message", session_data, text);
 	});
@@ -45,7 +48,7 @@ exports.add = function(socket, game, session_data, io, announcement, messageLog,
 
 	// The translator returned the semantic translation of the human's chat message
 	translator.onTranslation(function(text,translations) {
-		console.log("TranslationServer serving "+JSON.stringify(session_data));
+		//console.log("TranslationServer serving "+JSON.stringify(session_data));
 		if (!translations || translations.length==0) {
 			misunderstanding("I didn't understand your message: '"+text+"'. Please say this in other words");
 			return;

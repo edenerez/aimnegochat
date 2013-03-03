@@ -13,8 +13,7 @@
  * @param requiredRolesArray the required roles, e.g. ['Employer', 'Candidate']
  * @param maxTimeSeconds the max time for each game episode, in seconds.
  */ 
-exports.GameServer = function(gametype, roomTemplateName, requiredRolesArray, maxTimeSeconds, events) {
-  this.gametype = gametype;
+exports.GameServer = function(roomTemplateName, requiredRolesArray, maxTimeSeconds, events) {
   this.roomTemplateName = roomTemplateName;
   this.requiredRolesArray = requiredRolesArray;
   this.maxTimeSeconds = maxTimeSeconds;

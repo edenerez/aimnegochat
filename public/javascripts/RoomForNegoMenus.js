@@ -48,10 +48,10 @@ $(function() {
 				action.push({'offer': issuevalue});
 		});
 
-		socket.emit('offer', action);
+		socket.emit('negoactions', action);
 	});
 
-	socket.on('offer', function (data) {
+	socket.on('negoactions', function (data) {
 	});
 	
 });

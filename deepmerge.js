@@ -29,6 +29,8 @@ exports.deepMerge = function (source, target) {
  * @return the merged object.
  */
 exports.deepMergeArray = function(sources) {
+	if (!Array.isArray(sources))
+		return sources; // nothing to merge
 	var merged = {};
 	for (var i=0; i<sources.length; ++i) 
 		merged = exports.deepMerge(sources[i], merged);
@@ -48,5 +50,6 @@ if (process.argv[1] === __filename) {
 	console.log(JSON.stringify(a)+ " + " + JSON.stringify(b)+" = "+JSON.stringify(exports.deepMerge(a,b)));
 	
 	var arr = [a];
+	console.log(JSON.stringify(exports.deepMergeArray(a)));
 	console.log(JSON.stringify(exports.deepMergeArray(arr)));
 }

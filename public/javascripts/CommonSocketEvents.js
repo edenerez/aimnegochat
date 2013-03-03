@@ -11,17 +11,45 @@ function bidToString(bid) {
 	}
 	return result;
 }
- 
+
+var templates = {
+	'Reject': [
+		"I don't accept your offer",
+		"I reject your offer",
+		"Your offer is unacceptable"
+	],
+	'Accept': [
+		"I accept your offer",
+		"I am OK with your offer",
+		"Your offer is acceptable"
+	],
+	'Offer': [
+		"I offer",
+		"My offer is",
+		"I suggest"
+	],
+	'Quit': [
+		"I go home",
+		"I quit",
+		"I blow up the negotiation"
+	],
+};
+
 // A new message has been received, the data comes through as a JSON object with 
 // two attributes, an `id` of the client who sent the message, as well as a `msg` 
 // with the actual text of the message, add it to the DOM message container
 socket.on('announcement', function (data) {
+		var template = "";
+		var templatesSet = templates[data.action];
+		if (templatesSet) {
+			template = templatesSet[Math.floor((Math.random()*templatesSet.length))] + " ";
+		}
 		addDataToHistoryTable({			
 			proposerClass: data.id + (data.you? " You": " Partner"),
 			proposer: data.id + (data.you? " (You)": ""),
 			action: data.action,
 			util: "",
-			bid: data.msg,
+			bid: template + data.msg,
 			answered: "no"
 		});			// in datatable.js
 });

@@ -101,28 +101,28 @@ app.configure('development', function(){
 // 
 
 var gameServers = {};
-//gameServers['chat'] = new multiplayer.GameServer(
-//		'chat',
-//		/*roomTemplateName=*/'RoomForChat',
-//		/*requiredRoles=*/['Employer', 'Candidate'], 
-//		/*maxTimeSeconds=*/60,
-//		/*events=*/require('./EventsForChat')
-//		);
 
 gameServers['negomenus'] = new multiplayer.GameServer(
-		/*gametype=*/'negomenus',
 		/*roomTemplateName=*/'RoomForNegoMenus',
 		/*requiredRoles=*/['Employer','Candidate'], 
 		/*maxTimeSeconds=*/30*60,
 		/*events=*/require('./EventsForNegoChat')
 		);
 gameServers['negochat'] = new multiplayer.GameServer(
-		/*gametype=*/'negochat',
 		/*roomTemplateName=*/'RoomForNegoChat',
 		/*requiredRoles=*/['Employer', 'Candidate'], 
 		/*maxTimeSeconds=*/30*60,
 		/*events=*/require('./EventsForNegoChat')
 		);
+gameServers['negonlp'] = new multiplayer.GameServer(
+		/*roomTemplateName=*/'RoomForNegoNlp',
+		/*requiredRoles=*/['Employer', 'Candidate'], 
+		/*maxTimeSeconds=*/30*60,
+		/*events=*/require('./EventsForNegoChat')
+		);
+
+for (i in gameServers)
+	gameServers[i].gametype = i;
 
 //
 // Step 2.5: GENIUS related variables:
@@ -213,18 +213,22 @@ app.get('/:gametype/watchgame/:gameid', function(req,res) {
 });
 
 
+var entergameSemaphore = require('semaphore')(1);
+
 /**
  * The user with the given session wants to enter a new or existing game.
  * Find a game that matches the user, insert the user into the game, and put the gameid of the user into the session.
  * @param session includes data of a new user.
  */
 function entergame(session) {
+	entergameSemaphore.take(function() {
 		var gameServer = gameServers[session.data.gametype];
 		console.log('Enter game. session = '+JSON.stringify(session.data));
 
 		var game;
-		if (session.data.gameid) { // gameid already exists - a watcher is entering an existing game, or a player is re-entering after disconnection
+		if (session.data.gameid && gameServer.gameById(session.data.gameid)) { // gameid already exists - a watcher is entering an existing game, or a player is re-entering after disconnection
 			console.log("--- gameid already set: "+session.data.gameid);
+			game = gameServer.gameById(session.data.gameid);
 		} else {
 			console.log("--- Searching for "+session.data.gametype+" game with "+session.data.role+" played by "+session.data.userid);
 			game = gameServer.gameWithUser(session.data.userid, session.data.role);
@@ -236,6 +240,9 @@ function entergame(session) {
 			console.log("--- Entered "+session.data.gametype+" game: "+session.data.gameid);
 		}
 		users[session.data.userid].gameid = session.data.gameid;
+		game.playerEntersGame(session.data.userid, session.data.role);
+		entergameSemaphore.leave();
+	});
 }
 
 app.get('/entergame', function(req,res) {
@@ -464,18 +471,16 @@ io.sockets.on('connection', function (socket) {
 		var game;
 		if (!users[session.data.userid])
 			users[session.data.userid] = session.data;
-		if (!session.data.gameid) 
+		if (!session.data.gameid) // we can get here from a Java socket.io client, that doesn't go throught the "/entergame" URL
 			entergame(session);
 
 		game = gameServer.gameById(session.data.gameid);
 		if (!game) {
-				socket.emit('status', {key: 'phase', value: 'Status: Game over! No body is here!'});
-				return; // throw an exception?!
+			socket.emit('status', {key: 'phase', value: 'Status: Game over! No body is here!'});
+			return; // throw an exception?!
 		}
-
-		game.playerEntersGame(session.data.userid, session.data.role);
 		socket.join(game.gameid);
-	
+
 		if (!session.data.silentEntry)
 			announcement(socket, game, "Connect", session.data, "");
 		socket.emit('title', 'Room for '+session.data.gametype+" "+game.gameid+' - '+session.data.role);
