@@ -90,5 +90,14 @@ $(function() {
 		partiesThatSigned[proposer] = true;
 		if (Object.keys(partiesThatSigned).length>=2)
 			bye();
+			
+		addDataToHistoryTable({			
+			proposerClass: data.id + (data.you? " You": " Partner"),
+			proposer: proposer,
+			action: "Sign",
+			util: "",
+			bid: "Signing the following agreement: "+JSON.stringify(data.agreement),
+			answered: "no"
+		});
 	});
 });
