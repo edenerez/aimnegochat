@@ -5,13 +5,13 @@ var fs     = require('fs')
   , util = require('util')
   , jade = require('jade')
   , jsonref = require('json-ref')
+  , io = require('socket.io-client')
   ;
 
+socket = io.connect('localhost', {port: 9994});
 
-var obj = {a: 1, b: 2, c: 3};
-console.log(jsonref.ref(obj));
+socket.on('connect', function () { 
+	console.log("socket connected"); 
+});
+socket.emit('private message', { user: 'me', msg: 'whazzzup?' });
 
-console.log(jsonref.ref({port: 123}));
-
-obj.circular_reference = obj;
-console.log(jsonref.ref(obj));

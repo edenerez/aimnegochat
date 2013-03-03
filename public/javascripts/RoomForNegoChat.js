@@ -21,7 +21,7 @@ $(function() {
 	// field out when we are finished so it is ready to send another
 	function send() {
 		var msg = $('#chatMessage').val();
-		socket.emit('message', msg);
+		socket.emit('English', msg);
 		$('#chatMessage').val('');
 		if (msg==='bye') bye();
 	};
@@ -90,5 +90,14 @@ $(function() {
 		partiesThatSigned[proposer] = true;
 		if (Object.keys(partiesThatSigned).length>=2)
 			bye();
+			
+		addDataToHistoryTable({			
+			proposerClass: data.id + (data.you? " You": " Partner"),
+			proposer: proposer,
+			action: "Sign",
+			util: "",
+			bid: "Signing the following agreement: "+JSON.stringify(data.agreement),
+			answered: "no"
+		});
 	});
 });

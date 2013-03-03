@@ -28,15 +28,31 @@ $(function() {
 
 	// When the user clicks the "sign agreement" button, send the current agreement to the server:
 	$("#sendOffer").click(function() {
-		var agreement = {};
+		/* simple conversion - to a JSON Object: */
+		/*var agreement = {};
 		$("select.issue").each(function() {
-			agreement[$(this).attr('title')] = $(this).val();
+			var issue = $(this).attr('title');
+			var value = $(this).val();
+			if (value)
+				agreement[issue] = value;
 		});
-		socket.emit('offer', agreement);
+		var action = {'offer': agreement};*/
+
+		/* complex conversion - to a JSON Array - for testing only: */
+		var action = [];
+		$("select.issue").each(function() {
+			var issue = $(this).attr('title');
+			var value = $(this).val();
+			var issuevalue = {}; issuevalue[issue]=value;
+			if (value)
+				action.push({'offer': issuevalue});
+		});
+
+		socket.emit('offer', action);
 	});
-	
-	
+
 	socket.on('offer', function (data) {
 	});
 	
 });
+

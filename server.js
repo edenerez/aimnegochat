@@ -15,7 +15,6 @@ var express = require('express')
 	, timer = require('./timer')
 	;
 
-
 var cookieParser = express.cookieParser('biuailab')
 	, sessionStore = new express.session.MemoryStore()
 	;
@@ -115,7 +114,7 @@ gameServers['negomenus'] = new multiplayer.GameServer(
 		/*roomTemplateName=*/'RoomForNegoMenus',
 		/*requiredRoles=*/['Employer','Candidate'], 
 		/*maxTimeSeconds=*/30*60,
-		/*events=*/require('./EventsForNegoMenus')
+		/*events=*/require('./EventsForNegoChat')
 		);
 gameServers['negochat'] = new multiplayer.GameServer(
 		/*gametype=*/'negochat',
@@ -438,9 +437,13 @@ function messageLog(socket, game, action, user, data) {
 	logger.writeEventLog('events', action+" '"+JSON.stringify(data)+"'", user);
 }
 
-function message(socket, game, action, user, data) {
-	socket.emit('message', {action: action, id: user.role, msg: data, you: true});
-	socket.broadcast.to(game.gameid).emit('message', {action: action, id: user.role,	msg: data, you: false});		
+
+/**
+ * Tell the players in the game that a certain player has made a certain action.
+ */
+function announcement(socket, game, action, user, data) {
+	socket.emit('announcement', {action: action, id: user.role, msg: data, you: true});
+	socket.broadcast.to(game.gameid).emit('announcement', {action: action, id: user.role,	msg: data, you: false});		
 	messageLog(socket, game, action, user, data);
 }
 
@@ -473,7 +476,7 @@ io.sockets.on('connection', function (socket) {
 		socket.join(game.gameid);
 	
 		if (!session.data.silentEntry)
-			message(socket, game, "Connect", session.data, "");
+			announcement(socket, game, "Connect", session.data, "");
 		socket.emit('title', 'Room for '+session.data.gametype+" "+game.gameid+' - '+session.data.role);
 	
 		if (!game.startTime) { // game not started
@@ -491,8 +494,9 @@ io.sockets.on('connection', function (socket) {
 				game.startLogged = true;
 			}
 			io.sockets.in(game.gameid).emit('status', {key: 'phase', value: ''});
+			io.sockets.in(game.gameid).emit('EndTurn', 1);
 			if (!game.timer)
-				game.timer = new timer.Timer(gameServer.maxTimeSeconds, -1, 0, function(remainingTimeSeconds) {
+				game.timer = new timer.Timer(gameServer.maxTimeSeconds, -5, 0, function(remainingTimeSeconds) {
 					io.sockets.in(game.gameid).emit('status', {key: 'remainingTime', value: timer.timeToString(remainingTimeSeconds)});
 
 					game.turnsFromStart = 1+Math.floor(game.timer.timeFromStartSeconds() / app.locals.turnLengthInSeconds);
@@ -521,12 +525,12 @@ io.sockets.on('connection', function (socket) {
 	
 		// A user disconnected - closed the window, unplugged the chord, etc..
 		socket.on('disconnect', function () {
-			message(socket, game, "Disconnect", session.data, "");
+			announcement(socket, game, "Disconnect", session.data, "");
 			socket.leave(game.gameid);
 			game.playerLeavesGame(session.data.userid, session.data.role);
 		});
 	
-		gameServer.events.add(socket, game, session.data, io, message, messageLog, app.locals);
+		gameServer.events.add(socket, game, session.data, io, announcement, messageLog, app.locals);
 	});  // end of identify event
 });
 

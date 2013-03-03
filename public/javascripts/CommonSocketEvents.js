@@ -15,17 +15,15 @@ function bidToString(bid) {
 // A new message has been received, the data comes through as a JSON object with 
 // two attributes, an `id` of the client who sent the message, as well as a `msg` 
 // with the actual text of the message, add it to the DOM message container
-socket.on('message', function (data) {
-		var messageData = {			
+socket.on('announcement', function (data) {
+		addDataToHistoryTable({			
 			proposerClass: data.id + (data.you? " You": " Partner"),
 			proposer: data.id + (data.you? " (You)": ""),
 			action: data.action,
 			util: "",
 			bid: data.msg,
-			//content: data.msg,
 			answered: "no"
-		};
-		addDataToHistoryTable(messageData);			// in datatable.js
+		});			// in datatable.js
 });
 
 
