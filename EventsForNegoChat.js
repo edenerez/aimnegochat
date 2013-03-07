@@ -24,7 +24,7 @@ exports.add = function(socket, game, session_data, io, announcement, messageLog,
 		socket.broadcast.to(game.gameid).emit('negoactions', mergedAction); // forward the offer to the other player
 		if (announce) {
 			for (var key in mergedAction) {
-				announcement(socket, game, key, session_data, JSON.stringify(mergedAction[key])); // send ALL players a textual description of the offer
+				announcement(socket, game, key, session_data, mergedAction[key]); // send ALL players a textual description of the offer
 			}
 		}
 	};

@@ -13,7 +13,8 @@ function QuestionnaireModel(storageClient, tableName, partitionKey) {
   this.storageClient.createTableIfNotExists(tableName, 
     function tableCreated(err) {
       if(err) {
-        throw error;
+        console.log("Cannot create table: "+JSON.stringify(err));
+        // throw err;
       }
     });
 };

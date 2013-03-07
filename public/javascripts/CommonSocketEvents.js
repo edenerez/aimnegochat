@@ -49,7 +49,7 @@ socket.on('announcement', function (data) {
 			proposer: data.id + (data.you? " (You)": ""),
 			action: data.action,
 			util: "",
-			bid: template + data.msg,
+			bid: template + JSON.stringify(data.msg).replace(/\"/g," "),
 			answered: "no"
 		});			// in datatable.js
 });

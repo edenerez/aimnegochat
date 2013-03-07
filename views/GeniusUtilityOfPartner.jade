@@ -36,7 +36,7 @@ block body
       td.utilityUtil #{sprintf(format, 1*agent.utility_space_object.optout)}
 
    tr
-    td.utilityValue(colspan="1",title="Your score if the negotiation times out") Status Quo Score:
+    td.utilityValue(colspan="1",title="Status-quo score - your score if the negotiation times out") Time-out Score:
     for agent in agents
       td.utilityUtil #{sprintf(format, 1*agent.utility_space_object.reservation)}
 

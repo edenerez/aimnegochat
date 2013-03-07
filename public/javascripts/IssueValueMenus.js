@@ -20,7 +20,7 @@ $(function() {
 	});
 
 	$("#btnOptOut").click(function() {
-		if (confirm("Are you sure you want to leave the negotiation without an agreement?")) {
+		if (confirm("Are you sure you want to leave the negotiation?")) {
 			bye();
 		}
 	});	

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="deploy" name="Project negochat - Deploy all code except node_modules">
+	<property name="target" value="/media/nlp-srv/E/Apps/negochat" />
+
+	<target name="deploy">
+		  <copy overwrite="true" todir="${target}">
+		    <fileset dir=".">
+		    	  <include name="**"/>		    	
+		    	  <exclude name="**/node_modules/**"/>		    	
+		  	</fileset>
+		  </copy>
+	</target>
+</project>

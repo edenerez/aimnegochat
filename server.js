@@ -45,6 +45,8 @@ function setSessionForNewUser(req) {
 	req.session.data = req.query;  // for Amazon Turk users, the query contains the hit id, assignment id and worker id. 
 	req.session.data.userid = req.ip + ":" + new Date().toISOString();
 	req.session.data.gametype = req.params.gametype;
+	if (req.params.role)
+		req.session.data.role = req.params.role;
 	users[req.session.data.userid] = req.session.data;
 	users[req.session.data.userid].urls = [req.url.substr(0,60)];
 	logger.writeEventLog("events", "NEWSESSION",	 req.session);
@@ -190,8 +192,12 @@ app.get('/:gametype/beginner/:role', function(req,res) {
 app.get('/:gametype/advanced', function(req,res) {
 		var gameServer = gameServers[req.params.gametype];
 		setSessionForNewUser(req);
-		req.session.data.role = gameServer.nextRole();
-		res.redirect('/entergame');
+		if (amt.isPreview(req.query)) {
+			 res.redirect('/'+req.params.gametype+'/preview');
+		} else {
+			req.session.data.role = gameServer.nextRole();
+			res.redirect('/entergame');
+		}
 });
 
 // This is the entry point for a developer with a pre-specified role:
@@ -199,8 +205,12 @@ app.get('/:gametype/advanced', function(req,res) {
 app.get('/:gametype/advanced/:role', function(req,res) {
 		var gameServer = gameServers[req.params.gametype];
 		setSessionForNewUser(req);
-		req.session.data.role = req.params.role;
-		res.redirect('/entergame');
+		if (amt.isPreview(req.query)) {
+			 res.redirect('/'+req.params.gametype+'/preview');
+		} else {
+			req.session.data.role = req.params.role;
+			res.redirect('/entergame');
+		}
 });
 
 app.get('/:gametype/watchgame/:gameid', function(req,res) {
@@ -550,3 +560,5 @@ process.on('exit', function (){
 	logger.writeEventLog("events", "END", {port:app.get('port')});
 	console.log('Goodbye!');
 });
+// http://localhost:4000/negonlp/advanced/Employer?assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE
+

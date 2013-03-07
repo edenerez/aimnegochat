@@ -1,6 +1,7 @@
 // Translate text to semantic representation using a translation server:
-var HOST="localhost";
-var PORT=9994;
+var HOST=process.env.TRANSLATION_SERVER_HOST || "localhost";
+var PORT=process.env.TRANSLATION_SERVER_PORT || 9994;
+console.log("Looking for translation server at "+HOST+":"+PORT);
 
 exports.Translator = function() {
 	this.translationSocket = require('socket.io-client').connect(HOST, {port: PORT}); 
