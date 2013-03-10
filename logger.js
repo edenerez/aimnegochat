@@ -11,10 +11,10 @@ if (!fs.appendFile) {
   fs.appendFile = function(path, data, callback) {
     var stream = this.createWriteStream(path, {'flags': 'a'});
     stream.on('error', function (err) {
-      callback(err);
+      if (callback) callback(err);
     });    
     stream.on('drain', function () {
-      callback(null);
+      if (callback) callback(null);
     });    
     stream.write(data);
   };

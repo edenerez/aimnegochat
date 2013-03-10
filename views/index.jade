@@ -24,4 +24,10 @@ block body
     h4: a(href='/#{gametype}/advanced') A worker not from Amazon Turk - jump directly to game
     h4: a(href='/#{gametype}/advanced?workerId=amazonworker123&hitId=hit123&assignmentId=assignment123&turkSubmitTo=sandbox') Amazon Turk Live mode - jump directly to game
     h4: a(href='/#{gametype}/advanced/Employer') Jump directly to game as Employer
-    
+  div(style='background-color:#eee')
+   h1 Paraphrase experiment
+   h4: a(href='/LogToXml/ParaphraseInput') Inputs
+   h4: a(href='/LogToXml/ParaphraseOutput') Outputs
+   h4: a(href='/LogToXml/ParaphraseUsers') Users
+   h4: a(href='/paraphrase?assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE') Amazon Turk Preview mode
+   h4: a(href='/paraphrase?workerId=amazonworker123&hitId=hit123&assignmentId=assignment123&turkSubmitTo=sandbox') Amazon Turk Live mode with a dummy worker

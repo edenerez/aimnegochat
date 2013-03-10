@@ -123,8 +123,8 @@ gameServers['negonlp'] = new multiplayer.GameServer(
 		/*events=*/require('./EventsForNegoChat')
 		);
 
-for (i in gameServers)
-	gameServers[i].gametype = i;
+for (gameType in gameServers)
+	gameServers[gameType].gametype = gameType;
 
 //
 // Step 2.5: GENIUS related variables:
@@ -286,6 +286,43 @@ app.get('/:gametype/listlogs', function(req,res) {
 		});
 });
 
+//////////////////////////
+// Paraphrase experiment 
+//////////////////////////
+
+var paraphraseSemaphore = require('semaphore')(1);
+var paraphraseInput = logger.readJsonLogSync("logs/ParaphraseInput.json");
+var iparaphraseInput = 0;
+
+app.get('/paraphrase', function(req,res) {
+	setSessionForNewUser(req);
+	var iSentence, sentence;
+	paraphraseSemaphore.take(function() {
+		iSentence = iparaphraseInput;
+		iparaphraseInput = (iparaphraseInput+1)%paraphraseInput.length;
+		sentence = paraphraseInput[iSentence];
+		paraphraseSemaphore.leave();
+	});
+	res.render("RoomForParaphrase",	{
+		preview: amt.isPreview(req.query),
+		sentence: sentence,
+		iSentence: iSentence,
+		action:'/WriteParaphrases',
+		next_action:'/ThankYou',
+		AMTStatus: JSON.stringify(req.session.data)});
+});
+
+
+app.get('/WriteParaphrases', function(req,res) {
+		var nextAction = req.query.next_action;	delete req.query.next_action;
+		var iSentence  = req.query.iSentence;	delete req.query.iSentence;
+		if (req.session.data.assignmentId)
+			paraphraseInput[iSentence][req.session.data.assignmentId] = req.query;
+
+		logger.writeJsonLog("ParaphraseOutput", paraphraseInput[iSentence]);
+		logger.writeJsonLog("ParaphraseUsers", {user: req.session.data, answers: req.query});
+		res.redirect(nextAction);
+});
 
 //////////////////
 // Questionnaire 
@@ -546,7 +583,8 @@ io.sockets.on('connection', function (socket) {
 			game.playerLeavesGame(session.data.userid, session.data.role);
 		});
 	
-		gameServer.events.add(socket, game, session.data, io, announcement, messageLog, app.locals);
+		if (gameServer.events)
+			gameServer.events.add(socket, game, session.data, io, announcement, messageLog, app.locals);
 	});  // end of identify event
 });
 
