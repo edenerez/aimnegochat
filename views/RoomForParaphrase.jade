@@ -4,16 +4,18 @@ block title
  title Write a sentence in different words
 
 block body
- div.mainSection
+ div.mainSection(style='font-size:16px')
   h1 Write a sentence in different words
   //p A Hi-Tech company would like to hire you. You negotiate your job conditions with your potential employer.
-  p You are a manager in a hi-tech company. You negotiate with a job candidate about his/her job conditions.
-  p During the interview, you say something, but your partner doesn't understand, and asks you to say this again in different words.
-  p Please write three DIFFERENT English sentence that have the SAME meaning.
+  p You are a manager in a hi-tech company.
+  p You are negotiating with a job candidate about his/her job conditions.
+  p During the interview, you want to convey the message in the sentence below, 
+  | but for some reason, you are not allowed to use the exact same sentence, 
+  | so you need to come up with a variation. 
+  p Please write three DIFFERENT English sentences that have the SAME meaning.
   p Please write naturally, as you would do in a chat.
   p Here is the sentence:
-  h3 
-   big #{sentence.natural}
+  p(style='font-size:24px; font-weight:bold') #{natural}
   form(method='get',action='#{action}')
    input(type="hidden", name="iSentence", value="#{iSentence}")
    input(type="hidden", name="next_action", value="#{next_action}")

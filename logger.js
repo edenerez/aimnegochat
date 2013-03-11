@@ -23,6 +23,15 @@ if (!fs.appendFile) {
 }
 
 /**
+ * reads a log file that contains a single JSON object.
+ * @return the single object..
+ */
+exports.readSingleJsonObjectSync = function(pathToLog) {
+  var json = fs.readFileSync(pathToLog, 'utf8');
+  return JSON.parse(json);
+}
+
+/**
  * reads a log file, where each line is an object in JSON format.
  * @return an array of all objects in the file.
  */
@@ -52,7 +61,13 @@ exports.readJsonLog = function(logFileName, callback) {
     } else {
       var json = "["+data.replace(/\n/g,",")+"]";
       json = json.replace(/,\]/,"]");
-      callback(JSON.parse(json));
+      var object;
+      try {
+      	object = JSON.parse(json)
+      } catch (ex) {
+        object = [{error: "Error parsing JSON object: "+json+": "+JSON.stringify(ex)}];
+      }
+      callback(object);
     }
   });
 }

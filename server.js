@@ -291,21 +291,25 @@ app.get('/:gametype/listlogs', function(req,res) {
 //////////////////////////
 
 var paraphraseSemaphore = require('semaphore')(1);
-var paraphraseInput = logger.readJsonLogSync("logs/ParaphraseInput.json");
+var paraphraseInput = logger.readSingleJsonObjectSync("data/ParaphraseInput.json");
+var paraphraseOutput = {};
+var paraphraseNaturals = Object.keys(paraphraseInput);
+console.dir(paraphraseNaturals);
 var iparaphraseInput = 0;
 
 app.get('/paraphrase', function(req,res) {
 	setSessionForNewUser(req);
-	var iSentence, sentence;
+	var iSentence, natural, semantic;
 	paraphraseSemaphore.take(function() {
 		iSentence = iparaphraseInput;
-		iparaphraseInput = (iparaphraseInput+1)%paraphraseInput.length;
-		sentence = paraphraseInput[iSentence];
+		iparaphraseInput = (iparaphraseInput+1)%paraphraseNaturals.length;
+		natural = paraphraseNaturals[iSentence];
+		semantic = paraphraseInput[natural];
 		paraphraseSemaphore.leave();
 	});
 	res.render("RoomForParaphrase",	{
 		preview: amt.isPreview(req.query),
-		sentence: sentence,
+		natural: natural,
 		iSentence: iSentence,
 		action:'/WriteParaphrases',
 		next_action:'/ThankYou',
@@ -316,11 +320,18 @@ app.get('/paraphrase', function(req,res) {
 app.get('/WriteParaphrases', function(req,res) {
 		var nextAction = req.query.next_action;	delete req.query.next_action;
 		var iSentence  = req.query.iSentence;	delete req.query.iSentence;
-		if (req.session.data.assignmentId)
-			paraphraseInput[iSentence][req.session.data.assignmentId] = req.query;
+		var natural = paraphraseNaturals[iSentence];
+		var semantic = paraphraseInput[natural];
 
-		logger.writeJsonLog("ParaphraseOutput", paraphraseInput[iSentence]);
-		logger.writeJsonLog("ParaphraseUsers", {user: req.session.data, answers: req.query});
+		for (i in req.query)
+			fs.appendFile("logs/ParaphraseOutput.txt", "* "+req.query[i]+"    /    "+semantic + "\n");
+		
+		paraphraseOutput[natural] = req.query;
+		var output = {};
+		output[natural] = req.query;
+		logger.writeJsonLog("ParaphraseOutput", output);
+		
+		logger.writeJsonLog("ParaphraseUsers", {user: req.session.data, natural: natural, answers: req.query});
 		res.redirect(nextAction);
 });
 
