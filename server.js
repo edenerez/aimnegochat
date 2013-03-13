@@ -291,7 +291,7 @@ app.get('/:gametype/listlogs', function(req,res) {
 //////////////////////////
 
 var paraphraseSemaphore = require('semaphore')(1);
-var paraphraseInput = logger.readSingleJsonObjectSync("data/ParaphraseInput.json");
+var paraphraseInput = logger.readSingleJsonObjectSync("data/ParaphraseInput.txt");
 var paraphraseOutput = {};
 var paraphraseNaturals = Object.keys(paraphraseInput);
 console.dir(paraphraseNaturals);
