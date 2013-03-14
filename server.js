@@ -323,8 +323,10 @@ app.get('/WriteParaphrases', function(req,res) {
 		var natural = paraphraseNaturals[iSentence];
 		var semantic = paraphraseInput[natural];
 
-		for (i in req.query)
-			fs.appendFile("logs/ParaphraseOutput.txt", "* "+req.query[i]+"    /    "+semantic + "\n");
+		for (i in req.query) {
+			fs.appendFile("logs/ParaphraseOutputNatural.txt", "* "+req.query[i]+"    /    "+natural + "\n");
+			fs.appendFile("logs/ParaphraseOutputSemantic.txt", req.query[i]+"    /    "+semantic + "\n");
+		}
 		
 		paraphraseOutput[natural] = req.query;
 		var output = {};
