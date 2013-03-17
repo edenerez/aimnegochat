@@ -292,17 +292,20 @@ app.get('/:gametype/listlogs', function(req,res) {
 
 var paraphraseSemaphore = require('semaphore')(1);
 var paraphraseInput = logger.readSingleJsonObjectSync("data/ParaphraseInput.txt");
-var paraphraseOutput = {};
 var paraphraseNaturals = Object.keys(paraphraseInput);
 console.dir(paraphraseNaturals);
 var iparaphraseInput = 0;
+var doneParapharseInputs = {};
 
 app.get('/paraphrase', function(req,res) {
 	setSessionForNewUser(req);
 	var iSentence, natural, semantic;
 	paraphraseSemaphore.take(function() {
+		for (var i=0; i<paraphraseNaturals.length; ++i) {
+			iparaphraseInput = (iparaphraseInput+1)%paraphraseNaturals.length;
+			if (!doneParapharseInputs[iparaphraseInput]) break;
+		}
 		iSentence = iparaphraseInput;
-		iparaphraseInput = (iparaphraseInput+1)%paraphraseNaturals.length;
 		natural = paraphraseNaturals[iSentence];
 		semantic = paraphraseInput[natural];
 		paraphraseSemaphore.leave();
@@ -327,12 +330,18 @@ app.get('/WriteParaphrases', function(req,res) {
 			fs.appendFile("logs/ParaphraseOutputNatural.txt", "* "+req.query[i]+"    /    "+natural + "\n");
 			fs.appendFile("logs/ParaphraseOutputSemantic.txt", req.query[i]+"    /    "+semantic + "\n");
 		}
-		
-		paraphraseOutput[natural] = req.query;
+
 		var output = {};
 		output[natural] = req.query;
 		logger.writeJsonLog("ParaphraseOutput", output);
-		
+
+		doneParapharseInputs[iSentence] = true;
+		var numDone = Object.keys(doneParapharseInputs).length;
+		console.log("done "+numDone+" out of "+paraphraseNaturals.length+" paraphrases.");
+		if (numDone>=paraphraseNaturals.length) {  // restart:
+			doneParapharseInputs = {};
+		}
+
 		logger.writeJsonLog("ParaphraseUsers", {user: req.session.data, natural: natural, answers: req.query});
 		res.redirect(nextAction);
 });

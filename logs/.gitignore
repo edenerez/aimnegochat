@@ -1,15 +1,1 @@
-lib-cov
-*.seed
-*.log
-*.json
-*.csv
-*.dat
-*.out
-*.pid
-*.gz
-
-pids
-results
-
-npm-debug.log
-/ParaphraseOutput.txt
+*.*
