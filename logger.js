@@ -5,6 +5,7 @@ var fs     = require('fs')
   , path = require('path')
   ;
 
+exports.MAX_LENGTH_OF_CONSOLE_MESSAGE = 75;
 
 if (!fs.appendFile) {
   console.log("You have Node "+process.version+", that does not support appendFile. I try to approximate it with 'createWriteStream'.")
@@ -87,7 +88,7 @@ exports.writeEventLog = function(logFileName, event, object) {
       json = JSON.stringify(jsonref.ref(object));
     }
     var msg = new Date().toISOString() + " " + event + " " + json+"\n";
-    console.log(msg.substr(0,75)+"... ");
+    console.log(msg.substr(0,exports.MAX_LENGTH_OF_CONSOLE_MESSAGE)+"... ");
     fs.appendFile(cleanPathToLog(logFileName+".log"), msg, function (err) {
         if (err) throw (err);
     });
