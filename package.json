@@ -20,6 +20,8 @@
     "node-uuid": "~1.4.0",
     "async": "~0.2.5",
     "nconf": "~0.6.7",
-    "azure": "~0.6.10"
+    "azure": "~0.6.10",
+    "browserType": "~0.2.0",
+    "useragent": "~2.0.2"
   }
 }
