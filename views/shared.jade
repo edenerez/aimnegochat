@@ -10,17 +10,18 @@ html(lang="en")
    //Le styles
    link(href="/stylesheets/bootstrap.css", rel="stylesheet")
    link(href="/stylesheets/bootstrap-responsive.css", rel="stylesheet")
-   link(href="/stylesheets/aimapp.css", rel="stylesheet")
    link(href="/javascripts/google-code-prettify/prettify.css", rel="stylesheet")
    // for IE6-8 support of HTML5 elements
    //if lt IE 9
      script(src="http://html5shim.googlecode.com/svn/trunk/html5.js")
 
+   style(type='text/css')
+      .scrol {
+        overflow: auto;
+        border: 1px solid black;
+      }
 
   body(data-spy="scroll", data-target=".bs-docs-sidebar")
-    block nav
-     // Navbar
-     //==================================================
      div.navbar.navbar-inverse.navbar-fixed-top
       div.navbar-inner
        div.container
@@ -28,49 +29,30 @@ html(lang="en")
          span.icon-bar
          span.icon-bar
          span.icon-bar
-        a.brand(href="./") AIM Negochat
-        div.nav-collapse.collapse
-        ul.nav
-          li.active
-            a(href="./") Home
-          li
-            a(href="./getting-started.html") Get started
-          li
-            a(href="./research.html") Research
-          li
-            a(href="./modules.html") Modules
-          li
-           a(href="./listAllQuestionnaire") Questionnaire
+        a.brand(href='#') Chat Project
+        .nav-collapse.collapse
+          ul.nav
+            li
+              a(href="./") Home
+            for type in gametypes  
+                  if (type == gametype) 
+                    li.active
+                      a(href='/#{type}/gametype') #{type}
+                  else
+                    li
+                      a(href='/#{type}/gametype') #{type}
          
             
    
-    block content
+     block content
     
 
 
     block footer
      //Footer
      //==================================================
-     footer.footer
-      div.container
-       p Designed and built by 
-        a(href="http://twitter.com/mdo", target="_blank") @mdo
-       p Code licensed under 
-        a(href="http://www.apache.org/licenses/LICENSE-2.0", target="_blank") Apache License v2.0
-       p
-        a(href="http://glyphicons.com") Glyphicons Free 
-        | licensed under 
-        a(href="http://creativecommons.org/licenses/by/3.0/") CC BY 3.0
-        | .
-       ul.footer-links
-        li
-         a(href="http://blog.getbootstrap.com") Blog
-        li.muted &middot;
-        li
-         a(href="https://github.com/rothariel/aimnegochat/issues?state=open") Issues
-        li.muted &middot;
-        li
-         a(href="http://github.com/rothariel/aimnegochat/wiki") Roadmap and changelog
+     footer
+        p © Company 2013
 
          
         

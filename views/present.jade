@@ -37,22 +37,59 @@ head
           a.brand(href='#') Chat Project
           .nav-collapse.collapse
             ul.nav
-              li.active
-                a(href='#') Home
-              for gametype in gametypes  
-                li
-                 a(href='/#{gametype}/gametype') #{gametype}
-
+              li
+                a(href='/') Home
+              for type in gametypes  
+                  if (type == gametype) 
+                    li.active
+                      a(href='/#{type}/gametype') #{type}
+                  else
+                    li
+                      a(href='/#{type}/gametype') #{type}
           //
             /.nav-collapse 
     .container
-      //
-         Main hero unit for a primary marketing message or call to action 
-      .hero-unit
-        h1 WELCOME!
-        p This is a chat sample of a negotiation
-      //
-         Example row of columns 
+      
+      h1 BIU AI lab gametype server - Main Page
+      h4
+          a(href='/users') Active users
+          div(style='background-color: #eee;')
+            h1 #{gametype} Lists
+            h4
+              a(href='/#{gametype}/listAllQuestionnaire') All Questionnaire
+            h4
+              a(href='/#{gametype}/listAllGames') All Games
+             h4
+              a(href='/#{gametype}/listAllFinalResults') All FinalResults 
+            h4
+              a(href='/#{gametype}/listactive') Active games              
+            h4
+              a(href='/#{gametype}/listlogs') Logged games
+            h4
+              a(href='/#{gametype}/listlogs?finished=1') Finished games
+            h4
+              a(href='/#{gametype}/listlogs?pretty=1') Verified games
+            h4
+              a(href='/LogToXml/PreQuestionnaireDemography') answers to demographic questionnaire
+            h4
+              a(href='/LogToXml/PostQuestionnaire') answers to post-gametype questionnaire
+            hr
+            h2 Let's Play!
+            h4
+              | note: Open different links in different browsers, to make the server think they are different users.
+            h4
+              a(href='/#{gametype}/beginner') PLAY - A worker not from Amazon Turk
+            h4
+              a(href='/#{gametype}/beginner?assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE') PLAY - Amazon Turk Preview mode
+            h4
+              a(href='/#{gametype}/beginner?workerId=amazonworker123&hitId=hit123&assignmentId=assignment123&turkSubmitTo=sandbox') PLAY - Amazon Turk Live mode with a dummy worker
+            h4
+              a(href='/#{gametype}/advanced') PLAY - A worker not from Amazon Turk - jump directly to game
+            h4
+              a(href='/#{gametype}/advanced?workerId=amazonworker123&hitId=hit123&assignmentId=assignment123&turkSubmitTo=sandbox') PLAY - Amazon Turk Live mode - jump directly to game
+            h4
+              a(href='/#{gametype}/advanced/Employer') PLAY - Jump directly to game as Employer
+      
       hr
       footer
         p © Company 2013

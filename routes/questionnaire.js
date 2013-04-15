@@ -1,5 +1,6 @@
-var azure = require('azure')
-  , async = require('async');
+var azure = require('azure');
+  //, uuid = require('node-uuid');
+ // , async = require('async')
 
 
 module.exports = Questionnaire;
@@ -10,14 +11,14 @@ function Questionnaire(questionnaireModel) {
 }
 
 Questionnaire.prototype = {
-  listAll: function(req, res) {
+  listAll: function(req, res, gameServers) {
     self = this;
     var query = azure.TableQuery
       .select()
       .from(self.questionnaireModel.tableName);
       //.where('datastatus eq ?', 0);
     self.questionnaireModel.find(query, function itemsFound(err, items) {
-      res.render('researcheData',{title: 'Questionnaire List', questionnaireList: items});
+      res.render('questionnaireData',{title: 'Questionnaire List', questionnaireList: items ,gametype: req.params.gametype,  gametypes: Object.keys(gameServers)});
     });
   },
 
@@ -25,10 +26,21 @@ Questionnaire.prototype = {
   addQuestionnaire: function(req,res) {
     var self = this;      
     var item = req.body.item;
+    item.RowKey = req.session.data.userid;
+    req.session.data.RowKey = item.RowKey;
+    item.browserType = req.session.data.browserType + req.session.data.browserVersion;
+    item.userid = req.session.data.userid;
+    item.gametype = req.session.data.gametype;
+    item.role = req.session.data.role;
+    //item.gameid = req.session.data.gameid ? req.session.data.gameid : NaN; // doesn't work either - why?
+    item.assignmentId = req.session.data.assignmentId ? req.session.data.assignmentId : NaN; //null throw the program. undefine ignore it. mayby to put some string like "no amazonTurk"
+    item.hitId = req.session.data.hitId ? req.session.data.hitId : NaN;
+    item.workerId = req.session.data.workerId ? req.session.data.workerId : NaN; //same
     self.questionnaireModel.add(item, function itemAdded(err) {
       if(err) {
         throw err;
       }
+      //res.redirect('/PostQuestionnaireA');
       res.redirect('/PreQuestionnaireExam');
     });
   },
@@ -44,25 +56,15 @@ Questionnaire.prototype = {
     res.redirect('/listAllQuestionnaire');
   },
 
-
-
   activeQuestionnaire: function(req,res) {
     var self = this;
-    var activeQuestionnairs = Object.keys(req.body);
-    async.forEach(activeQuestionnairs, function taskIterator(activeQuestionnaire, callback){
-      self.questionnaireModel.updateItem(activeQuestionnaire, function itemsUpdated(err){
-        if(err){
-          callback(err);
-        } else {
-          callback(null);
-        }
-      })
-    }, function(err){
+    var item = req.body.item;
+    item.RowKey = req.session.data.RowKey;
+    self.questionnaireModel.updateItem(item, function itemAdded(err) {
       if(err) {
         throw err;
-      } else {
-       res.redirect('/listAllQuestionnaire');
       }
+      res.redirect('/ThankYou');
     });
   }
 

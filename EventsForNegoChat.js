@@ -1,4 +1,4 @@
-exports.add = function(socket, game, session_data, io, message, messageLog, applocals) {
+exports.add = function(socket, game, session_data, io, message, messageLog, applocals, finalResultTable) {
 
 	var agent = applocals.actualAgents[session_data.role];
 	if (agent)
@@ -45,6 +45,8 @@ exports.add = function(socket, game, session_data, io, message, messageLog, appl
 		};
 		//messageLog(socket, game, "Sign", session_data, finalResult);
 		game.mapRoleToFinalResult[session_data.role] = finalResult;
+				session_data.mapRoleToFinalResult = finalResult;
+		finalResultTable.addFinalResult(session_data);
 		messageLog(socket, game, "Sign", session_data, finalResult);
 		socket.emit('sign', {id: session_data.role, agreement: agreement, you: true});
 		socket.broadcast.to(game.gameid).emit('sign', {id: session_data.role, agreement: agreement, you: false});

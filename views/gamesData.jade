@@ -1,0 +1,38 @@
+extends shared
+
+block content
+ div.container
+   br 
+   br
+   h1= title
+   br
+
+
+   form.scrol(action="/activeGames", method="post")
+     table(class="table table-striped table-bordered")
+       tr
+         td Game Id
+         td Timestamp
+         td Employer Id
+         td Candidate Id
+         td Game Type
+         td Start Time
+         td End Time
+         td DataStatus
+         td Active
+       - if (gamesList !== undefined) 
+         each games in gamesList
+          tr
+            td
+             a(href='/#{gametype},#{games.PartitionKey},#{games.Employer},#{games.Candidate}/gameReport') #{games.PartitionKey}
+            td #{games.Timestamp}
+            td #{games.Employer}
+            td #{games.Candidate}
+            td #{games.gametype}
+            td #{games.startTime}
+            td #{games.endTime}
+            td #{games.DataStatus}
+            td
+              input(type="hidden", name="#{games.RowKey}", value="#{games.RowKey}")
+              input(type="checkbox", name="active", value="#{!games.active}", checked=games.active)
+     
