@@ -97,7 +97,7 @@ var iparaphraseInput = 0;
 var doneParapharseInputs = {};
 var INPUTS_PER_ASSIGNMENT=4;
 var PARAPHRASES_PER_INPUT=3;
-var PRIME_STEP_IN_INPUT_LOOP=31;
+var PRIME_STEP_IN_INPUT_LOOP=29;
 
 app.get('/paraphrase', function(req,res) {
 	setSessionForNewUser(req);
@@ -129,34 +129,45 @@ app.get('/paraphrase', function(req,res) {
 
 app.get('/WriteParaphrases', function(req,res) {
 		var nextAction = req.query.next_action;	delete req.query.next_action;
+		logger.writeEventLog("events", "WRITE",	req.query);
 
-		var newNaturalPairs = "", newSemanticPairs = "";
 		for (var j=0; j<INPUTS_PER_ASSIGNMENT; ++j) {
+			var newNaturalPairs = "", newSemanticPairs = "";
 			var iSentence  = req.query["iSentence_"+j];	
 			var natural  = req.query["natural_"+j];	
 			var semantic  = req.query["semantic_"+j];	
-			var output = {};
 			for (var i=1; i<=PARAPHRASES_PER_INPUT; ++i) {
-				var id = "paraphrase_"+j+"_"+i;
-				if (req.query[id] && req.query[id].length) {
-					newNaturalPairs  += "* "+req.query[id]+"    /    "+natural  + "\n";
-					newSemanticPairs += "* "+req.query[id]+"    /    "+semantic + "\n";
-					output[natural] = semantic;
-				}
+					var id = "paraphrase_"+j+"_"+i;
+					if (req.query[id] && req.query[id].length>0) {
+						newNaturalPairs  += "* "+req.query[id]+"    /    "+natural  + "\n";
+						newSemanticPairs += "* "+req.query[id]+"    /    "+semantic + "\n";
+					}
 			}
 			if (newNaturalPairs.length>0)  fs.appendFile("logs/ParaphraseOutputNatural.txt", newNaturalPairs);
 			if (newSemanticPairs.length>0) fs.appendFile("logs/ParaphraseOutputSemantic.txt", newSemanticPairs);
-			logger.writeJsonLog("ParaphraseOutput", output);
 
-			doneParapharseInputs[iSentence] = true;
-			var numDone = Object.keys(doneParapharseInputs).length;
+			var numDone;
+			paraphraseSemaphore.take(function() {
+				doneParapharseInputs[iSentence] = true;
+				numDone = Object.keys(doneParapharseInputs).length;
+				if (numDone>=paraphraseNaturals.length)  // restart:
+					doneParapharseInputs = {};
+				paraphraseSemaphore.leave();
+			});
 			console.log("done "+numDone+" out of "+paraphraseNaturals.length+" paraphrases.");
-			if (numDone>=paraphraseNaturals.length)  // restart:
-				doneParapharseInputs = {};
 		}
 
-		logger.writeJsonLog("ParaphraseUsers", {user: req.session.data, natural: natural, answers: req.query});
+		logger.writeJsonLog("ParaphraseUsers", {user: req.session.data, answers: req.query});
 		res.redirect(nextAction);
+});
+
+
+
+app.get('/LogToXml/:logFileName', function(req,res) {
+		res.contentType('text/xml');
+		logger.readJsonLog(req.params.logFileName+".json", function(object) {
+			res.render("LogToXml",	{log: object});
+		});
 });
 
 

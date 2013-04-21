@@ -13,6 +13,7 @@ var express = require('express')
 	, multiplayer = require('./multiplayer')
 	, logger = require('./logger')
 	, timer = require('./timer')
+	, useragent = require('useragent')
 	;
 
 var cookieParser = express.cookieParser('biuailab')
@@ -30,12 +31,33 @@ var partitionKey = nconf.get("PARTITION_KEY")
 , accountKey = nconf.get("STORAGE_KEY");
 
 
-
 //
 // Step 0: Users and sessions:
 //
 //ariel
 var users = {}; 
+
+/**
+ * Gets as input HTTP request.
+ * Puts in the req.session.data a new field called 'browserType', which is a string describing the type of web-browser used for that request.
+ */
+function browserType (req){
+	var ua = useragent.is(req.headers['user-agent']);
+	req.session.data.browserVersion =  ua.version;
+	
+	if (ua.webkit == true)
+		req.session.data.browserType = 'webkit';
+	if (ua.opera == true)
+		req.session.data.browserType = 'opera';
+	if (ua.ie == true)
+		req.session.data.browserType = 'ie';
+	if (ua.chrome == true)
+		req.session.data.browserType = 'chrome';
+	if (ua.safari == true)
+		req.session.data.browserType = 'safari';
+	if (ua.firefox == true)
+		req.session.data.browserType = 'firefox';
+}
 
 function setSessionForNewUser(req) {
 	if (req.session && req.session.data) {
@@ -47,6 +69,9 @@ function setSessionForNewUser(req) {
 	req.session.data.gametype = req.params.gametype;
 	if (req.params.role)
 		req.session.data.role = req.params.role;
+	browserType(req);
+	req.session.data.gameid = req.param.gameid;
+	
 	users[req.session.data.userid] = req.session.data;
 	users[req.session.data.userid].urls = [req.url.substr(0,60)];
 	logger.writeEventLog("events", "NEWSESSION",	 req.session);
@@ -161,7 +186,10 @@ app.get('/users', function(req,res) {
 		res.render("Users",	{users:users});
 });
 
-
+app.get('/:gametype/gametype', function (req,res){
+	var gameType = req.params.gametype;
+	res.render("present", {gametype: gameType , gametypes: Object.keys(gameServers) });
+});
 // This is the entry point for an Amazon Turker with no role:
 //    It will select his role, then lead him to the preview or to the pre-questionnaire:
 app.get('/:gametype/beginner', function(req,res) {
@@ -171,7 +199,7 @@ app.get('/:gametype/beginner', function(req,res) {
 			 res.redirect('/'+req.params.gametype+'/preview');
 		} else {
 			req.session.data.role = gameServer.nextRole();
-			res.redirect('/PreQuestionnaireDemography');
+			res.redirect('/prequestionnaireA');
 		}
 });
 
@@ -217,7 +245,7 @@ app.get('/:gametype/watchgame/:gameid', function(req,res) {
 		setSessionForNewUser(req);	
 		console.log('Watch mode start. session = '+JSON.stringify(req.session.data));
 		req.session.data.role = 'Watcher';
-		ret.session.data.gameid = req.params.gameid;
+		req.session.data.gameid = req.params.gameid;
 		req.session.data.silentEntry = true;
 		res.redirect('/'+req.params.gametype+'/play');
 });
@@ -298,15 +326,99 @@ var questionnaireModel = new QuestionnaireModel(
     , partitionKey);
 var questionnaire = new Questionnaire(questionnaireModel);
 
-
-app.get('/listAllQuestionnaire', questionnaire.listAll.bind(questionnaire));
+app.get('/:gametype/listAllQuestionnaire' ,function (req,res){
+	 questionnaire.listAll(req,res,gameServers);
+});
 app.get('/prequestionnaireA', questionnaire.demographyQuestionnaire.bind(questionnaire));
 app.post('/addquestionnaire', questionnaire.addQuestionnaire.bind(questionnaire));
 app.post('/deleteQuestionnaireTable', questionnaire.deleteQuestionnaireTable.bind(questionnaire));
 app.post('/activeQuestionnaire', questionnaire.activeQuestionnaire.bind(questionnaire));
 
-/////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+/////////////////
+//gameAction
+/////////////////
+
+var GameAction = require('./routes/gameAction');
+var GameActionModel = require('./models/gameActionModel');
+var gameActionModel = new GameActionModel (
+	azure.createTableService(accountName, accountKey)
+	, 'GameAction'
+	, partitionKey);
+var gameAction = new GameAction(gameActionModel);
+
+function messageLog(socket, game, action, user, data) {
+	logger.writeJsonLog('actions_'+game.gameid, 
+		{role: user.role, remainingTime: game.timer? game.timer.remainingTimeSeconds(): "-", user: (action=='Connect'? user: user.userid), action: action, data: data});
+	logger.writeEventLog('events', action+" '"+JSON.stringify(data)+"'", user);
+//I think we can change the call of the "massageLog" function to "gameAction.activeGameAction" instead and it will still work. and we don't need the socket here
+	gameAction.activeGameAction(game, action, user, data);
+	if (action == "Disconnect" )
+	{	
+		gamesTable(user.gametype, game, true);
+		//finalResult.addFinalResult(game.gameid,game.mapRoleToFinalResult.Candidate, game.mapRoleToUserid.Candidate);
+		//finalResult.addFinalResult(game.gameid,game.mapRoleToFinalResult.Employer, game.mapRoleToUserid.Employer);
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////
+//Games
+///////////////////
+
+var Games = require('./routes/games');
+var GamesModel = require('./models/gamesModel');
+var gamesModel = new GamesModel (
+	azure.createTableService(accountName, accountKey)
+	, 'Games');
+var games = new Games(gamesModel);
+
+app.get('/:gametype/listAllGames' ,function (req,res){
+	 games.listAll(req,res,gameServers);
+});
+
+function gamesTable(gametype, game, unverified)
+{
+	game.endGame();
+	games.addGames(gametype, game.gameid, game.startTime, unverified, game.mapRoleToUserid, game.endTime);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////
+//FinalResult
+///////////////////
+
+var FinalResult = require('./routes/finalResult');
+var FinalResultModel = require('./models/finalResultModel');
+var finalResultModel = new FinalResultModel (
+	azure.createTableService(accountName, accountKey)
+	, 'FinalResult');
+var finalResult = new FinalResult(finalResultModel);
+
+app.get('/:gametype/listAllFinalResults' ,function (req,res){
+	 finalResult.listAll(req,res,gameServers);
+});
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////
+//GameReport
+/////////////////////
+
+var GameReport = require('./routes/report');
+var gameReport = new GameReport (questionnaireModel
+								,gamesModel
+								,gameActionModel
+								,finalResultModel);
+
+app.get('/:gametype,:PartitionKey,:Employer,:Candidate/gameReport' , function (req,res){
+	gameReport.gameInfo (req,res,gameServers);
+});
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.get('/PreQuestionnaireDemography', function(req,res) {
 		res.render("PreQuestionnaireDemography",	{
@@ -391,7 +503,7 @@ app.get('/:gametype/play', function(req,res) {
 				agent: actualAgents[req.session.data.role],
 				session_data: req.session.data,
 				AMTStatus: JSON.stringify(req.session.data),
-				next_action:'/PostQuestionnaire'});
+				next_action:'/PostQuestionnaireA'});
 });
 
 app.get('/:gametype/preview', function(req,res) {
@@ -405,9 +517,10 @@ app.get('/:gametype/preview', function(req,res) {
 				next_action: ''});
 });
 
-app.get('/PostQuestionnaire', function(req,res) {
-		res.render("PostQuestionnaire",	{
-				action:'/WriteQuestionnaireAnswers/PostQuestionnaire',
+app.get('/PostQuestionnaireA', function(req,res) {
+		
+		res.render("PostQuestionnaireA",	{
+				action:'/WriteQuestionnaireAnswers/PostQuestionnaireA',
 				next_action:'/ThankYou',
 				AMTStatus: JSON.stringify(req.session.data)});
 });
@@ -448,11 +561,13 @@ io.configure(function () {
 	io.set("polling duration", 10); 
 });
 
-function messageLog(socket, game, action, user, data) {
+/*
+function mymessageLog(socket, game, action, user, data) { 
 	logger.writeJsonLog('actions_'+game.gameid, 
 		{role: user.role, remainingTime: game.timer? game.timer.remainingTimeSeconds(): "-", user: (action=='Connect'? user: user.userid), action: action, data: data});
 	logger.writeEventLog('events', action+" '"+JSON.stringify(data)+"'", user);
 }
+*/
 
 
 /**
@@ -531,7 +646,7 @@ io.sockets.on('connection', function (socket) {
 								unverified: true,
 								mapRoleToUserid: game.mapRoleToUserid,
 								mapRoleToFinalResult: game.mapRoleToFinalResult
-							});
+								});
 							game.endLogged = true;
 						}
 					}
@@ -546,11 +661,14 @@ io.sockets.on('connection', function (socket) {
 		});
 	
 		if (gameServer.events)
-			gameServer.events.add(socket, game, session.data, io, announcement, messageLog, app.locals);
+			gameServer.events.add(socket, game, session.data, io, announcement, messageLog, app.locals, finalResult);
 	});  // end of identify event
 });
 
-
+process.on('uncaughtException', function(err){
+console.error(err.stack);
+process.exit(1);
+});
 
 //
 // Last things to do before exit:

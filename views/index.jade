@@ -1,32 +1,78 @@
-extends layout
-block title
- title BIU AI lab gametype server - Home
-block body
- div#index
-  h1 BIU AI lab gametype server - Main Page
-  h2 Server started at GMT <b>#{serverStartTime.toISOString().replace(/[ZT]/g," ")}</b>
-  h4: a(href='/users') Active users
-  for gametype in gametypes
-   div(style='background-color:#eee')
-    h1 #{gametype}
-    h2 Lists
-    h4: a(href='/#{gametype}/listactive') Active games
-    h4: a(href='/#{gametype}/listlogs') Logged games
-    h4: a(href='/#{gametype}/listlogs?finished=1') Finished games
-    h4: a(href='/#{gametype}/listlogs?pretty=1') Verified games
-    h4: a(href='/LogToXml/PreQuestionnaireDemography') answers to demographic questionnaire
-    h4: a(href='/LogToXml/PostQuestionnaire') answers to post-gametype questionnaire
-    h2 Testing
-    h4 note: Open different links in different browsers, to make the server think they are different users.
-    h4: a(href='/#{gametype}/beginner') A worker not from Amazon Turk
-    h4: a(href='/#{gametype}/beginner?assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE') Amazon Turk Preview mode
-    h4: a(href='/#{gametype}/beginner?workerId=amazonworker123&hitId=hit123&assignmentId=assignment123&turkSubmitTo=sandbox') Amazon Turk Live mode with a dummy worker
-    h4: a(href='/#{gametype}/advanced') A worker not from Amazon Turk - jump directly to game
-    h4: a(href='/#{gametype}/advanced?workerId=amazonworker123&hitId=hit123&assignmentId=assignment123&turkSubmitTo=sandbox') Amazon Turk Live mode - jump directly to game
-    h4: a(href='/#{gametype}/advanced/Employer') Jump directly to game as Employer
-  div(style='background-color:#eee')
-   h1 Paraphrase experiment
-   h4: a(href='/LogToXml/ParaphraseOutput') Outputs
-   h4: a(href='/LogToXml/ParaphraseUsers') Users
-   h4: a(href='/paraphrase?assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE') Amazon Turk Preview mode
-   h4: a(href='/paraphrase?workerId=amazonworker123&hitId=hit123&assignmentId=assignment123&turkSubmitTo=sandbox') Amazon Turk Live mode with a dummy worker
+!!! 5
+html(lang='en')
+head
+    meta(charset='utf-8')
+    title Chat-Chat
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    meta(name='description', content='')
+    meta(name='author', content='')
+    //
+       Le styles 
+    link(href='../assets/css/bootstrap.css', rel='stylesheet')
+    style(type='text/css')
+      body {
+      padding-top: 60px;
+      padding-bottom: 40px;
+      }
+    link(href='../assets/css/bootstrap-responsive.css', rel='stylesheet')
+    //
+       HTML5 shim, for IE6-8 support of HTML5 elements 
+    //if lt IE 9
+      script(src='../assets/js/html5shiv.js')
+    //
+       Fav and touch icons 
+    link(rel='apple-touch-icon-precomposed', sizes='144x144', href='../assets/ico/apple-touch-icon-144-precomposed.png')
+    link(rel='apple-touch-icon-precomposed', sizes='114x114', href='../assets/ico/apple-touch-icon-114-precomposed.png')
+    link(rel='apple-touch-icon-precomposed', sizes='72x72', href='../assets/ico/apple-touch-icon-72-precomposed.png')
+    link(rel='apple-touch-icon-precomposed', href='../assets/ico/apple-touch-icon-57-precomposed.png')
+    link(rel='shortcut icon', href='../assets/ico/favicon.png')
+  body
+    .navbar.navbar-inverse.navbar-fixed-top
+      .navbar-inner
+        .container
+          button.btn.btn-navbar(type='button', data-toggle='collapse', data-target='.nav-collapse')
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.brand(href='#') Chat Project
+          .nav-collapse.collapse
+            ul.nav
+              li.active
+                a(href='#') Home
+              for gametype in gametypes  
+                li
+                 a(href='/#{gametype}/gametype') #{gametype}
+
+          //
+            /.nav-collapse 
+    .container
+      //
+         Main hero unit for a primary marketing message or call to action 
+      .hero-unit
+        h1 WELCOME!
+        p This is a chat sample of a negotiation
+      //
+         Example row of columns 
+      hr
+      footer
+        p © Company 2013
+    //
+       /container 
+    //
+       Le javascript
+          
+    //
+       Placed at the end of the document so the pages load faster 
+    script(src='../assets/js/jquery.js')
+    script(src='../assets/js/bootstrap-transition.js')
+    script(src='../assets/js/bootstrap-alert.js')
+    script(src='../assets/js/bootstrap-modal.js')
+    script(src='../assets/js/bootstrap-dropdown.js')
+    script(src='../assets/js/bootstrap-scrollspy.js')
+    script(src='../assets/js/bootstrap-tab.js')
+    script(src='../assets/js/bootstrap-tooltip.js')
+    script(src='../assets/js/bootstrap-popover.js')
+    script(src='../assets/js/bootstrap-button.js')
+    script(src='../assets/js/bootstrap-collapse.js')
+    script(src='../assets/js/bootstrap-carousel.js')
+    script(src='../assets/js/bootstrap-typeahead.js')

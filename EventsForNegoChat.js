@@ -3,13 +3,13 @@ var deepmerge = require('./deepmerge');
 var grammarFile = "NegotiationGrammarJson.txt";
 var translation = require('./translation');
 
-exports.add = function(socket, game, session_data, io, announcement, messageLog, applocals) {
+exports.add = function(socket, game, session_data, io, announcement, messageLog, applocals, finalResultTable) {
 	var translator = new translation.Translator();
 
 	var agent = applocals.actualAgents[session_data.role];
 	if (agent)
 		var allIssues = agent.utility_space_object.issueByIndex;
-		
+
 	var misunderstanding = function(message) {
 		socket.emit('announcement', {action: "Misunderstanding", id: "Translator", you: false, msg: message});
 	}
@@ -87,7 +87,7 @@ exports.add = function(socket, game, session_data, io, announcement, messageLog,
 		socket.emit('yourUtility', utilityWithDiscount);
 	});
 
-	// A user finished playing (e.g. by clicking a "finish" button):
+	// A player finished playing (e.g. by clicking a "finish" button):
 	socket.on('sign', function (agreement) {
 		var utilityWithoutDiscount = Math.round(agent.utility_space_object.getUtilityWithoutDiscount(agreement));
 		var timeFromStart = game.timer? game.timer.timeFromStartSeconds(): 0;
@@ -101,8 +101,9 @@ exports.add = function(socket, game, session_data, io, announcement, messageLog,
 			utilityWithoutDiscount:	utilityWithoutDiscount,
 			utilityWithDiscount:		 utilityWithDiscount
 		};
-		//messageLog(socket, game, "Sign", session_data, finalResult);
 		game.mapRoleToFinalResult[session_data.role] = finalResult;
+		session_data.mapRoleToFinalResult = finalResult;
+		finalResultTable.addFinalResult(session_data);
 		messageLog(socket, game, "Sign", session_data, finalResult);
 		socket.emit('sign', {id: session_data.role, agreement: agreement, you: true});
 		socket.broadcast.to(game.gameid).emit('sign', {id: session_data.role, agreement: agreement, you: false});

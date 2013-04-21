@@ -1,0 +1,81 @@
+extends layout
+block title
+  title Post-Game Feedback Questionnaire
+block body
+  script
+    $(function() {
+      $(".human").hide();
+      $("select#computer_program").change(function() {
+        $(".human").show();
+      });
+    });
+  div#analysisContainer
+    form#questForm(action="/activeQuestionnaire", method="post")
+      h1 Post-negotiation questionnaire
+      p Please give us some feedback about the experiment!
+      p We would appreciate your answers to the following:
+
+      
+      table
+        tr
+          td.left How <b>happy</b> are you with the end result? (1 - not happy, 5 - very happy)
+          td.field
+            select(name='item[happy]')
+              option(value='') -- select --
+              for v in [1, 2, 3, 4, 5]
+                option(value='#{v}') #{v}
+        tr
+          td.left Were the <b>instructions</b> of the game explained clearly in the tutorial? (1 - not clear, 5 - very clear)
+          td.field
+            select(name='item[instructions]')
+              option(value='') -- select --
+              for v in [1, 2, 3, 4, 5]
+                option(value='#{v}') #{v}
+        tr
+          td.left How do you evaluate the <b>fairness</b> of the end result? (1 - not fair, 5 - very fair)
+          td.field
+            select(name='item[fairness]')
+              option(value='') -- select --
+              for v in [1, 2, 3, 4, 5]
+                option(value='#{v}') #{v}
+        tr
+           td.left How likely is it that the negotiation partner was a <b>computer program</b>? (1 - not likely, 5 - very likely)
+           td.field
+            select#computer_program(name='item[computer_program]')
+              option(value='') -- select --
+              for v in [1, 2, 3, 4, 5]
+                option(value='#{v}') #{v}
+        tr.human
+           td.left Well... it was a human.
+        tr.human
+           td.left Can you estimate the <b>type</b> of person you've negotiated with?
+           td.field
+            select(name='item[type]')
+              option(value='') -- select --
+              for v in ['Short-term', 'Compromise', 'Long-term']
+                option(value='#{v}') #{v}
+        tr.human
+           td.left Can you estimate the <b>gender</b> of person you've negotiated with?
+           td.field
+            select(name='item[otherGender]')
+              option(value='') -- select --
+              for v in ['Male', 'Female']
+                option(value='#{v}') #{v}
+        tr.human
+           td.left How likely is it that the negotiation partner was from the <b>same country</b> as you are? (1 - not likely, 5 - very likely)
+           td.field
+            select(name='item[same_country]')
+              option(value='') -- select --
+              for v in [1, 2, 3, 4, 5]
+                option(value='#{v}') #{v}
+        tr
+           td.label General feedback:
+           td.field
+              textarea(name='item[feedback]',rows='10',cols='40')
+
+        tr
+           td
+           td.left
+             input(type="submit", class="button", value="Continue")
+
+      h1 Thank you for your time

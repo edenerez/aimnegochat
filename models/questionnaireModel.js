@@ -1,5 +1,5 @@
-var azure = require('azure')
-  , uuid = require('node-uuid');
+var azure = require('azure');
+ // , uuid = require('node-uuid');
 
 module.exports = QuestionnaireModel;
 
@@ -21,7 +21,7 @@ function QuestionnaireModel(storageClient, tableName, partitionKey) {
 
 QuestionnaireModel.prototype.add = function(item, callback) {
 	self = this;
-  item.RowKey = uuid();
+  //item.RowKey = uuid();
   item.PartitionKey = self.partitionKey;
   item.datastatus = 0;
   item.completed = false;
@@ -29,7 +29,7 @@ QuestionnaireModel.prototype.add = function(item, callback) {
   self.storageClient.insertEntity(self.tableName, item, 
     function entityInserted(error) {
       if(error){  
-        callback(err);
+        callback(error);
       }
       callback(null);
     });
@@ -45,32 +45,41 @@ QuestionnaireModel.prototype.deleteTable = function() {
 };
 
 QuestionnaireModel.prototype.find = function(query, callback) {
-	self = this;
+  self = this;
   self.storageClient.queryEntities(query, 
-    function entitiesQueried(err, entities){
-      if(err) {
-        callback(err);
+    function entitiesQueried(error, entities){
+      if(error) {
+        callback(error);
       } else {
         callback(null, entities);
       }
     });
 };
 
+
+QuestionnaireModel.prototype.findOne = function(query, callback) {
+	self = this;
+  self.storageClient.queryEntity(query.tableName,
+                                 query.partitionKey,
+                                 query.rowKey, 
+    function entitiesQueried(error, entity){
+      if(error) {
+        callback(error);
+      } else {
+        callback(null, entity);
+      }
+    });
+};
+
 QuestionnaireModel.prototype.updateItem = function(item, callback) {
   self = this;
-  self.storageClient.queryEntity(self.tableName, self.partitionKey, item,
-    function entityQueried(err, entity) {
-     if(err) {
+  item.PartitionKey = self.partitionKey;
+    self.storageClient.insertOrMergeEntity (self.tableName, item, 
+    function entityInserted(error) {
+      if(error){  
         callback(err);
       }
-      entity.active = false;
-      self.storageClient.updateEntity(self.tableName, entity,
-        function entityUpdated(err) {
-          if(err) {
-            callback(err);
-          }
-          callback(null);
-        });
+      callback(null);
     });
 };
  
