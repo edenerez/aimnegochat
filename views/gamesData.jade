@@ -22,17 +22,18 @@ block content
          td Active
        - if (gamesList !== undefined) 
          each games in gamesList
-          tr
-            td
-             a(href='/#{gametype},#{games.PartitionKey},#{games.Employer},#{games.Candidate}/gameReport') #{games.PartitionKey}
-            td #{games.Timestamp}
-            td #{games.Employer}
-            td #{games.Candidate}
-            td #{games.gametype}
-            td #{games.startTime}
-            td #{games.endTime}
-            td #{games.DataStatus}
-            td
-              input(type="hidden", name="#{games.RowKey}", value="#{games.RowKey}")
-              input(type="checkbox", name="active", value="#{!games.active}", checked=games.active)
-     
+          if (games.gametype == gametype)
+            tr
+              td
+               a(href='/#{gametype},#{games.PartitionKey},#{games.Employer},#{games.Candidate}/gameReport') #{games.PartitionKey}
+              td #{games.Timestamp}
+              td #{games.Employer}
+              td #{games.Candidate}
+              td #{games.gametype}
+              td #{games.startTime}
+              td #{games.endTime}
+              td #{games.DataStatus}
+              td
+                input(type="hidden", name="#{games.RowKey}", value="#{games.RowKey}")
+                input(type="checkbox", name="active", value="#{!games.active}", checked=games.active)
+       

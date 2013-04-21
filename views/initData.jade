@@ -1,0 +1,46 @@
+extends shared
+
+block content
+  br 
+  br
+  div.container
+   
+   h1 User Info
+   br
+   div.scrol
+     table(class="table table-striped table-bordered")
+       tr
+         td Salary
+         td Job Description
+         td Leased Car
+         td Pension Fund
+         td Promotion Possibilities
+         td Working Hours
+         td Emp-Util-short
+         td Emp-Util-comp
+         td Emp-Util-long
+         td Luce Employer
+         td Can-Util-short
+         td Can-Util-comp
+         td Can-Util-long
+         td Luce Candidat
+
+       - if (initList !== undefined)
+         each questionnaire in initList 
+          tr
+            td #{questionnaire[0]}
+            td #{questionnaire[1]}
+            td #{questionnaire[2]}
+            td #{questionnaire[3]}
+            td #{questionnaire[4]}
+            td #{questionnaire[5]}
+            td #{questionnaire.utilEmployer}
+            td #{questionnaire.utilEmployerC}
+            td #{questionnaire.utilEmployerL}
+            td #{questionnaire.LuceEmployer}
+            td #{questionnaire.utilCandidat}
+            td #{questionnaire.utilCandidatC}
+            td #{questionnaire.utilCandidatL}
+            td #{questionnaire.LuceCandidat}
+
+ 

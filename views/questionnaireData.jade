@@ -39,32 +39,33 @@ block content
          td Active
        - if (questionnaireList !== undefined) 
          each questionnaire in questionnaireList
-          tr
-            td #{questionnaire.Timestamp}
-            td #{questionnaire.gender}
-            td #{questionnaire.age}
-            td #{questionnaire.education}
-            td #{questionnaire.field}
-            td #{questionnaire.birth_country}
-            td #{questionnaire.browserType}
-            td #{questionnaire.userid}
-            td #{questionnaire.gametype}
-            td #{questionnaire.role}
-            td #{questionnaire.gameid} 
-            td #{questionnaire.assisnmentid}
-            td #{questionnaire.hitid}
-            td #{questionnaire.workerid}
-            td #{questionnaire.datastatus}
-            td #{questionnaire.computer_program}
-            td #{questionnaire.fairness}
-            td #{questionnaire.feedback}
-            td #{questionnaire.happy}
-            td #{questionnaire.instruction}
-            td #{questionnaire.otherGender}
-            td #{questionnaire.same_country}
-            td #{questionnaire.type}
-            td #{questionnaire.completed}
-            td
-              input(type="hidden", name="#{questionnaire.RowKey}", value="#{questionnaire.RowKey}")
-              input(type="checkbox", name="active", value="#{!questionnaire.active}", checked=questionnaire.active)
+          if (questionnaire.gametype == gametype)
+             tr
+               td #{questionnaire.Timestamp}
+               td #{questionnaire.gender}
+               td #{questionnaire.age}
+               td #{questionnaire.education}
+               td #{questionnaire.field}
+               td #{questionnaire.birth_country}
+               td #{questionnaire.browserType}
+               td #{questionnaire.userid}
+               td #{questionnaire.gametype}
+               td #{questionnaire.role}
+               td #{questionnaire.gameid} 
+               td #{questionnaire.assisnmentid}
+               td #{questionnaire.hitid}
+               td #{questionnaire.workerid}
+               td #{questionnaire.datastatus}
+               td #{questionnaire.computer_program}
+               td #{questionnaire.fairness}
+               td #{questionnaire.feedback}
+               td #{questionnaire.happy}
+               td #{questionnaire.instruction}
+               td #{questionnaire.otherGender}
+               td #{questionnaire.same_country}
+               td #{questionnaire.type}
+               td #{questionnaire.completed}
+               td
+                 input(type="hidden", name="#{questionnaire.RowKey}", value="#{questionnaire.RowKey}")
+                 input(type="checkbox", name="active", value="#{!questionnaire.active}", checked=questionnaire.active)
      

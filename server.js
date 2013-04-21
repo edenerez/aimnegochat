@@ -314,6 +314,21 @@ app.get('/:gametype/listlogs', function(req,res) {
 		});
 });
 
+///////////////////
+//NewKBAgent
+///////////////////
+
+var NewKBAgent  = require('./agents/NewKBAgent');
+var newkbagent = new NewKBAgent();
+newkbagent.initializeNewKBAgent(domain);
+app.get('/:gametype/listNewKBAgentInit', function(req,res){
+	newkbagent.listAllInitData(req,res,gameServers);
+});
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 //////////////////
 // Questionnaire 
 ///////////////////
