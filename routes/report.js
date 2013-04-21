@@ -35,8 +35,15 @@ Report.prototype = {
              var queryE = {tableName : questionnaireModel.tableName, partitionKey : 'gameid', rowKey : req.params.Employer};
              questionnaireModel.findOne(queryE,function itemsFound(error,items2){
                 var users = {};
-                users[0] = items1;
-                users[1] = items2;
+                if (items1)
+                  users[0] = items1;
+                if (items2)
+                  if (!users[0])
+                    users[1] = items2;
+                  else
+                    users[0] = items2;
+                //users[0] = items1;
+                //users[1] = items2;
                 res.render('gamesActionData',{title: 'Game Action List', GameActionList: items, questionnaireList: users, gametype: gametype, FinalResultList: items0, gametypes: Object.keys(gameServers)});
               });
            });
