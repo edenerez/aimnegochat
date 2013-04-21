@@ -1,0 +1,32 @@
+extends shared
+
+block content
+ div.container
+  br 
+  br
+  h1 Game Action List
+  br
+  div.scrol
+     table(class="table table-striped table-bordered")
+       tr
+         td Game Id
+         td Action's Number
+         td Timestamp
+         td Action
+         td Remaining Time
+         td Role
+         td User Id
+         td Issue
+         td Value
+       - if (GameActionList !== undefined) 
+         each GameAction in GameActionList
+          tr
+            td #{GameAction.PartitionKey}
+            td #{GameAction.RowKey}
+            td #{GameAction.Timestamp}
+            td #{GameAction.action}
+            td #{GameAction.remainingTime}
+            td #{GameAction.role}
+            td #{GameAction.userid}
+            td #{GameAction.issue}
+            td #{GameAction.value}

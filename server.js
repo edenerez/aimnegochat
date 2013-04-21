@@ -363,6 +363,10 @@ function messageLog(socket, game, action, user, data) {
 	}
 }
 
+app.get('/:gametype/listAllGameAction' ,function (req,res){
+	 gameAction.listAll(req,res,gameServers);
+});
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////

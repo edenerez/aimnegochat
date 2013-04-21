@@ -27,6 +27,18 @@ GameAction.prototype = {
       }
     });
   },
+
+ listAll: function(req, res,gameServers) {
+    self = this;
+    var query = azure.TableQuery
+      .select()
+      .from(self.GameActionModel.tableName);
+      //.where('datastatus eq ?', 0);
+    self.GameActionModel.find(query, function itemsFound(err, items) {
+      res.render('games',{title: 'Games Action', GameActionList: items, gametype: req.params.gametype,  gametypes: Object.keys(gameServers)});
+    });
+  },
+
   
   activeGameAction: function(game, action, user, data) {
     var self = this;
