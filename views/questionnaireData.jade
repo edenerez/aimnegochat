@@ -11,8 +11,6 @@ block content
    form.scrol(action="/activeQuestionnaire", method="post")
      table(class="table table-striped table-bordered")
        tr
-         td PartitionKey
-         td RowKey
          td Timestamp
          td Gender
          td Age
@@ -42,8 +40,6 @@ block content
        - if (questionnaireList !== undefined) 
          each questionnaire in questionnaireList
           tr
-            td #{questionnaire.PartitionKey}
-            td #{questionnaire.RowKey}
             td #{questionnaire.Timestamp}
             td #{questionnaire.gender}
             td #{questionnaire.age}
