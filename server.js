@@ -315,6 +315,22 @@ app.get('/:gametype/listlogs', function(req,res) {
 });
 
 ///////////////////
+//KBAgent
+///////////////////
+/*
+
+//in my opinion the kbagent supposed to initialize when we start the game or
+//something, but then we suold check what happened with the unsync running.
+var KBAgent  = require('./agents/KBAgent');
+var kbagent = new KBAgent();
+//kbagent.initializeKBAgent();
+
+*/
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+///////////////////
 //NewKBAgent
 ///////////////////
 
@@ -370,12 +386,14 @@ function messageLog(socket, game, action, user, data) {
 	logger.writeEventLog('events', action+" '"+JSON.stringify(data)+"'", user);
 //I think we can change the call of the "massageLog" function to "gameAction.activeGameAction" instead and it will still work. and we don't need the socket here
 	gameAction.activeGameAction(game, action, user, data);
+	/*
 	if (action == "Disconnect" )
 	{	
 		gamesTable(user.gametype, game, true);
 		//finalResult.addFinalResult(game.gameid,game.mapRoleToFinalResult.Candidate, game.mapRoleToUserid.Candidate);
 		//finalResult.addFinalResult(game.gameid,game.mapRoleToFinalResult.Employer, game.mapRoleToUserid.Employer);
-	}
+	}*/
+	gamesTable(user.gametype, game, true, action);
 }
 
 app.get('/:gametype/listAllGameAction' ,function (req,res){
@@ -399,10 +417,16 @@ app.get('/:gametype/listAllGames' ,function (req,res){
 	 games.listAll(req,res,gameServers);
 });
 
-function gamesTable(gametype, game, unverified)
+function gamesTable(gametype, game, unverified, action)
 {
-	game.endGame();
-	games.addGames(gametype, game.gameid, game.startTime, unverified, game.mapRoleToUserid, game.endTime);
+	if (action == "Connect"){
+		games.addGames(gametype, game.gameid, unverified);
+	}
+	if (action == "Disconnect" ){
+		game.endGame();
+		games.activeGames(game.gameid, game.mapRoleToUserid, game.startTime, game.endTime);
+	}
+	
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

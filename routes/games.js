@@ -12,12 +12,12 @@ function Games(GamesModel) {
 
 Games.prototype = {
 
-  addGames: function(gametype, gameid, startTime, unverified, mapRoleToUserid, endTime) {
+  addGames: function(gametype, gameid, startTime, unverified) {
     var self = this;      
     if (self.PartitionKey == gameid){
       return;
     }
-    var item = mapRoleToUserid;
+    var item = new Object();
     item.PartitionKey = gameid;
     self.PartitionKey = item.PartitionKey;
     item.RowKey = uuid();
@@ -25,9 +25,8 @@ Games.prototype = {
     item.gametype = gametype;
     item.active = true;
     item.dataStatus = true;
-    item.startTime = JSON.stringify(startTime);
     item.unverified = JSON.stringify(unverified);
-    item.endTime = JSON.stringify(endTime);
+   
     self.GamesModel.add(item, function itemAdded(error) {
       if(error) {
         throw error;
@@ -42,17 +41,19 @@ Games.prototype = {
       .select()
       .from(self.GamesModel.tableName);
       //.where('datastatus eq ?', 0);
-    self.GamesModel.find(query, function itemsFound(err, items) {
+    self.GamesModel.find(query, function itemsFound(error, items) {
       res.render('gamesData',{title: 'Games List', gamesList: items, gametype: req.params.gametype,  gametypes: Object.keys(gameServers)});
     });
   },
 
   
-  activeGames: function(endTime) {
+  activeGames: function(gameid, mapRoleToUserid, startTime, endTime) {
     var self = this;
-    var item = new Object();
+    var item = mapRoleToUserid;
     item.RowKey = self.RowKey;
-    item.PartitionKey = self.PartitionKey;
+    item.PartitionKey = gameid;
+    item.startTime = JSON.stringify(startTime);
+    item.endTime = JSON.stringify(endTime);
     
     self.GamesModel.updateItem(item, function itemAdded(error) {
       if(error) {

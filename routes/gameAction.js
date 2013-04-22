@@ -44,11 +44,12 @@ GameAction.prototype = {
     var self = this;
     if (action == "Change")
       var item = data;
-    if (action == "offer"){
-      var item = new Object();
-      item.issue = NaN;  
-      item.value = JSON.stringify(data);
-    }
+    else 
+      if (action == "offer"){
+        var item = new Object();
+        item.issue = NaN;  
+        item.value = JSON.stringify(data);
+      }
     else{
       var item = new Object();
       item.issue = NaN;  

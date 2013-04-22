@@ -10,8 +10,8 @@ function GamesModel(storageClient, tableName) {
 
 
   this.storageClient.createTableIfNotExists(tableName, 
-    function tableCreated(err) {
-      if(err) {
+    function tableCreated(error) {
+      if(error) {
         throw error;
       }
     });
@@ -22,7 +22,7 @@ GamesModel.prototype.add = function(item, callback) {
   self.storageClient.insertEntity(self.tableName, item, 
     function entityInserted(error) {
       if(error){  
-        callback(err);
+        callback(error);
       }
       callback(null);
     });
@@ -40,9 +40,9 @@ GamesModel.prototype.deleteTable = function() {
 GamesModel.prototype.find = function(query, callback) {
 	self = this;
   self.storageClient.queryEntities(query, 
-    function entitiesQueried(err, entities){
-      if(err) {
-        callback(err);
+    function entitiesQueried(error, entities){
+      if(error) {
+        callback(error);
       } else {
         callback(null, entities);
       }
