@@ -38,7 +38,7 @@ Report.prototype = {
                 if (items1)
                   users[0] = items1;
                 if (items2)
-                  if (!users[0])
+                  if (users[0])
                     users[1] = items2;
                   else
                     users[0] = items2;
