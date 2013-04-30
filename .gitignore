@@ -11,3 +11,6 @@ pids
 results
 
 npm-debug.log
+/config_release.json
+/config_test.json
+/config.json
