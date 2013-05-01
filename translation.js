@@ -1,12 +1,12 @@
 // Translate text to semantic representation using a translation server:
 var HOST=process.env.TRANSLATION_SERVER_HOST || "nlp-srv";
 var PORT=process.env.TRANSLATION_SERVER_PORT || 9994;
-console.log("Looking for translation server at "+HOST+":"+PORT);
 
 var fs=require('fs'), path=require('path');
 var DEFAULT_GRAMMAR_PATH = path.join(__dirname,"maps","NegotiationGrammarJson.txt");
 
 exports.Translator = function(translatorName, pathToGrammarFile) {
+	console.log("Looking for translation server at "+HOST+":"+PORT);
 	this.translatorName = translatorName;
 	this.grammar = fs.readFileSync(pathToGrammarFile? pathToGrammarFile: DEFAULT_GRAMMAR_PATH, 'utf8');
 	this.translationSocket = require('socket.io-client').connect(HOST, {port: PORT}); 
@@ -60,6 +60,8 @@ exports.Translator.prototype.onTranslation = function(translationHandler) {
 //
 
 if (process.argv[1] === __filename) {
+	if (process.argv[2]) HOST = process.argv[2];
+	if (process.argv[3]) PORT = process.argv[3];
 	console.log("translation.js unitest start");
 	var translator1 = new exports.Translator("translator1");
 	var translator2 = new exports.Translator("translator2");
