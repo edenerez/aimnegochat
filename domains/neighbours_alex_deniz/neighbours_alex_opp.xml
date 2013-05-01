@@ -83,6 +83,8 @@
 </objective> 
 <reservation value="0"/> 
 <optout value="0"/> 
-<weightmultiplyer value="0.1"> 
-</weightmultiplyer> 
+<weightmultiplyer value="0.1"/> 
+<timeeffect value="0" />
+
+
 </utility_space> 

@@ -83,8 +83,9 @@
 </objective> 
 <reservation value="280"/> 
 <optout value="280"/> 
-<weightmultiplyer value="5.0"> 
-</weightmultiplyer> 
+<weightmultiplyer value="5.0" />
+<timeeffect value="0" />
+
 <opponent>
 	<utilityspace file="file:etc/templates/neighbours/neighbours_alex_opp.xml" />
 </opponent>
