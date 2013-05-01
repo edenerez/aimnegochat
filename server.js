@@ -158,7 +158,7 @@ gameServers['negomenus_neighbours'] = new multiplayer.GameServer(
 		 maxTimeSeconds:   30*60,
 		 events: require('./EventsForNegoChat'),
 		 domain: 'Neighbours',
-		 defaultPersonality: '1'
+		 defaultPersonality: 'A'
 		});
 gameServers['negochat'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Employer', 'Candidate'], 
