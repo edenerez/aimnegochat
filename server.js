@@ -157,6 +157,7 @@ for (gameType in gameServers)
 
 var genius = require('./genius');
 var domain = new genius.Domain(path.join(__dirname,'domains','JobCandiate','JobCanDomain.xml'));
+var domain_neighbours = new genius.Domain(path.join(__dirname,'domains','neighbours_alex_deniz','neighbours_domain.xml'));
 var actualAgents = {};
 var otherAgents = {};
 actualAgents['Employer']	= domain.agentOfRoleAndPersonality('employer', 'short-term');

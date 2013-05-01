@@ -9,10 +9,10 @@ var xml2js = require('xml2js')
 
 
 //
-// Domain
+// negotiationDomain
 //
 
-exports.Domain = function (pathToXmlFile) {
+exports.negotiationDomain = function (pathToXmlFile) {
     var parser = new xml2js.Parser();
     var utility_space = null;
     parser.parseString(fs.readFileSync(pathToXmlFile), function (err, result) {
@@ -39,15 +39,15 @@ exports.Domain = function (pathToXmlFile) {
     this.agentsByOwnerAndPersonality = agentsByOwnerAndPersonality;    
 }
 
-exports.Domain.prototype.agentOfRoleAndPersonality = function(role, personality) {
+exports.negotiationDomain.prototype.agentOfRoleAndPersonality = function(role, personality) {
     return this.agentsByOwnerAndPersonality[role][personality];
 };
 
-exports.Domain.prototype.agentsOfRole = function(role) {
+exports.negotiationDomain.prototype.agentsOfRole = function(role) {
     return this.agentsByOwnerAndPersonality[role];
 };
 
-exports.Domain.prototype.agentsOfOtherRole = function(role) {
+exports.negotiationDomain.prototype.agentsOfOtherRole = function(role) {
     var agents = [];
     for (var otherRole in this.agentsByOwnerAndPersonality) {
         if (otherRole!=role) {
@@ -74,7 +74,7 @@ var UtilitySpace = function (pathToXmlFile) {
     // Initialize simple parameters:
     this.reservation = utility_space.reservation[0].$.value;
     this.optout = utility_space.optout[0].$.value;
-    this.timeeffect = utility_space.timeeffect[0].$.value;
+    this.timeeffect = utility_space.timeeffect? utility_space.timeeffect[0].$.value: 0;
     this.weightmultiplyer = utility_space.weightmultiplyer[0].$.value;
 
     // Initialize weights and issues:
@@ -121,34 +121,44 @@ UtilitySpace.prototype.getUtilityWithDiscount = function(utility, roundsFromStar
     return utility + roundsFromStart * this.timeeffect;
 }
 
+function jadeTemplate(jadeFileName) {
+  var pathToJade = path.join(__dirname,"views",jadeFileName);
+  return jade.compile(fs.readFileSync(pathToJade), {pretty:true, filename:pathToJade});
+}
 
 if (process.argv[1] === __filename) {
   console.log("genius.js unitest start");
   
-  var jade = require('jade')
-    ;
-
-  var domain = new exports.Domain(path.join(__dirname,'domains','JobCandiate','JobCanDomain.xml'));
-  //console.dir(domain);
-  var agent = domain.agentOfRoleAndPersonality('employer', 'compromise');
-  //console.dir(agent);
-  var utilitySpace = agent.utility_space_object;
-  console.log("utility="+utilitySpace.getUtilityWithoutDiscount({Salary: '7,000 NIS', 'Job Description': 'QA'}));
-
-  var otheragents = domain.agentsOfOtherRole('employer');
-
-  var pathToJade = path.join(__dirname,"views","GeniusUtilityOfCurrent.jade");
-  var fn = jade.compile(fs.readFileSync(pathToJade), {pretty:true, filename:pathToJade});
-  //console.log(fn({agent: agent, turnLengthInSeconds: 10, AMTStatus: '-', sprintf: require('sprintf').sprintf, format:"%1.0f"}));
+  var jade = require('jade');
+  
+  var domain, agent, utilitySpace, offer;
+  
+  /* files for rendering: */
+  var GeniusUtilityOfCurrent = jadeTemplate("GeniusUtilityOfCurrent.jade");
+  var GeniusUtilityOfPartner = jadeTemplate("GeniusUtilityOfPartner.jade");
+  var GeniusIssuesAndValues = jadeTemplate("GeniusIssuesAndValues.jade");
 
   var pathToJade = path.join(__dirname,"views","GeniusUtilityOfPartner.jade");
   var fn = jade.compile(fs.readFileSync(pathToJade), {pretty:true, filename:pathToJade});
-  //console.log(fn({agents: otheragents, turnLengthInSeconds: 10, AMTStatus: '-', sprintf: require('sprintf').sprintf, format:"%1.0f"}));
+  
 
-  var pathToJade = path.join(__dirname,"views","GeniusIssuesAndValues.jade");
-  var fn = jade.compile(fs.readFileSync(pathToJade), {pretty:true, filename:pathToJade});
-  console.log(fn({agent: agent}));
+  /* test negotiation domain: */
+  domain = new exports.negotiationDomain(path.join(__dirname,'domains','JobCandiate','JobCanDomain.xml'));
+  agent = domain.agentOfRoleAndPersonality('employer', 'comp-romise');
+  utilitySpace = agent.utility_space_object;
+  offer = {Salary: '7,000 NIS', 'Job Description': 'QA'};
+  console.log("utility of "+JSON.stringify(offer)+"="+utilitySpace.getUtilityWithoutDiscount(offer));
+  var otheragents = domain.agentsOfOtherRole('employer');
+  console.log(GeniusIssuesAndValues({agent: agent}));
 
-  //console.log(util.inspect(domain,true,1000,true));
+  /* test neighbours domain: */
+  domain = new exports.negotiationDomain(path.join(__dirname,'domains','neighbours_alex_deniz','neighbours_domain.xml'));
+  agent = domain.agentOfRoleAndPersonality('alex', '1');
+  utilitySpace = agent.utility_space_object;
+  offer = {'Basketball court': 'Alex will not use court on Saturday', Noise: 'Deniz will be quiet after 11pm'};
+  console.log("utility of "+JSON.stringify(offer)+"="+utilitySpace.getUtilityWithoutDiscount(offer));
+  console.log(GeniusIssuesAndValues({agent: agent}));
+
+  //console.log(util.inspect(negotiationDomain,true,1000,true));
   console.log("genius.js unitest end");
 }
