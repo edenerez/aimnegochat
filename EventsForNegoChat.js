@@ -1,10 +1,9 @@
 var deepmerge = require('./deepmerge');
 
-var grammarFile = "NegotiationGrammarJson.txt";
 var translation = require('./translation');
 
 exports.add = function(socket, game, session_data, io, announcement, messageLog, applocals, finalResultTable) {
-	var translator = new translation.Translator();
+	var translator = new translation.Translator("translator-of-"+session_data.role);
 
 	var agent = applocals.actualAgents[session_data.role];
 	if (agent)
@@ -43,7 +42,7 @@ exports.add = function(socket, game, session_data, io, announcement, messageLog,
 	// A human chat-player sent an English chat message - send it to all other users, and translate to semantics:
 	socket.on('English', function (text) {
 		announcement(socket, game, "Message", session_data, text);
-		translator.sendToTranslationServer(text, /*forward=*/true, grammarFile);
+		translator.sendToTranslationServer(text, /*forward=*/true);
 	});
 
 	// The translator returned the semantic translation of the human's chat message

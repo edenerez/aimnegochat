@@ -100,7 +100,7 @@ app.configure(function(){
 
 	// Define tasks to do for ANY url:
 	app.use(function(req,res,next) {
-		if (!/\/stylesheets\//.test(req.url) && !/\/javascripts\//.test(req.url)) {
+		if (!/\/assets\//.test(req.url) && !/\/stylesheets\//.test(req.url) && !/\/javascripts\//.test(req.url)) {
 			// task 1 - logging the URL: 
 			logger.writeEventLog("events", req.method+" "+req.url, extend({remoteAddress: req.ip}, req.headers));
 			// task 2 - remembering the user's location:
