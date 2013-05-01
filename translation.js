@@ -6,7 +6,7 @@ var fs=require('fs'), path=require('path');
 var DEFAULT_GRAMMAR_PATH = path.join(__dirname,"maps","NegotiationGrammarJson.txt");
 
 exports.Translator = function(translatorName, pathToGrammarFile) {
-	console.log("Looking for translation server at "+HOST+":"+PORT);
+	console.log(translatorName+" tries to connect to translation server at "+HOST+":"+PORT);
 	this.translatorName = translatorName;
 	this.grammar = fs.readFileSync(pathToGrammarFile? pathToGrammarFile: DEFAULT_GRAMMAR_PATH, 'utf8');
 	this.translationSocket = require('socket.io-client').connect(HOST, {port: PORT}); 
@@ -17,7 +17,7 @@ exports.Translator = function(translatorName, pathToGrammarFile) {
 	];
 
 	this.translationSocket.on('connect', function () { 
-		console.log(translatorName+" connected to translation server");
+		console.log(translatorName+" connected to translation server at "+HOST+":"+PORT);
 		/* Test: */
 		//this.sendToTranslationServer("I offer a salary of 20000 and a car.", true, "NegotiationGrammarJson.txt");
 	});

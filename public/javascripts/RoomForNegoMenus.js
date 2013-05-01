@@ -50,6 +50,14 @@ $(function() {
 
 		socket.emit('negoactions', action);
 	});
+	
+	$("#Accept").click(function() {
+		socket.emit('negoactions', {'Accept': ''});
+	});
+	
+	$("#Reject").click(function() {
+		socket.emit('negoactions', {'Reject': ''});
+	});
 
 	socket.on('negoactions', function (data) {
 	});

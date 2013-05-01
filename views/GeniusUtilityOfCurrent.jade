@@ -3,33 +3,36 @@
 //   turnLengthInSeconds
 extends layoutForUtilities
 block title
-  title Your score table
+		title Your score table
 block body
- table#utilityTable.utility
-   caption
-    em Your score table
-   tr
-    th.utility Values
-    th.utility Scores
-   for issue in agent.utility_space_object.issueByIndex
-    tr.utilityIssue
-     td(colspan="2") #{issue.name}
-    for item in issue.itemByIndex
-     tr
-      td.utilityValue #{item.value}
-      td.utilityUtil #{sprintf(format,item.evaluation * issue.weight * agent.utility_space_object.weightmultiplyer)}
-
-   tr.utilityIssue
-    td(colspan="2") Time Effect
-    
-   tr
-    td.utilityValue Decrease per #{turnLengthInSeconds} sec:
-    td.utilityUtil #{sprintf(format, 1*agent.utility_space_object.timeeffect)}
-
-   tr
-    td.utilityValue(colspan="1",title="Your score if you opt-out of the negotiation") Opt-out Score:
-    td.utilityUtil #{sprintf(format, 1*agent.utility_space_object.optout)}
-
-   tr
-    td.utilityValue(colspan="1",title="Status-quo score - your score if the negotiation times out") Time-out Score:
-    td.utilityUtil #{sprintf(format, 1*agent.utility_space_object.reservation)}
+	if (!locals.agent)
+		p ERROR: no agent!
+	else
+		table#utilityTable.utility
+				caption
+					em Your score table
+				tr
+					th.utility Values
+					th.utility Scores
+				for issue in agent.utility_space_object.issueByIndex
+					tr.utilityIssue
+						td(colspan="2") #{issue.name}
+					for item in issue.itemByIndex
+						tr
+							td.utilityValue #{item.value}
+							td.utilityUtil #{sprintf(format,item.evaluation * issue.weight * agent.utility_space_object.weightmultiplyer)}
+	
+				tr.utilityIssue
+					td(colspan="2") Time Effect
+					
+				tr
+					td.utilityValue Decrease per #{turnLengthInSeconds} sec:
+					td.utilityUtil #{sprintf(format, 1*agent.utility_space_object.timeeffect)}
+	
+				tr
+					td.utilityValue(colspan="1",title="Your score if you opt-out of the negotiation") Opt-out Score:
+					td.utilityUtil #{sprintf(format, 1*agent.utility_space_object.optout)}
+	
+				tr
+					td.utilityValue(colspan="1",title="Status-quo score - your score if the negotiation times out") Time-out Score:
+					td.utilityUtil #{sprintf(format, 1*agent.utility_space_object.reservation)}

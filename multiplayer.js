@@ -9,15 +9,13 @@
 
 /**
  * Initialize a game-server.
- * @param roomTemplateName name of the JADE template for rendering the room for this game. Defines the GUI.
  * @param requiredRolesArray the required roles, e.g. ['Employer', 'Candidate']
- * @param maxTimeSeconds the max time for each game episode, in seconds.
+ * @param additionalData any data that is specific to this type of game, for example: max length in seconds, data files, etc. 
+ *        Not used by the multiplayer server.  
  */ 
-exports.GameServer = function(roomTemplateName, requiredRolesArray, maxTimeSeconds, events) {
-  this.roomTemplateName = roomTemplateName;
+exports.GameServer = function(requiredRolesArray, additionalData) {
+  this.data = additionalData;
   this.requiredRolesArray = requiredRolesArray;
-  this.maxTimeSeconds = maxTimeSeconds;
-  this.events = events;
   this.games = [];
   this.totalNumberOfStartingPlayers = 0;   // The total number of players that started the process (including questionnaires etc.) since the server started.
 

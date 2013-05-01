@@ -1,13 +1,24 @@
 var deepmerge = require('./deepmerge');
-
 var translation = require('./translation');
 
-exports.add = function(socket, game, session_data, io, announcement, messageLog, applocals, finalResultTable) {
+exports.initializeEventHandlers = function(socket, game, session_data, io, finalResultTable, functions) {
 	var translator = new translation.Translator("translator-of-"+session_data.role);
 
-	var agent = applocals.actualAgents[session_data.role];
+	var agent = null, allIssues = null;
+	if (!session_data.domain) {
+		console.error("\n\nERROR: Undefined domain!");
+		console.dir(session_data);
+	} else if (!session_data.personality) {
+		console.error("\n\nERROR: Undefined personality!");
+		console.dir(session_data);
+	} else if (!session_data.role) {
+		console.error("\n\nERROR: Undefined role!");
+		console.dir(session_data);
+	} else {
+		agent = functions.getActualAgent(session_data.domain, session_data.role, session_data.personality);
+	}
 	if (agent)
-		var allIssues = agent.utility_space_object.issueByIndex;
+		allIssues = agent.utility_space_object.issueByIndex;
 
 	var misunderstanding = function(message) {
 		socket.emit('announcement', {action: "Misunderstanding", id: "Translator", you: false, msg: message});
@@ -23,7 +34,7 @@ exports.add = function(socket, game, session_data, io, announcement, messageLog,
 		socket.broadcast.to(game.gameid).emit('negoactions', mergedAction); // forward the offer to the other player
 		if (announce) {
 			for (var key in mergedAction) {
-				announcement(socket, game, key, session_data, mergedAction[key]); // send ALL players a textual description of the offer
+				functions.announcement(socket, game, key, session_data, mergedAction[key]); // send ALL players a textual description of the offer
 			}
 		}
 	};
@@ -36,12 +47,12 @@ exports.add = function(socket, game, session_data, io, announcement, messageLog,
 
 	// A player sent an informative message - just send it to all other users
 	socket.on('message', function (text) {
-		announcement(socket, game, "Message", session_data, text);
+		functions.announcement(socket, game, "Message", session_data, text);
 	});
 
 	// A human chat-player sent an English chat message - send it to all other users, and translate to semantics:
 	socket.on('English', function (text) {
-		announcement(socket, game, "Message", session_data, text);
+		functions.announcement(socket, game, "Message", session_data, text);
 		translator.sendToTranslationServer(text, /*forward=*/true);
 	});
 
@@ -72,7 +83,7 @@ exports.add = function(socket, game, session_data, io, announcement, messageLog,
 		var changed = game.playerChangesValue(session_data.role, data.issue, data.value);
 		if (!changed) return;
 
-		messageLog(socket, game, "Change", session_data, data);
+		functions.messageLog(socket, game, "Change", session_data, data);
 		var currentIssueAgreed = game.arePlayerValuesEqual(data.issue);
 		var allIssuesAgreed = game.arePlayerValuesToAllIssuesEqual(allIssues);
 		io.sockets.in(game.gameid).emit('issueAgreed', {issue: data.issue, agreed: currentIssueAgreed, allAgreed: allIssuesAgreed});
@@ -103,7 +114,7 @@ exports.add = function(socket, game, session_data, io, announcement, messageLog,
 		game.mapRoleToFinalResult[session_data.role] = finalResult;
 		session_data.mapRoleToFinalResult = finalResult;
 		finalResultTable.addFinalResult(session_data);
-		messageLog(socket, game, "Sign", session_data, finalResult);
+		functions.messageLog(socket, game, "Sign", session_data, finalResult);
 		socket.emit('sign', {id: session_data.role, agreement: agreement, you: true});
 		socket.broadcast.to(game.gameid).emit('sign', {id: session_data.role, agreement: agreement, you: false});
 	});

@@ -8,7 +8,7 @@ $(function() {
 		at: "right top",
 		of: $("#mainStatusRow")};
 	$("#btnUtility").click(function() {
-		var utilityUrl = '/UtilityOfCurrent/'+session_data.role;
+		var utilityUrl = '/UtilityOfCurrent/'+session_data.domain+"/"+session_data.role+"/"+session_data.personality;
 		// load the utility table to a hidden div:...
 		utilityDiv.load(utilityUrl, function() {   
 			// ... after it is loaded, make it a dialog and put it in the correct position:
@@ -17,7 +17,7 @@ $(function() {
 		return false;
 	});
 	$("#btnOppUtility").click(function() {
-		var utilityUrl = '/UtilityOfPartner/'+session_data.role;
+		var utilityUrl = '/UtilityOfPartner/'+session_data.domain+"/"+session_data.role;
 		utilityDiv.load(utilityUrl, function() { utilityDiv.dialog(utilityOptions).dialog('widget').position(utilityPosition); }); 
 		return false;
 	});

@@ -67,8 +67,23 @@ function setSessionForNewUser(req) {
 	req.session.data = req.query;  // for Amazon Turk users, the query contains the hit id, assignment id and worker id. 
 	req.session.data.userid = req.ip + ":" + new Date().toISOString();
 	req.session.data.gametype = req.params.gametype;
+	var gameServer = gameServers[req.params.gametype];
+	
+	if (req.params.domain)
+		req.session.data.domain = req.params.domain;
+	else
+		req.session.data.domain = gameServer.data.domain;
+		  	
+	if (req.params.personality)
+		req.session.data.personality = req.params.personality;
+	else
+		req.session.data.personality = gameServer.data.defaultPersonality;
+		
 	if (req.params.role)
 		req.session.data.role = req.params.role;
+	// else -
+	// 	the role will be selected by the gameServer in order to match roles in games.
+	
 	browserType(req);
 	req.session.data.gameid = req.param.gameid;
 	
@@ -130,47 +145,69 @@ app.configure('development', function(){
 var gameServers = {};
 
 gameServers['negomenus'] = new multiplayer.GameServer(
-		/*roomTemplateName=*/'RoomForNegoMenus',
-		/*requiredRoles=*/['Employer','Candidate'], 
-		/*maxTimeSeconds=*/30*60,
-		/*events=*/require('./EventsForNegoChat')
-		);
+		/*requiredRoles=*/['Employer','Candidate'],
+		{roomTemplateName: 'RoomForNegoMenus',
+		 maxTimeSeconds:   30*60,
+		 events: require('./EventsForNegoChat'),
+		 domain: 'Job',
+		 defaultPersonality: 'short-term'
+		});
 gameServers['negochat'] = new multiplayer.GameServer(
-		/*roomTemplateName=*/'RoomForNegoChat',
 		/*requiredRoles=*/['Employer', 'Candidate'], 
-		/*maxTimeSeconds=*/30*60,
-		/*events=*/require('./EventsForNegoChat')
-		);
+		{roomTemplateName: 'RoomForNegoChat',
+		 maxTimeSeconds:   30*60,
+		 events: require('./EventsForNegoChat'),
+		 domain: 'Job',
+		 defaultPersonality: 'short-term'
+		});
 gameServers['negonlp'] = new multiplayer.GameServer(
-		/*roomTemplateName=*/'RoomForNegoNlp',
-		/*requiredRoles=*/['Employer', 'Candidate'], 
-		/*maxTimeSeconds=*/30*60,
-		/*events=*/require('./EventsForNegoChat')
-		);
+		/*requiredRoles=*/['Employer', 'Candidate'],
+		{roomTemplateName: 'RoomForNegoNlp',
+		 maxTimeSeconds:   30*60,
+		 events: require('./EventsForNegoChat'),
+		 domain: 'Job',
+		 defaultPersonality: 'short-term'
+		});
 
 for (gameType in gameServers)
 	gameServers[gameType].gametype = gameType;
+	
+	
+function getActualAgent(domainName, roleName, personality) {
+	var domain = domains[domainName];
+	if (!domain) {
+		throw new Error("Cannot get domain "+domainName);
+		return null; 
+	}
+	var role = roleName.toLowerCase();
+	var actualAgent = domain.agentOfRoleAndPersonality(role, personality);
+	if (!actualAgent) {
+		console.dir(domain);
+		throw new Error("Cannot get actual agent of domain "+domainName+", role "+role+" and personality "+personality);
+		return null; 
+	}
+	return actualAgent;
+}
 
 //
 // Step 2.5: GENIUS related variables:
 //
 
 var genius = require('./genius');
-var domain = new genius.Domain(path.join(__dirname,'domains','JobCandiate','JobCanDomain.xml'));
-var domain_neighbours = new genius.Domain(path.join(__dirname,'domains','neighbours_alex_deniz','neighbours_domain.xml'));
-var actualAgents = {};
-var otherAgents = {};
-actualAgents['Employer']	= domain.agentOfRoleAndPersonality('employer', 'short-term');
-otherAgents['Employer']	= domain.agentsOfOtherRole('employer');
-actualAgents['Candidate'] = domain.agentOfRoleAndPersonality('candidate', 'short-term');
-otherAgents['Candidate']	= domain.agentsOfOtherRole('candidate');
-actualAgents['Previewer'] =	actualAgents['Employer'];
+var domains = {};
+domains['Job'] = new genius.Domain(path.join(__dirname,'domains','JobCandiate','JobCanDomain.xml'));
+domains['Neighbours'] = new genius.Domain(path.join(__dirname,'domains','neighbours_alex_deniz','neighbours_domain.xml'));
+
+//var actualAgents = {};
+//actualAgents['Employer']	= domains['Job'].agentOfRoleAndPersonality('employer', 'short-term');
+//actualAgents['Candidate'] = domains['Job'].agentOfRoleAndPersonality('candidate', 'short-term');
+//actualAgents['Previewer'] =	actualAgents['Employer'];
+//app.locals.actualAgents = actualAgents;
 
 // Variables that will be available to all JADE templates:
 app.locals.turnLengthInSeconds = 2*60;
 app.locals.sprintf = require('sprintf').sprintf;
 app.locals.format = "%+1.0f";
-app.locals.actualAgents = actualAgents;
 
 
 
@@ -191,6 +228,7 @@ app.get('/:gametype/gametype', function (req,res){
 	var gameType = req.params.gametype;
 	res.render("present", {gametype: gameType , gametypes: Object.keys(gameServers) });
 });
+
 // This is the entry point for an Amazon Turker with no role:
 //    It will select his role, then lead him to the preview or to the pre-questionnaire:
 app.get('/:gametype/beginner', function(req,res) {
@@ -207,6 +245,7 @@ app.get('/:gametype/beginner', function(req,res) {
 // This is the entry point for an Amazon Turker with a pre-specified role:
 //    It will lead him to the preview or to the pre-questionnaire:
 app.get('/:gametype/beginner/:role', function(req,res) {
+		var gameServer = gameServers[req.params.gametype];
 		setSessionForNewUser(req);
 		if (amt.isPreview(req.query)) {
 			 res.redirect('/'+req.params.gametype+'/preview');
@@ -337,7 +376,7 @@ var kbagent = new KBAgent();
 
 var NewKBAgent  = require('./agents/NewKBAgent');
 var newkbagent = new NewKBAgent();
-newkbagent.initializeNewKBAgent(domain);
+newkbagent.initializeNewKBAgent(domains['Job']);
 app.get('/:gametype/listNewKBAgentInit', function(req,res){
 	newkbagent.listAllInitData(req,res,gameServers);
 });
@@ -471,17 +510,17 @@ app.get('/PreQuestionnaireDemography', function(req,res) {
 				AMTStatus: JSON.stringify(req.session.data)});
 });
 
-app.get('/UtilityOfCurrent/:role', function(req,res) {
-		res.render("GeniusUtilityOfCurrent",	{
-				agent: actualAgents[req.params.role]/*,
-				AMTStatus: JSON.stringify(req.session.data)*/});
+app.get('/UtilityOfCurrent/:domain/:role/:personality', function(req,res) {
+		var actualAgent = getActualAgent(req.params.domain, req.params.role, req.params.personality);
+		res.render("GeniusUtilityOfCurrent",	{agent: actualAgent});
 });
 
-app.get('/UtilityOfPartner/:role', function(req,res) {
-		res.render("GeniusUtilityOfPartner",	{
-				agents: otherAgents[req.params.role]/*,
-				AMTStatus: JSON.stringify(req.session.data)*/});
+app.get('/UtilityOfPartner/:domain/:role', function(req,res) {
+		var domain = domains[req.params.domain];
+		var otherAgents	= domain.agentsOfOtherRole(req.params.role.toLowerCase());
+		res.render("GeniusUtilityOfPartner",	{agents: otherAgents});
 });
+
 //ariel
 app.get('/WriteQuestionnaireAnswers/:logFileName', function(req,res) {
 		var nextAction = req.query.next_action;	delete req.query.next_action;
@@ -541,10 +580,12 @@ app.get('/:gametype/play', function(req,res) {
 				return;
 		}
 		var gameServer = gameServers[req.params.gametype];
-		res.render(gameServer.roomTemplateName,	{
+		var actualAgent = getActualAgent(req.session.data.domain, req.session.data.role, req.session.data.personality);
+
+		res.render(gameServer.data.roomTemplateName,	{
 				gametype: req.params.gametype, 
 				role: req.session.data.role,
-				agent: actualAgents[req.session.data.role],
+				agent: actualAgent,
 				session_data: req.session.data,
 				AMTStatus: JSON.stringify(req.session.data),
 				next_action:'/PostQuestionnaireA'});
@@ -552,11 +593,13 @@ app.get('/:gametype/play', function(req,res) {
 
 app.get('/:gametype/preview', function(req,res) {
 		var gameServer = gameServers[req.params.gametype];
-		res.render(gameServer.roomTemplateName,	{
+		var roleForPreview = gameServer.requiredRolesArray[0];
+		var actualAgent = getActualAgent(req.session.data.domain, roleForPreview, req.session.data.personality);
+		res.render(gameServer.data.roomTemplateName,	{
 				preview: true,
 				gametype: req.params.gametype, 
 				role: 'Previewer',
-				agent: actualAgents['Previewer'],
+				agent: actualAgent,
 				AMTStatus: JSON.stringify(req.session.data),
 				next_action: ''});
 });
@@ -629,13 +672,19 @@ io.sockets.on('connection', function (socket) {
 	socket.on('start_session', function (session_data) {
 		console.log("SOCKETIO: New client starts session: ");
 		console.dir(session_data);
-		var session = {data: session_data};
-		var gameServer = gameServers[session.data.gametype];
+		
+		var gameServer = gameServers[session_data.gametype];
 		if (!gameServer) {
 			console.error("Can't find game server "+session.data.gametype);
 			return;
-		} 
-	
+		}
+		
+		if (!session_data.domain)
+			session_data.domain = gameServer.data.domain;
+		if (!session_data.personality)
+			session_data.personality = gameServer.data.defaultPersonality;
+
+		var session = {data: session_data};
 		var game;
 		if (!users[session.data.userid])
 			users[session.data.userid] = session.data;
@@ -644,7 +693,7 @@ io.sockets.on('connection', function (socket) {
 
 		game = gameServer.gameById(session.data.gameid);
 		if (!game) {
-			socket.emit('status', {key: 'phase', value: 'Status: Game over! No body is here!'});
+			socket.emit('status', {key: 'phase', value: 'Status: Game over! Nobody is here!'});
 			return; // throw an exception?!
 		}
 		socket.join(game.gameid);
@@ -670,7 +719,7 @@ io.sockets.on('connection', function (socket) {
 			io.sockets.in(game.gameid).emit('status', {key: 'phase', value: ''});
 			io.sockets.in(game.gameid).emit('EndTurn', 1);
 			if (!game.timer)
-				game.timer = new timer.Timer(gameServer.maxTimeSeconds, -5, 0, function(remainingTimeSeconds) {
+				game.timer = new timer.Timer(gameServer.data.maxTimeSeconds, -5, 0, function(remainingTimeSeconds) {
 					io.sockets.in(game.gameid).emit('status', {key: 'remainingTime', value: timer.timeToString(remainingTimeSeconds)});
 
 					game.turnsFromStart = 1+Math.floor(game.timer.timeFromStartSeconds() / app.locals.turnLengthInSeconds);
@@ -704,14 +753,20 @@ io.sockets.on('connection', function (socket) {
 			game.playerLeavesGame(session.data.userid, session.data.role);
 		});
 	
-		if (gameServer.events)
-			gameServer.events.add(socket, game, session.data, io, announcement, messageLog, app.locals, finalResult);
+		// Initialize the event handlers that are specific to the type of game we are playing:
+		if (gameServer.data.events) {
+			gameServer.data.events.initializeEventHandlers(socket, game, session.data, io, finalResult, {
+				getActualAgent: getActualAgent,
+				messageLog: messageLog,
+				announcement: announcement
+			});
+		}
 	});  // end of identify event
 });
 
 process.on('uncaughtException', function(err){
-console.error(err.stack);
-process.exit(1);
+	console.error(err.stack);
+	process.exit(1);
 });
 
 //

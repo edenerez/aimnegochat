@@ -1,30 +1,30 @@
-exports.add = function(socket, game, session_data, io, message, messageLog, applocals) {
+exports.initializeEventHandlers = function(socket, game, session_data, io, functions) {
 
-	var agent = applocals.actualAgents[session_data.role];
+	var agent = functions.getActualAgent(session_data.domain, session_data.role, session_data.personality);
 	if (agent)
 		var allIssues = agent.utility_space_object.issueByIndex;
 
 	// A user sent a chat message - just send this message to all other users:
 	socket.on('message', function (data) {
-		message(socket, game, "Message", session_data, data);
+		functions.message(socket, game, "Message", session_data, data);
 	});
 
 	// A player sent an offer:
 	socket.on('offer', function (bid) {
 		socket.broadcast.to(game.gameid).emit('offer', bid);       // forward the offer to the other player
 		var bidAsString = JSON.stringify(bid);
-		message(socket, game, "Offer", session_data, bidAsString);  // send ALL players a textual description of the offer 
+		functions.message(socket, game, "Offer", session_data, bidAsString);  // send ALL players a textual description of the offer 
 	});
 
 	// A player accepted an offer:
 	socket.on('accept', function (bid) {
-		message(socket, game, "Accept", session_data, JSON.stringify(bid));
+		functions.message(socket, game, "Accept", session_data, JSON.stringify(bid));
 		socket.broadcast.to(game.gameid).emit('accept', bid);
 	});
 	
 	// A player accepted an offer:
 	socket.on('reject', function (bid) {
-		message(socket, game, "Reject", session_data, JSON.stringify(bid));
+		functions.message(socket, game, "Reject", session_data, JSON.stringify(bid));
 		socket.broadcast.to(game.gameid).emit('reject', bid);
 	});
 	
@@ -34,7 +34,7 @@ exports.add = function(socket, game, session_data, io, message, messageLog, appl
 		var changed = game.playerChangesValue(session_data.role, data.issue, data.value);
 		if (!changed) return;
 
-		messageLog(socket, game, "Change", session_data, data);
+		functions.messageLog(socket, game, "Change", session_data, data);
 		var currentIssueAgreed = game.arePlayerValuesEqual(data.issue);
 		var allIssuesAgreed = game.arePlayerValuesToAllIssuesEqual(allIssues);
 		io.sockets.in(game.gameid).emit('issueAgreed', {issue: data.issue, agreed: currentIssueAgreed, allAgreed: allIssuesAgreed});

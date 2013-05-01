@@ -1,6 +1,6 @@
-exports.add = function(socket, game, session_data, io, message, messageLog) {
+exports.initializeEventHandlers = function(socket, game, session_data, io, finalResultTable, functions) {
   // A user sent a chat message - just send this message to all other users:
   socket.on('message', function (data) {
-    message(socket, game, "Message", session_data, data);
+    functions.announcement(socket, game, "Message", session_data, data);
   });
 }
