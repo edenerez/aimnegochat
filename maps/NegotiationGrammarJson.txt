@@ -1,0 +1,116 @@
+== {root} ==
+* {offer:any}  / {offer:any}
+* {accept:any} / {accept:any}
+* {reject:any} / {reject:any}
+* {insist:any} / {insist:any}
+* {quit:any}   / {quit:any}
+* {greet:any}  / {greet:any}
+
+
+
+
+== {offer:any} ==
+* I offer   {issuevalue:any}.                /   {"Offer": {issuevalue:any}}
+* I give    {issuevalue:any}.                /   {"Offer": {issuevalue:any}}
+* I suggest {issuevalue:any}.                /   {"Offer": {issuevalue:any}}
+
+== {accept:any} ==
+* I accept your offer.                  /   {"Accept": "previous"}
+* I am OK with your offer.              /   {"Accept": "previous"}
+* Your offer is acceptable.             /   {"Accept": "previous"}
+* I accept.                             /   {"Accept": "previous"}
+
+== {reject:any} ==
+* I don't accept.                          /   {"Reject": "previous"}
+* I reject.                                /   {"Reject": "previous"}
+* Your offer is unacceptable.              /   {"Reject": "previous"}
+* no chance.                               /   {"Reject": "previous"}
+* no way.                                  /   {"Reject": "previous"}
+* I reject your {issue:noun} offer.        /   {"Reject": {issue:noun}}
+* You can not be a {position:noun}         /   {"Reject": "Job Description"}
+* we do not need a {position:noun}         /   {"Reject": "Job Description"}
+
+== {insist:any} ==
+* I insist                        / {"Insist": "previous"}
+* take it or leave it             / {"Insist": "previous"}
+* it is my last offer             / {"Insist": "previous"}
+* that was my best offer          / {"Insist": "previous"}
+* Think about it again            / {"Insist": "previous"}
+
+== {quit:any} == 
+* I go home / {"Quit": true}
+* I quit    / {"Quit": true}
+* I blow up the negotiation / {"Quit": true}
+
+== {greet:any} ==
+* hi                   / {"Greet": true}
+* Nice to meet you     / {"Greet": true}
+* I am the Candidate   / {"Greet": true}
+* I am the Employer    / {"Greet": true}
+
+== {issuevalue:any} ==
+* {111:number} % pension                         /   {"Pension Fund": "{111:number}%"}
+* A salary of {wage:number}                      /   {"Salary": "{wage:number} NIS"}
+* {wage:number} NIS                              /   {"Salary": "{wage:number} NIS"}
+* {wage:number} per month                        /   {"Salary": "{wage:number} NIS"}
+* {111:number} hours                             /   {"Working Hours": "{111:number} hours"}
+* {leasedcar:any}                               /   {"Leased Car": "{leasedcar:any}"}
+* A {jobdescription:noun} position               /   {"Job Description": "{jobdescription:noun}"}
+* A {jobdescription:noun} job                    /   {"Job Description": "{jobdescription:noun}"}
+* A {promotional:adjective} promotion track      /   {"Promotion Possibilities": "{promotional:adjective} promotion track"}
+* {issue:noun} No Agreement                      /   {"{issue:noun}": "No Agreement"}
+
+== {leasedcar:any} ==
+* with car                                       /   With leased car
+* no car                                         /   Without leased car
+* without a car                                  /   Without leased car
+
+== {leasedcar:any} LowPriority ==
+* a car                                          /   With leased car
+
+== {wage:number} ==
+* 7000  / 7,000
+* 12000 / 12,000
+* 20000 / 20,000
+
+== {wage:number} LowPriority ==
+* {111:number} / {111:number}
+
+== {jobdescription:noun} ==
+* qa              /   QA
+* programmer      /   Programmer
+* team manager    /   Team Manager
+* project manager /   Project Manager
+
+== {jobdescription:noun} LowPriority ==
+* {position:noun} / {position:noun}
+
+== {promotional:adjective} ==
+* fast            /   Fast
+* slow            /   Slow
+
+== {issue:noun} ==
+* pension fund    /   Pension Fund
+* leased car      /   Leased Car
+* company car     /   Leased Car
+
+
+
+
+== @Test ==
+* I offer a salary of 20000        /    {"Offer": {"Salary": "20,000 NIS"}}
+* I offer a salary of 12000 NIS    /    {"Offer": {"Salary": "12,000 NIS"}}
+* I offer a salary of 7000 and a car / {"Offer": {"Salary": "7,000 NIS"}}  AND  {"Offer": {"Leased Car": "With leased car"}}
+* I offer a salary of 7000 and no car / {"Offer": {"Salary": "7,000 NIS"}}  AND  {"Offer": {"Leased Car": "Without leased car"}}
+* I offer a salary of 7000 with a car / {"Offer": {"Salary": "7,000 NIS"}}  AND  {"Offer": {"Leased Car": "With leased car"}}
+* I offer a salary of 7000 without car / {"Offer": {"Salary": "7,000 NIS"}}  AND  {"Offer": {"Leased Car": "Without leased car"}}
+* I offer a salary of 12345 and a car and 20% pension / {"Offer": {"Salary": "12345 NIS"}}  AND  {"Offer": {"Pension Fund": "20%"}}  AND  {"Offer": {"Leased Car": "With leased car"}}
+* I offer a salary of 67890, a car and 20% pension    / {"Offer": {"Salary": "67890 NIS"}}  AND  {"Offer": {"Pension Fund": "20%"}}  AND  {"Offer": {"Leased Car": "With leased car"}}
+* I offer a slow promotion track    / {"Offer": {"Promotion Possibilities": "Slow promotion track"}}
+* I offer a fast promotion track    / {"Offer": {"Promotion Possibilities": "Fast promotion track"}}
+* I offer a programmer position     / {"Offer": {"Job Description": "Programmer"}}
+* I offer 20000 NIS and a programmer position     / {"Offer": {"Job Description": "Programmer"}}  AND  {"Offer": {"Salary": "20,000 NIS"}}
+
+== @Demo ==
+* I offer a salary of 20000        /    {"Offer": {"Salary": "20,000 NIS"}}
+* I offer a salary of 12000 and a car and 20% pension / {"Offer": {"Salary": "12,000 NIS"}}  AND  {"Offer": {"Pension Fund": "20%"}}  AND  {"Offer": {"Leased Car": "With leased car"}}
