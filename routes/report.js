@@ -47,9 +47,7 @@ Report.prototype = {
 
                 // Erel: sort gameActions by increasing timestamp:
                 gameActions.sort(function(a, b){
-                    var keyA = new Date(a.Timestamp),
-                        keyB = new Date(b.Timestamp);
-                    return keyA - keyB;
+                    return new Date(a.Timestamp) - new Date(b.Timestamp);
                 });                
 
                 res.render('gamesActionData',{

@@ -45,7 +45,7 @@ $(function() {
 			var value = $(this).val();
 			var issuevalue = {}; issuevalue[issue]=value;
 			if (value)
-				action.push({'offer': issuevalue});
+				action.push({'Offer': issuevalue});
 		});
 
 		socket.emit('negoactions', action);

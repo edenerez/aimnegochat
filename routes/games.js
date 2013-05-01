@@ -42,7 +42,15 @@ Games.prototype = {
       .from(self.GamesModel.tableName);
       //.where('datastatus eq ?', 0);
     self.GamesModel.find(query, function itemsFound(error, items) {
-      res.render('gamesData',{title: 'Games List', gamesList: items, gametype: req.params.gametype,  gametypes: Object.keys(gameServers)});
+      // Erel: sort games by increasing timestamp:
+      items.sort(function(a, b){
+            return new Date(a.Timestamp) - new Date(b.Timestamp);
+      });
+      res.render('gamesData',{
+        title: 'Games List', 
+        gamesList: items, 
+        gametype: req.params.gametype,  
+        gametypes: Object.keys(gameServers)});
     });
   },
 
