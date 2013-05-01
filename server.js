@@ -152,6 +152,14 @@ gameServers['negomenus'] = new multiplayer.GameServer(
 		 domain: 'Job',
 		 defaultPersonality: 'short-term'
 		});
+gameServers['negomenus_neighbours'] = new multiplayer.GameServer(
+		/*requiredRoles=*/['Alex','Deniz'],
+		{roomTemplateName: 'RoomForNegoMenus',
+		 maxTimeSeconds:   30*60,
+		 events: require('./EventsForNegoChat'),
+		 domain: 'Neighbours',
+		 defaultPersonality: '1'
+		});
 gameServers['negochat'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Employer', 'Candidate'], 
 		{roomTemplateName: 'RoomForNegoChat',
@@ -226,7 +234,11 @@ app.get('/users', function(req,res) {
 
 app.get('/:gametype/gametype', function (req,res){
 	var gameType = req.params.gametype;
-	res.render("present", {gametype: gameType , gametypes: Object.keys(gameServers) });
+	res.render("present", {
+		gametype: gameType, 
+		gametypes: Object.keys(gameServers),
+		roles: gameServers[gameType].requiredRolesArray
+		});
 });
 
 // This is the entry point for an Amazon Turker with no role:
@@ -247,10 +259,10 @@ app.get('/:gametype/beginner', function(req,res) {
 app.get('/:gametype/beginner/:role', function(req,res) {
 		var gameServer = gameServers[req.params.gametype];
 		setSessionForNewUser(req);
+		req.session.data.role = req.params.role;
 		if (amt.isPreview(req.query)) {
 			 res.redirect('/'+req.params.gametype+'/preview');
 		} else {
-			req.session.data.role = req.params.role;
 			res.redirect('/PreQuestionnaireDemography');
 		}
 });
@@ -273,10 +285,10 @@ app.get('/:gametype/advanced', function(req,res) {
 app.get('/:gametype/advanced/:role', function(req,res) {
 		var gameServer = gameServers[req.params.gametype];
 		setSessionForNewUser(req);
+		req.session.data.role = req.params.role;
 		if (amt.isPreview(req.query)) {
 			 res.redirect('/'+req.params.gametype+'/preview');
 		} else {
-			req.session.data.role = req.params.role;
 			res.redirect('/entergame');
 		}
 });

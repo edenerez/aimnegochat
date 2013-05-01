@@ -45,9 +45,13 @@ Report.prototype = {
                 //users[0] = items1;
                 //users[1] = items2;
 
-                // Erel: sort gameActions by increasing timestamp:
+                // Erel: sort gameActions by increasing timestamp, then by row key:
+                //console.dir(gameActions);
                 gameActions.sort(function(a, b){
-                    return new Date(a.Timestamp) - new Date(b.Timestamp);
+                    var diff = new Date(a.Timestamp) - new Date(b.Timestamp);
+                    if (diff==0) 
+                       diff = Integer.valueOf(a.RowKey) - Integer.valueOf(b.RowKey);
+                    return diff;
                 });                
 
                 res.render('gamesActionData',{
