@@ -43,10 +43,9 @@
 * I blow up the negotiation / {"Quit": true}
 
 == {greet:any} ==
-* hi                   / {"Greet": true}
-* Nice to meet you     / {"Greet": true}
-* I am the Candidate   / {"Greet": true}
-* I am the Employer    / {"Greet": true}
+* hi                     / {"Greet": true}
+* Nice to meet you       / {"Greet": true}
+* I am the {role:noun}   / {"Greet": true}
 
 == {issuevalue:any} ==
 * {111:number} % pension                         /   {"Pension Fund": "{111:number}%"}

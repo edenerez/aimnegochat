@@ -91,7 +91,7 @@ head
               a(href='/#{gametype}/advanced') PLAY - A worker not from Amazon Turk - jump directly to game
             h4
               a(href='/#{gametype}/advanced?workerId=amazonworker123&hitId=hit123&assignmentId=assignment123&turkSubmitTo=sandbox') PLAY - Amazon Turk Live mode - jump directly to game
-            each role in roles
+            each role in requiredRoles
               h4
                 a(href='/#{gametype}/advanced/#{role}') PLAY - Jump directly to game as #{role}
       

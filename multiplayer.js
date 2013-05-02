@@ -9,7 +9,7 @@
 
 /**
  * Initialize a game-server.
- * @param requiredRolesArray the required roles, e.g. ['Employer', 'Candidate']
+ * @param requiredRolesArray the required roles, e.g. ['Emp-loyer', 'Can-didate'], or ['Alex', 'Deniz']
  * @param additionalData any data that is specific to this type of game, for example: max length in seconds, data files, etc. 
  *        Not used by the multiplayer server.  
  */ 
@@ -226,19 +226,19 @@ Game.prototype.endGame = function() {
 
 if (process.argv[1] === __filename) {
   console.log("multiplayer.js unitest start");
-  var gameServer = new GameServer("RoomForNegoChat", ['Employer', 'Candidate'], 600);
+  var gameServer = new exports.GameServer(['Alex', 'Deniz']);
 
   for (var userid=1; userid<=5; ++userid) {
-    var role = gameServer.roleWaitingForPlayer(userid);
+    var role = gameServer.nextRole();
     console.log("user "+userid+" starts with "+JSON.stringify(role));
     
-    var game = gameServer.gameWaitingForRole(role.role);
-    game.playerEntersGame(userid, role.role);
+    var game = gameServer.gameWaitingForRole(role);
+    game.playerEntersGame(userid, role);
     console.log("game = "+JSON.stringify(game));
-    
-    console.log("salary equal="+game.arePlayerValuesEqual("Salary"));
-    game.playerChangesValue(role.role, "Salary", "20000");
-    console.log("salary equal="+game.arePlayerValuesEqual("Salary"));
+
+    console.log("salary equal before change="+game.arePlayerValuesEqual("Salary"));
+    game.playerChangesValue(role, "Salary", "20000");
+    console.log("salary equal after change="+game.arePlayerValuesEqual("Salary"));
     
     console.log("-");
   }

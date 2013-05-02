@@ -14,11 +14,12 @@ var xml2js = require('xml2js')
 
 exports.Domain = function (pathToXmlFile) {
     var parser = new xml2js.Parser();
-    var utility_space = null;
+    var description = null, utility_space = null;
     parser.parseString(fs.readFileSync(pathToXmlFile), function (err, result) {
+        description = result.negotiation_template.description[0].trim();
         utility_space = result.negotiation_template.utility_space[0];
     });
-    //this.utility_space = utility_space;
+    this.description= description;
     
     // Initialize issues:
     this.issues = utility_space.objective[0].issue;
@@ -144,6 +145,7 @@ if (process.argv[1] === __filename) {
 
   /* test job candidate domain: */
   domain = new exports.Domain(path.join(__dirname,'domains','JobCandiate','JobCanDomain.xml'));
+  console.log("This is a domain of negotiation "+domain.description);
   agent = domain.agentOfRoleAndPersonality('employer', 'comp-romise');
   utilitySpace = agent.utility_space_object;
   offer = {Salary: '7,000 NIS', 'Job Description': 'QA'};
@@ -153,7 +155,8 @@ if (process.argv[1] === __filename) {
 
   /* test neighbours domain: */
   domain = new exports.Domain(path.join(__dirname,'domains','neighbours_alex_deniz','neighbours_domain.xml'));
-  agent = domain.agentOfRoleAndPersonality('alex', '1');
+  console.log("This is a domain of negotiation "+domain.description);
+  agent = domain.agentOfRoleAndPersonality('alex', 'A');
   utilitySpace = agent.utility_space_object;
   offer = {'Basketball court': 'Alex will not use court on Saturday', Noise: 'Deniz will be quiet after 11pm'};
   console.log("utility of "+JSON.stringify(offer)+"="+utilitySpace.getUtilityWithoutDiscount(offer));

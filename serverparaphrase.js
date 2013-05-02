@@ -202,5 +202,3 @@ process.on('exit', function (){
 	logger.writeEventLog("events", "END", {port:app.get('port')});
 	console.log('Goodbye!');
 });
-// http://localhost:4000/negonlp/advanced/Employer?assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE
-
