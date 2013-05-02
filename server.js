@@ -152,7 +152,7 @@ gameServers['negomenus'] = new multiplayer.GameServer(
 		 domain: 'Job',
 		 defaultPersonality: 'short-term'
 		});
-gameServers['negomenus_neighbours'] = new multiplayer.GameServer(
+gameServers['negomenus_nb'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Alex','Deniz'],
 		{roomTemplateName: 'RoomForNegoMenus',
 		 maxTimeSeconds:   30*60,
@@ -168,6 +168,14 @@ gameServers['negochat'] = new multiplayer.GameServer(
 		 domain: 'Job',
 		 defaultPersonality: 'short-term'
 		});
+gameServers['negochat_nb'] = new multiplayer.GameServer(
+		/*requiredRoles=*/['Alex','Deniz'],
+		{roomTemplateName: 'RoomForNegoChat',
+		 maxTimeSeconds:   30*60,
+		 events: require('./EventsForNegoChat'),
+		 domain: 'Neighbours',
+		 defaultPersonality: 'A'
+		});
 gameServers['negonlp'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Employer', 'Candidate'],
 		{roomTemplateName: 'RoomForNegoNlp',
@@ -175,6 +183,14 @@ gameServers['negonlp'] = new multiplayer.GameServer(
 		 events: require('./EventsForNegoChat'),
 		 domain: 'Job',
 		 defaultPersonality: 'short-term'
+		});
+gameServers['negonlp_nb'] = new multiplayer.GameServer(
+		/*requiredRoles=*/['Alex','Deniz'],
+		{roomTemplateName: 'RoomForNegoNlp',
+		 maxTimeSeconds:   30*60,
+		 events: require('./EventsForNegoChat'),
+		 domain: 'Neighbours',
+		 defaultPersonality: 'A'
 		});
 
 for (gameType in gameServers)
