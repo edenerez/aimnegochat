@@ -222,12 +222,6 @@ var domains = {};
 domains['Job'] = new genius.Domain(path.join(__dirname,'domains','JobCandiate','JobCanDomain.xml'));
 domains['Neighbours'] = new genius.Domain(path.join(__dirname,'domains','neighbours_alex_deniz','neighbours_domain.xml'));
 
-//var actualAgents = {};
-//actualAgents['Employer']	= domains['Job'].agentOfRoleAndPersonality('employer', 'short-term');
-//actualAgents['Candidate'] = domains['Job'].agentOfRoleAndPersonality('candidate', 'short-term');
-//actualAgents['Previewer'] =	actualAgents['Employer'];
-//app.locals.actualAgents = actualAgents;
-
 // Variables that will be available to all JADE templates:
 app.locals.turnLengthInSeconds = 2*60;
 app.locals.sprintf = require('sprintf').sprintf;
@@ -253,7 +247,7 @@ app.get('/:gametype/gametype', function (req,res){
 	res.render("present", {
 		gametype: gameType, 
 		gametypes: Object.keys(gameServers),
-		roles: gameServers[gameType].requiredRolesArray
+		requiredRoles: gameServers[gameType].requiredRolesArray
 		});
 });
 
@@ -576,7 +570,8 @@ app.get('/PreQuestionnaireExam', function(req,res) {
 				action:'/VerifyQuestionnaire',
 				next_action:'/entergame',
 				query: req.query,
-				role: req.session.data.role,
+				userRole: req.session.data.role,
+				requiredRoles: gameServers[req.session.data.gametype].requiredRolesArray,
 				AMTStatus: JSON.stringify(req.session.data)});
 });
 
@@ -614,6 +609,7 @@ app.get('/:gametype/play', function(req,res) {
 				gametype: req.params.gametype, 
 				role: req.session.data.role,
 				agent: actualAgent,
+				domain_description: domains[req.session.data.domain].description,
 				session_data: req.session.data,
 				AMTStatus: JSON.stringify(req.session.data),
 				next_action:'/PostQuestionnaireA'});
@@ -805,5 +801,3 @@ process.on('exit', function (){
 	logger.writeEventLog("events", "END", {port:app.get('port')});
 	console.log('Goodbye!');
 });
-// http://localhost:4000/negonlp/advanced/Employer?assignmentId=ASSIGNMENT_ID_NOT_AVAILABLE
-

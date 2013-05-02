@@ -8,7 +8,7 @@ block body
       p 
         b #{(query.mistake? 'Wrong answer in '+ query.wrong + '! Please try again.': '')}
       
-      p Please read the <a target='_blank' href='#{role=="Employer"? "http://biu-ai.com/ChatEmployer/": "http://biu-ai.com/ChatCandidate/"}'>tutorial presentation</a> (opens in a new window), then answer the questions below:
+      p Please read the <a target='_blank' href='http://biu-ai.com/Chat#{userRole}/'>tutorial presentation</a> (opens in a new window), then answer the questions below:
 
       input(type="hidden", name="next_action", value="#{next_action}")
 
@@ -16,8 +16,8 @@ block body
       p Whose side are you playing in the negotiation? 
       select(name='question1')
         option(value='') -- select --
-        option(value='#{role=="Employer"? "correct": ""}') Employer
-        option(value='#{role=="Candidate"? "correct": ""}') Job Candidate
+        each requiredRole in requiredRoles
+         option(value='#{userRole==requiredRole? "correct": ""}') #{requiredRole}
         option Both
 
       h2 Question 2

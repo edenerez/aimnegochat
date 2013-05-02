@@ -10,13 +10,13 @@ block previewNotes
 
 block mainGui
     div.mainSection <!-- row #3: explanations to the user; possible values and utils -->
-      | This is a game of <b>negotiation</b> between Employer and Job Candidate, about the Candidate's job conditions: 
+      | This is a game of <b>negotiation</b> #{domain_description} 
       ul
        if (locals.session_data)
         li You are the <b>#{session_data.role}</b>. 
        li The negotiation relates to several <b>issues</b>. For each issue, there are several possible <b>values</b>.
        li Your score depends on the <b>values</b> in the final agreement, and on <b>time</b>. Click "Your scores" for details.
-       li You will get a bonus in cents: <b>score/10</b>. An average score is 400 which means 40 cents bonus. 
+       li You will get a bonus in cents: <b>score/10</b>. For example, a of 400 means 40 cents bonus. 
        li Use the menus below as a draft. Your partner cannot see them - you communicate with <b>chat</b> only.
       include GeniusMenus
 

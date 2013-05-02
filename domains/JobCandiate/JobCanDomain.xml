@@ -1,5 +1,7 @@
 <negotiation_template number_of_sessions="1"> 
-
+<description>
+between an Employer and a Job Candidate, about the Candidate's job conditions.
+</description>
 <utility_space number_of_issues="0">
 
 <agent utility_space="Side_ACompromise.xml" owner="employer" personality="comp-romise"></agent> 

@@ -1,4 +1,7 @@
 <negotiation_template number_of_sessions="1"> 
+<description>
+between two neighbours, Alex and Deniz, about neighbour problems.
+</description>
 
 <utility_space number_of_issues="0"> 
 
