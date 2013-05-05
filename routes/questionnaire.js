@@ -11,14 +11,14 @@ function Questionnaire(questionnaireModel) {
 }
 
 Questionnaire.prototype = {
-  listAll: function(req, res, gameServers) {
+  listAll: function(req, res, types) {
     self = this;
     var query = azure.TableQuery
       .select()
       .from(self.questionnaireModel.tableName);
       //.where('datastatus eq ?', 0);
     self.questionnaireModel.find(query, function itemsFound(err, items) {
-      res.render('questionnaireData',{title: 'Questionnaire List', questionnaireList: items ,gametype: req.params.gametype,  gametypes: Object.keys(gameServers)});
+      res.render('questionnaireData',{title: 'Questionnaire List', questionnaireList: items ,gametype: req.params.gametype,  gametypes: types});
     });
   },
 

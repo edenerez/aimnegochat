@@ -14,7 +14,7 @@ function Report(questionnaireModel, gamesModel, GameActionModel,finalResultModel
 }
 
 Report.prototype = {
-   gameInfo: function(req, res, gameServers) {
+   gameInfo: function(req, res, types) {
     self = this;
     var questionnaireModel = self.questionnaireModel;
     var finalResultModel = self.finalResultModel;
@@ -60,7 +60,7 @@ Report.prototype = {
                   questionnaireList: users, 
                   gametype: gametype, 
                   FinalResultList: items0, 
-                  gametypes: Object.keys(gameServers)});
+                  gametypes: types});
               });
            });
         });

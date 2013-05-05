@@ -28,33 +28,46 @@ GameAction.prototype = {
     });
   },
 
- listAll: function(req, res,gameServers) {
+ listAll: function(req, res,types) {
     self = this;
     var query = azure.TableQuery
       .select()
       .from(self.GameActionModel.tableName);
       //.where('datastatus eq ?', 0);
     self.GameActionModel.find(query, function itemsFound(err, items) {
-      res.render('games',{title: 'Games Action', GameActionList: items, gametype: req.params.gametype,  gametypes: Object.keys(gameServers)});
+      res.render('games',{title: 'Games Action', GameActionList: items, gametype: req.params.gametype,  gametypes: types});
     });
   },
+/*
 
-  
-  activeGameAction: function(game, action, user, data) {
-    var self = this;
-    if (action == "Change")
-      var item = data;
-    else 
-      if (action == "offer"){
+if (typeof data == "object"){
+      if (!data.issue){
         var item = new Object();
         item.issue = NaN;  
         item.value = JSON.stringify(data);
       }
-    else{
-      var item = new Object();
-      item.issue = NaN;  
-      item.value = data.toString();
+      else{
+
+*/
+  
+  activeGameAction: function(game, action, user, data) {
+    var self = this;
+   /* console.log("!!!!!!!!!game",  game);
+    console.log("!!!!!!!!!action", action);
+    console.log("!!!!!!!!!user", user);
+    console.log("!!!!!!!!!data", data);
+    
+    if (typeof data == "object")
+      //console.log("!!!!!", typeof data ,"+", data );*/
+    if (action == "Change"){
+      var item = data;
     }
+    else{ 
+        var item = new Object();
+        item.issue = NaN;  
+        item.value = JSON.stringify(data);
+    }
+    //var item = new Object(); /// delete this line after funish
     item.PartitionKey = game.gameid;
     item.userid = user.userid;
     item.role = user.role;

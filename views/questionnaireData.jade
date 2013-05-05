@@ -39,7 +39,7 @@ block content
          td Active
        - if (questionnaireList !== undefined) 
          each questionnaire in questionnaireList
-          if (questionnaire.gametype == gametype)
+          if (games.gametype == gametype || games.gametype == gametype.split("_")[0])
              tr
                td #{questionnaire.Timestamp}
                td #{questionnaire.gender}

@@ -35,13 +35,13 @@ FinalResult.prototype = {
   },
   
   
-  listAll: function(req, res, gameServers) {
+  listAll: function(req, res, types) {
     self = this;
     var query = azure.TableQuery
       .select()
       .from(self.FinalResultModel.tableName);
     self.FinalResultModel.find(query, function itemsFound(err, items) {
-      res.render('finalResultsData',{title: 'Final Result List', FinalResultList: items, gametype: req.params.gametype, gametypes: Object.keys(gameServers)});
+      res.render('finalResultsData',{title: 'Final Result List', FinalResultList: items, gametype: req.params.gametype, gametypes: types});
     });
   },
 
