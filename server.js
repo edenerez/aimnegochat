@@ -143,8 +143,8 @@ app.configure('development', function(){
 // 
 
 var gameServers = {};
-
-gameServers['negomenus'] = new multiplayer.GameServer(
+var types = {};
+gameServers['negomenus_JobCandidate'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Employer','Candidate'],
 		{roomTemplateName: 'RoomForNegoMenus',
 		 maxTimeSeconds:   30*60,
@@ -152,7 +152,7 @@ gameServers['negomenus'] = new multiplayer.GameServer(
 		 domain: 'Job',
 		 defaultPersonality: 'short-term'
 		});
-gameServers['negomenus_nb'] = new multiplayer.GameServer(
+gameServers['negomenus_Neighbours'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Alex','Deniz'],
 		{roomTemplateName: 'RoomForNegoMenus',
 		 maxTimeSeconds:   30*60,
@@ -160,7 +160,7 @@ gameServers['negomenus_nb'] = new multiplayer.GameServer(
 		 domain: 'Neighbours',
 		 defaultPersonality: 'A'
 		});
-gameServers['negochat'] = new multiplayer.GameServer(
+gameServers['negochat_JobCandidate'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Employer', 'Candidate'], 
 		{roomTemplateName: 'RoomForNegoChat',
 		 maxTimeSeconds:   30*60,
@@ -168,7 +168,7 @@ gameServers['negochat'] = new multiplayer.GameServer(
 		 domain: 'Job',
 		 defaultPersonality: 'short-term'
 		});
-gameServers['negochat_nb'] = new multiplayer.GameServer(
+gameServers['negochat_Neighbours'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Alex','Deniz'],
 		{roomTemplateName: 'RoomForNegoChat',
 		 maxTimeSeconds:   30*60,
@@ -176,7 +176,7 @@ gameServers['negochat_nb'] = new multiplayer.GameServer(
 		 domain: 'Neighbours',
 		 defaultPersonality: 'A'
 		});
-gameServers['negonlp'] = new multiplayer.GameServer(
+gameServers['negonlp_JobCandidate'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Employer', 'Candidate'],
 		{roomTemplateName: 'RoomForNegoNlp',
 		 maxTimeSeconds:   30*60,
@@ -184,7 +184,7 @@ gameServers['negonlp'] = new multiplayer.GameServer(
 		 domain: 'Job',
 		 defaultPersonality: 'short-term'
 		});
-gameServers['negonlp_nb'] = new multiplayer.GameServer(
+gameServers['negonlp_Neighbours'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Alex','Deniz'],
 		{roomTemplateName: 'RoomForNegoNlp',
 		 maxTimeSeconds:   30*60,
@@ -193,9 +193,16 @@ gameServers['negonlp_nb'] = new multiplayer.GameServer(
 		 defaultPersonality: 'A'
 		});
 
-for (gameType in gameServers)
-	gameServers[gameType].gametype = gameType;
-	
+for (gameType in gameServers){
+	gameServers[gameType].gametype = gameType;//.split("_")[0];
+	if (!types[gameType.split("_")[0]]){
+		types[gameType.split("_")[0]] = [];
+		types[gameType.split("_")[0]][0] = gameType.split("_")[1];
+	}
+	else
+		types[gameType.split("_")[0]][types[gameType.split("_")[0]].length] = gameType.split("_")[1];
+}
+console.log(types);	
 	
 function getActualAgent(domainName, roleName, personality) {
 	var domain = domains[domainName];
@@ -234,7 +241,7 @@ app.locals.format = "%+1.0f";
 //
 
 app.get('/', express.basicAuth('biu','biu'), function(req,res) {
-		res.render("index",	{serverStartTime: serverStartTime, gametypes: Object.keys(gameServers)});
+		res.render("index",	{serverStartTime: serverStartTime, gametypes: types}); //Object.keys(gameServers)
 });
 
 //ariel
@@ -246,7 +253,7 @@ app.get('/:gametype/gametype', function (req,res){
 	var gameType = req.params.gametype;
 	res.render("present", {
 		gametype: gameType, 
-		gametypes: Object.keys(gameServers),
+		gametypes: types,
 		requiredRoles: gameServers[gameType].requiredRolesArray
 		});
 });
@@ -395,7 +402,7 @@ var kbagent = new KBAgent();
 ///////////////////
 //NewKBAgent
 ///////////////////
-
+/*
 var NewKBAgent  = require('./agents/NewKBAgent');
 var newkbagent = new NewKBAgent();
 newkbagent.initializeNewKBAgent(domains['Job']);
@@ -403,7 +410,7 @@ app.get('/:gametype/listNewKBAgentInit', function(req,res){
 	newkbagent.listAllInitData(req,res,gameServers);
 });
 
-
+*/
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -420,7 +427,7 @@ var questionnaireModel = new QuestionnaireModel(
 var questionnaire = new Questionnaire(questionnaireModel);
 
 app.get('/:gametype/listAllQuestionnaire' ,function (req,res){
-	 questionnaire.listAll(req,res,gameServers);
+	 questionnaire.listAll(req,res,types);
 });
 app.get('/prequestionnaireA', questionnaire.demographyQuestionnaire.bind(questionnaire));
 app.post('/addquestionnaire', questionnaire.addQuestionnaire.bind(questionnaire));
@@ -459,7 +466,7 @@ function messageLog(socket, game, action, user, data) {
 }
 
 app.get('/:gametype/listAllGameAction' ,function (req,res){
-	 gameAction.listAll(req,res,gameServers);
+	 gameAction.listAll(req,res,types);
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -476,7 +483,7 @@ var gamesModel = new GamesModel (
 var games = new Games(gamesModel);
 
 app.get('/:gametype/listAllGames' ,function (req,res){
-	 games.listAll(req,res,gameServers);
+	 games.listAll(req,res,types);
 });
 
 function gamesTable(gametype, game, unverified, action)
@@ -505,7 +512,7 @@ var finalResultModel = new FinalResultModel (
 var finalResult = new FinalResult(finalResultModel);
 
 app.get('/:gametype/listAllFinalResults' ,function (req,res){
-	 finalResult.listAll(req,res,gameServers);
+	 finalResult.listAll(req,res,types);
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -520,7 +527,7 @@ var gameReport = new GameReport (questionnaireModel
 								,finalResultModel);
 
 app.get('/:gametype,:PartitionKey,:Employer,:Candidate/gameReport' , function (req,res){
-	gameReport.gameInfo (req,res,gameServers);
+	gameReport.gameInfo (req,res,types);
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

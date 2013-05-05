@@ -12,7 +12,7 @@ function Games(GamesModel) {
 
 Games.prototype = {
 
-  addGames: function(gametype, gameid, startTime, unverified) {
+  addGames: function(gametype, gameid, unverified) {
     var self = this;      
     if (self.PartitionKey == gameid){
       return;
@@ -35,7 +35,7 @@ Games.prototype = {
   },
 
 
-  listAll: function(req, res,gameServers) {
+  listAll: function(req, res,types) {
     self = this;
     var query = azure.TableQuery
       .select()
@@ -50,7 +50,7 @@ Games.prototype = {
         title: 'Games List', 
         gamesList: items, 
         gametype: req.params.gametype,  
-        gametypes: Object.keys(gameServers)});
+        gametypes: types});
     });
   },
 

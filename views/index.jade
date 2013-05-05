@@ -39,9 +39,17 @@ head
             ul.nav
               li.active
                 a(href='#') Home
-              for gametype in gametypes  
-                li
-                 a(href='/#{gametype}/gametype') #{gametype}
+              li
+                a(href='#about') About
+              for type in Object.keys(gametypes)  
+                li.dropdown
+                  a.dropdown-toggle(href='#', data-toggle='dropdown')
+                    | #{type}
+                    b.caret
+                  ul.dropdown-menu
+                   for t in gametypes[type]
+                    li
+                      a(href='/#{type+'_'+t}/gametype') #{t}
 
           //
             /.nav-collapse 
