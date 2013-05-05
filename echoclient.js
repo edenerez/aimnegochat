@@ -1,6 +1,6 @@
 // Demo of socket.io client.
 var HOST = "localhost";
-var PORT = 10000;
+var PORT = 10001;
 
 var socketioclient = require('socket.io-client');
 var socket1 = socketioclient.connect(HOST, {port: PORT}); 
@@ -14,11 +14,11 @@ socket2.on('connect', function () {
 	console.log("socket2 connected!");
 });
 
-socket1.on('echo', function (result) { 
+socket1.on('echoes', function (result) { 
 	console.log("socket1 received: "+result);
 });
 
-socket2.on('echo', function (result) { 
+socket2.on('echoes', function (result) { 
 	console.log("socket2 received: "+result);
 });
 
