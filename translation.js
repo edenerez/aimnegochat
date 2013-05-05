@@ -1,5 +1,5 @@
 // Translate text to semantic representation using a translation server:
-var HOST=process.env.TRANSLATION_SERVER_HOST || "nlp-srv";
+var HOST=process.env.TRANSLATION_SERVER_HOST || "localhost";
 var PORT=process.env.TRANSLATION_SERVER_PORT || 9994;
 
 var fs=require('fs'), path=require('path');
