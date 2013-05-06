@@ -1,4 +1,6 @@
 // Demo of socket.io server.
+// See also echoclient.js
+
 var PORT = 10001;
 
 var io = require('socket.io').listen(PORT);

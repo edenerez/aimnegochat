@@ -1,4 +1,6 @@
 // Demo of socket.io client.
+// It connects to echoserver.js
+
 var HOST = "localhost";
 var SETTINGS = {
 	port: 10001, 
