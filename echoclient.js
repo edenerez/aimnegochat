@@ -1,5 +1,10 @@
 // Demo of socket.io client.
-// It connects to echoserver.js
+// It connects to echoserver.js.
+//
+// First, run:
+//    node echoserver.js
+// Then, run
+//    node echoclient.js
 
 var HOST = "localhost";
 var SETTINGS = {

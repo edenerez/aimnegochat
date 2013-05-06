@@ -1,5 +1,9 @@
 // Demo of socket.io server.
-// See also echoclient.js
+//
+// First, run:
+//    node echoserver.js
+// Then, run
+//    node echoclient.js
 
 var PORT = 10001;
 
