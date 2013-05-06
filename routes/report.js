@@ -54,7 +54,7 @@ Report.prototype = {
                     return diff;
                 });                
 
-                res.render('gamesActionData',{
+                res.render('gameReportsData',{
                   title: 'Game Action List', 
                   GameActionList: gameActions, 
                   questionnaireList: users, 
