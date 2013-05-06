@@ -202,7 +202,7 @@ for (gameType in gameServers){
 	else
 		types[gameType.split("_")[0]][types[gameType.split("_")[0]].length] = gameType.split("_")[1];
 }
-console.log(types);	
+
 	
 function getActualAgent(domainName, roleName, personality) {
 	var domain = domains[domainName];
@@ -489,11 +489,13 @@ app.get('/:gametype/listAllGames' ,function (req,res){
 function gamesTable(gametype, game, unverified, action)
 {
 	if (action == "Connect"){
-		games.addGames(gametype, game.gameid, unverified);
+		console.log(game)
+		if (game.startTime)
+			games.addGames(gametype, game.gameid, game.startTime, unverified);
 	}
 	if (action == "Disconnect" ){
 		game.endGame();
-		games.activeGames(game.gameid, game.mapRoleToUserid, game.startTime, game.endTime);
+		games.activeGames(game.gameid, game.mapRoleToUserid, game.endTime);
 	}
 	
 }

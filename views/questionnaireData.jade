@@ -35,11 +35,10 @@ block content
          td same_country
          td type
          td Completed
-         td Date
          td Active
        - if (questionnaireList !== undefined) 
          each questionnaire in questionnaireList
-          if (games.gametype == gametype || games.gametype == gametype.split("_")[0])
+          if (questionnaire.gametype == gametype || questionnaire.gametype == gametype.split("_")[0])
              tr
                td #{questionnaire.Timestamp}
                td #{questionnaire.gender}
@@ -68,4 +67,5 @@ block content
                td
                  input(type="hidden", name="#{questionnaire.RowKey}", value="#{questionnaire.RowKey}")
                  input(type="checkbox", name="active", value="#{!questionnaire.active}", checked=questionnaire.active)
+                  
      

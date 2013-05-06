@@ -12,7 +12,7 @@ function Games(GamesModel) {
 
 Games.prototype = {
 
-  addGames: function(gametype, gameid, unverified) {
+  addGames: function(gametype, gameid, startTime, unverified) {
     var self = this;      
     if (self.PartitionKey == gameid){
       return;
@@ -23,6 +23,7 @@ Games.prototype = {
     item.RowKey = uuid();
     self.RowKey = item.RowKey;
     item.gametype = gametype;
+    item.startTime = JSON.stringify(startTime);
     item.active = true;
     item.dataStatus = true;
     item.unverified = JSON.stringify(unverified);
@@ -55,12 +56,11 @@ Games.prototype = {
   },
 
   
-  activeGames: function(gameid, mapRoleToUserid, startTime, endTime) {
+  activeGames: function(gameid, mapRoleToUserid, endTime) {
     var self = this;
     var item = mapRoleToUserid;
     item.RowKey = self.RowKey;
     item.PartitionKey = gameid;
-    item.startTime = JSON.stringify(startTime);
     item.endTime = JSON.stringify(endTime);
     
     self.GamesModel.updateItem(item, function itemAdded(error) {
