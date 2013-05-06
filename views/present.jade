@@ -6,7 +6,7 @@ block content
       h4
           a(href='/users') Active users
           div(style='background-color: #eee;')
-            h1 #{gametype} Lists
+            h1 #{gametype.split("_")[0]} #{gametype.split("_")[1]} Lists
             h4
               a(href='/#{gametype}/listAllQuestionnaire') All Questionnaire
             h4
