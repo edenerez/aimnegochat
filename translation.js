@@ -1,6 +1,10 @@
 // Translate text to semantic representation using a translation server:
-var HOST=process.env.TRANSLATION_SERVER_HOST || "nlp-srv";
-var PORT=process.env.TRANSLATION_SERVER_PORT || 9994;
+var HOST=process.env.TRANSLATION_SERVER_HOST || "localhost";
+var SETTINGS = {
+	port: process.env.TRANSLATION_SERVER_PORT || 9994, 
+	'force new connection': true, 
+	'sync disconnect on unload': true
+};
 
 var fs=require('fs'), path=require('path');
 var DEFAULT_GRAMMAR_PATH = path.join(__dirname,"maps","NegotiationGrammarJson.txt");
@@ -10,10 +14,10 @@ function logWithTimestamp(message) {
 }
 
 exports.Translator = function(translatorName, pathToGrammarFile) {
-	logWithTimestamp(translatorName+" tries to connect to translation server at "+HOST+":"+PORT);
+	logWithTimestamp(translatorName+" tries to connect to translation server at "+HOST+":"+SETTINGS.port);
 	this.translatorName = translatorName;
 	this.grammar = fs.readFileSync(pathToGrammarFile? pathToGrammarFile: DEFAULT_GRAMMAR_PATH, 'utf8');
-	this.translationSocket = require('socket.io-client').connect(HOST, {port: PORT}); 
+	this.translationSocket = require('socket.io-client').connect(HOST, SETTINGS); 
 	this.translationHandlers = [  /* initialize with a default handler */
 		function (text, translations) {
 			logWithTimestamp(translatorName + " receives "+translations.length+" translations to '"+text + "': "+JSON.stringify(translations));
@@ -21,28 +25,19 @@ exports.Translator = function(translatorName, pathToGrammarFile) {
 	];
 
 	this.translationSocket.on('connect', function () { 
-		logWithTimestamp(translatorName+" connected to translation server at "+HOST+":"+PORT);
-		/* Test: */
-		//this.sendToTranslationServer("I offer a salary of 20000 and a car.", true, "NegotiationGrammarJson.txt");
+		logWithTimestamp(translatorName+" connected to translation server at "+HOST+":"+SETTINGS.port);
 	});
-	
-	this.textsWaitingForTranslations = {};
 	
 	var translator = this;
 	this.translationSocket.on('translation', function (result) {
-		//logWithTimestamp(translatorName+" got a translation");
-		if (translator.textsWaitingForTranslations[result.text]) {
 			for (var i=0; i<translator.translationHandlers.length; ++i) 
 				translator.translationHandlers[i](result.text, result.translations);
-			delete translator.textsWaitingForTranslations[result.text];
-		}
 	});
 }
 
 
 exports.Translator.prototype.sendToTranslationServer = function(text, forward) {
 	logWithTimestamp(this.translatorName+" asks: '" + text + "'");
-	this.textsWaitingForTranslations[text] = true;
 	this.translationSocket.emit("translate", {
 		text: text,
 		forward: forward,
@@ -65,7 +60,7 @@ exports.Translator.prototype.onTranslation = function(translationHandler) {
 
 if (process.argv[1] === __filename) {
 	if (process.argv[2]) HOST = process.argv[2];
-	if (process.argv[3]) PORT = process.argv[3];
+	if (process.argv[3]) SETTINGS.port = process.argv[3];
 	logWithTimestamp("translation.js unitest start");
 	var translator1 = new exports.Translator("translator1");
 	var translator2 = new exports.Translator("translator2");
