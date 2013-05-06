@@ -1,10 +1,14 @@
 // Demo of socket.io client.
 var HOST = "localhost";
-var PORT = 10001;
+var SETTINGS = {
+	port: 10001, 
+	'force new connection': true, 
+	'sync disconnect on unload': true
+};
 
 var socketioclient = require('socket.io-client');
-var socket1 = socketioclient.connect(HOST, {port: PORT}); 
-var socket2 = socketioclient.connect(HOST, {port: PORT});
+var socket1 = socketioclient.connect(HOST, SETTINGS); 
+var socket2 = socketioclient.connect(HOST, SETTINGS);
 
 socket1.on('connect', function () { 
 	console.log("socket1 connected!");
