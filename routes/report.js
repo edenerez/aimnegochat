@@ -6,18 +6,21 @@ var azure = require('azure');
 module.exports = Report;
 
 
-function Report(questionnaireModel, gamesModel, GameActionModel,finalResultModel) {
+function Report(questionnaireModel, gamesModel, GameActionModel,finalResultModel, playerModel) {
   this.questionnaireModel = questionnaireModel;
   this.gamesModel = gamesModel;
   this.GameActionModel = GameActionModel;
   this.finalResultModel = finalResultModel;
+  this.playerModel = playerModel;
 }
 
 Report.prototype = {
-   gameInfo: function(req, res, types) {
+  
+  gameInfo: function(req, res, types) {
     self = this;
     var questionnaireModel = self.questionnaireModel;
     var finalResultModel = self.finalResultModel;
+    var playerModel = self.playerModel;
     var key = req.params.PartitionKey;
     var gametype =  req.params.gametype;
     var queryGameActions = azure.TableQuery
@@ -29,22 +32,12 @@ Report.prototype = {
       .select()
       .from(finalResultModel.tableName)
       .where('PartitionKey eq ?' , key);
-      finalResultModel.find(queryFinalResults, function itemsFound(error, items0) {
-           var queryC = {tableName : questionnaireModel.tableName, partitionKey : 'gameid', rowKey : req.params.Candidate};
-           questionnaireModel.findOne(queryC, function itemsFound(error, items1) {
-             var queryE = {tableName : questionnaireModel.tableName, partitionKey : 'gameid', rowKey : req.params.Employer};
-             questionnaireModel.findOne(queryE,function itemsFound(error,items2){
-                var users = {};
-                if (items1)
-                  users[0] = items1;
-                if (items2)
-                  if (users[0])
-                    users[1] = items2;
-                  else
-                    users[0] = items2;
-                //users[0] = items1;
-                //users[1] = items2;
-
+      finalResultModel.find(queryFinalResults, function itemsFound(error, finelResults) {
+           var queryPlayer = azure.TableQuery
+          .select()
+          .from(playerModel.tableName)
+          .where('PartitionKey eq ?' , key);
+          playerModel.find(queryPlayer, function itemsFound(error, player) {
                 // Erel: sort gameActions by increasing timestamp, then by row key:
                 //console.dir(gameActions);
                 gameActions.sort(function(a, b){
@@ -57,13 +50,38 @@ Report.prototype = {
                 res.render('gameReportsData',{
                   title: 'Game Action List', 
                   GameActionList: gameActions, 
-                  questionnaireList: users, 
+                  playerList: player,
                   gametype: gametype, 
-                  FinalResultList: items0, 
+                  FinalResultList: finelResults, 
                   gametypes: types});
               });
            });
         });
-     });
-  },
+     },
+
+    playerInfo: function(req, res, types) {
+      self = this;
+      var questionnaireModel = self.questionnaireModel;
+      var playerModel = self.playerModel;
+      var key = req.params.RowKey;
+      var gametype =  req.params.gametype;
+      var queryQuestionnaire = azure.TableQuery
+      .select()
+      .from(questionnaireModel.tableName)
+      .where('RowKey eq ?' , key);
+      questionnaireModel.find(queryQuestionnaire, function itemsFound(error, questionnaire) {
+        var queryplayer = azure.TableQuery
+        .select()
+        .from(playerModel.tableName)
+        .where('RowKey eq ?' , key);
+        playerModel.find(queryplayer, function itemsFound(error, player) {
+                    res.render('playerReportsData',{
+                    title: 'Player Information', 
+                    questionnaireList: questionnaire, 
+                    playerList: player,
+                    gametype: gametype,
+                    gametypes: types});
+             });
+        });
+    },
 }

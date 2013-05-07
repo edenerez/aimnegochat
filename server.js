@@ -351,6 +351,7 @@ function entergame(session) {
 		entergameSemaphore.leave();
 	});
 }
+var AgentManager  = require('./AgentManager');
 
 app.get('/entergame', function(req,res) {
 	entergame(req.session);  // sets req.session.data.gameid
@@ -411,6 +412,24 @@ app.get('/:gametype/listNewKBAgentInit', function(req,res){
 });
 
 */
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////
+// Player
+///////////////////
+
+var Player = require('./routes/player');
+var PlayerModel = require('./models/playerModel');
+var playerModel = new PlayerModel(
+    azure.createTableService(accountName, accountKey)
+    , 'Player'
+    , partitionKey);
+var player = new Player(playerModel);
+
+app.get('/:gametype/listAllPlayers' ,function (req,res){
+	 player.listAll(req,res,types);
+});
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -490,12 +509,24 @@ function gamesTable(gametype, game, unverified, action)
 {
 	if (action == "Connect"){
 		console.log(game)
-		if (game.startTime)
+		if (game.startTime){
+			console.log(game.startTime);
 			games.addGames(gametype, game.gameid, game.startTime, unverified);
+			for (a in game.mapRoleToUserid){
+			    if (!game.mapRoleToUserid[a].indexOf('agent')){
+			        //console.log('!!!!!!!!!!!!!!!!!!'+game.mapRoleToUserid[a].indexOf('agent'));
+					player.addPlayer(game.gameid, game.mapRoleToUserid[a], a, 'agent', gametype);
+				}
+				else{
+					player.addPlayer(game.gameid, game.mapRoleToUserid[a], a, 'humen', gametype);	
+				}
+
+			}
+		}
 	}
 	if (action == "Disconnect" ){
 		game.endGame();
-		games.activeGames(game.gameid, game.mapRoleToUserid, game.endTime);
+		games.activeGames(game.gameid, game.endTime);
 	}
 	
 }
@@ -526,10 +557,15 @@ var GameReport = require('./routes/report');
 var gameReport = new GameReport (questionnaireModel
 								,gamesModel
 								,gameActionModel
-								,finalResultModel);
+								,finalResultModel
+								,playerModel);
 
-app.get('/:gametype,:PartitionKey,:Employer,:Candidate/gameReport' , function (req,res){
+app.get('/:gametype,:PartitionKey/gameReport' , function (req,res){
 	gameReport.gameInfo (req,res,types);
+});
+
+app.get('/:gametype,:RowKey/playerReport' , function (req,res){
+	gameReport.playerInfo (req,res,types);
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -613,7 +649,10 @@ app.get('/:gametype/play', function(req,res) {
 		}
 		var gameServer = gameServers[req.params.gametype];
 		var actualAgent = getActualAgent(req.session.data.domain, req.session.data.role, req.session.data.personality);
-
+		//console.log(domains[req.session.data.domain])
+		//var agentManager = new AgentManager(domains[gameServer.data.domain],gameServers)
+		//agentManager.playGame(req.params.gametype, req.session.data.gameid, users);
+		//agentManager.connectGame(req,res);
 		res.render(gameServer.data.roomTemplateName,	{
 				gametype: req.params.gametype, 
 				role: req.session.data.role,

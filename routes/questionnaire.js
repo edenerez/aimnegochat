@@ -28,14 +28,13 @@ Questionnaire.prototype = {
     var item = req.body.item;
     item.RowKey = req.session.data.userid;
     req.session.data.RowKey = item.RowKey;
-    item.browserType = req.session.data.browserType + req.session.data.browserVersion;
     item.userid = req.session.data.userid;
     item.gametype = req.session.data.gametype;
-    item.role = req.session.data.role;
+    item.browserType = req.session.data.browserType + req.session.data.browserVersion;
     //item.gameid = req.session.data.gameid ? req.session.data.gameid : NaN; // doesn't work either - why?
     item.assignmentId = req.session.data.assignmentId ? req.session.data.assignmentId : NaN; //null throw the program. undefine ignore it. mayby to put some string like "no amazonTurk"
     item.hitId = req.session.data.hitId ? req.session.data.hitId : NaN;
-    item.workerId = req.session.data.workerId ? req.session.data.workerId : NaN; //same
+    item.workerId = req.session.data.workerId ? req.session.data.workerId : NaN; 
     self.questionnaireModel.add(item, function itemAdded(err) {
       if(err) {
         throw err;
