@@ -1,0 +1,31 @@
+extends shared
+
+block content
+ div.container
+   br 
+   br
+   h1 #{gametype.split("_")[0]} 
+    h1= title
+   
+   br
+
+
+   form.scrol(action="/activePlayer", method="post")
+     table(class="table table-striped table-bordered")
+       tr
+         td Game Id
+         td Player Id
+         td Role
+         td Type
+         td Active
+       - if (playerList !== undefined) 
+         each player in playerList
+          if (player.gametype == gametype || player.gametype == gametype.split("_")[0])
+            tr
+              td #{player.PartitionKey}
+              td #{player.RowKey}
+              td #{player.role}
+              td #{player.type}
+              td
+                input(type="checkbox", name="active", value="#{!player.active}", checked=player.active)
+       
