@@ -25,7 +25,6 @@ Games.prototype = {
     item.gametype = gametype;
     item.startTime = JSON.stringify(startTime);
     item.active = true;
-    item.dataStatus = true;
     item.unverified = JSON.stringify(unverified);
    
     self.GamesModel.add(item, function itemAdded(error) {
@@ -56,9 +55,9 @@ Games.prototype = {
   },
 
   
-  activeGames: function(gameid, mapRoleToUserid, endTime) {
+  activeGames: function(gameid, endTime) {
     var self = this;
-    var item = mapRoleToUserid;
+    var item = {};
     item.RowKey = self.RowKey;
     item.PartitionKey = gameid;
     item.endTime = JSON.stringify(endTime);

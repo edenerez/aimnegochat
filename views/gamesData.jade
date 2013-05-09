@@ -4,7 +4,9 @@ block content
  div.container
    br 
    br
-   h1= title
+   h1 #{gametype.split("_")[0]} 
+    h1= title
+   
    br
 
 
@@ -22,7 +24,7 @@ block content
           if (games.gametype == gametype || games.gametype == gametype.split("_")[0])
             tr
               td
-               a(href='/#{gametype},#{games.PartitionKey},#{games.Employer},#{games.Candidate}/gameReport') #{games.PartitionKey}
+               a(href='/#{gametype},#{games.PartitionKey}/gameReport') #{games.PartitionKey}
               td #{games.Timestamp}
               td #{games.gametype}
               td #{games.startTime}
