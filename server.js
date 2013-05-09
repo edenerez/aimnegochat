@@ -702,6 +702,8 @@ function announcement(socket, game, action, user, data) {
 
 io.sockets.on('connection', function (socket) {
 	console.log("SOCKETIO: New client connects");
+	socket.on('disconnect', function () { console.log("SOCKETIO: Client disconnects"); });
+	
 	socket.on('start_session', function (session_data) {
 		console.log("SOCKETIO: New client starts session: ");
 		console.dir(session_data);

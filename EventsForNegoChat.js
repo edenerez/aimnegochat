@@ -2,7 +2,9 @@ var deepmerge = require('./deepmerge');
 var translation = require('./translation');
 
 exports.initializeEventHandlers = function(socket, game, session_data, io, finalResultTable, functions) {
-	var translator = new translation.Translator("translator-of-"+session_data.role);
+	var translator;
+	if (/^negonlp/.test(game.gametype))
+		translator = new translation.Translator("translator-of-"+session_data.role);
 
 	var agent = null, allIssues = null;
 	if (!session_data.domain) {
@@ -15,7 +17,13 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		console.error("\n\nERROR: Undefined role!");
 		console.dir(session_data);
 	} else {
-		agent = functions.getActualAgent(session_data.domain, session_data.role, session_data.personality);
+		try {
+			agent = functions.getActualAgent(session_data.domain, session_data.role, session_data.personality);
+		} catch (error) {
+			console.error("\n\nERROR: Cannot initialize agent!");
+			console.dir(error);
+		// TODO: send error message to the client.
+		}
 	}
 	if (agent)
 		allIssues = agent.utility_space_object.issueByIndex;
@@ -56,8 +64,9 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		translator.sendToTranslationServer(text, /*forward=*/true);
 	});
 
+
 	// The translator returned the semantic translation of the human's chat message
-	translator.onTranslation(function(text,translations) {
+	if (translator) translator.onTranslation(function(text,translations) {
 		//console.log("TranslationServer serving "+JSON.stringify(session_data));
 		if (!translations || translations.length==0) {
 			misunderstanding("I didn't understand your message: '"+text+"'. Please say this in other words");

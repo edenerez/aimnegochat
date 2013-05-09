@@ -41,7 +41,10 @@ exports.Domain = function (pathToXmlFile) {
 }
 
 exports.Domain.prototype.agentOfRoleAndPersonality = function(role, personality) {
-    return this.agentsByOwnerAndPersonality[role][personality];
+	var agentsOfRole = this.agentsByOwnerAndPersonality[role];
+	if (!agentsOfRole)
+		throw new Error("No agents of role '"+role+"'. Known agents are: "+Object.keys(this.agentsByOwnerAndPersonality));
+	return agentsOfRole[personality];
 };
 
 exports.Domain.prototype.agentsOfRole = function(role) {
