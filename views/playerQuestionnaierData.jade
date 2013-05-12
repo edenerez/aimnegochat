@@ -8,16 +8,16 @@ block content
  form(action="/activeQuestionnaire", method="post")
    table(class="table table-striped table-bordered")
      tr
-       td PartitionKey
-       td Gender
-       td Age
-       td Education
-       td Field
-       td Birth Country
-       td Data Status
-       td Completed
-       td Date
-       td Active
+       th PartitionKey
+       th Gender
+       th Age
+       th Education
+       th Field
+       th Birth Country
+       th Data Status
+       th Completed
+       th Date
+       th Active
      - if (questionnaireList !== undefined) 
        each questionnaire in questionnaireList
         tr

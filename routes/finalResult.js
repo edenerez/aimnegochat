@@ -8,25 +8,23 @@ module.exports = FinalResult;
 
 function FinalResult(FinalResultModel) {
   this.FinalResultModel = FinalResultModel;
+  this.check = false;
 }
 
 FinalResult.prototype = {
 
-  addFinalResult: function(data) {
-    var self = this;      
+  addFinalResult: function(results, userid, role, gameid) {
+    var self = this; 
+
     var item = new Object();
-    item.JobDescription = data.mapRoleToFinalResult.agreement['Job Description'];
-    item.LeasedCar = data.mapRoleToFinalResult.agreement['Leased Car'];
-    item.PensionFond = data.mapRoleToFinalResult.agreement['Pension Fund'];
-    item.PromotionPosibilities = data.mapRoleToFinalResult.agreement['Promotion Possibilities'];
-    item.Salary = data.mapRoleToFinalResult.agreement['Salary'];
-    item.WorkingHours = data.mapRoleToFinalResult.agreement['Working Hours'];
-    item.timeFromStart = data.mapRoleToFinalResult.timeFromStart.toString();
-    item.turnsFromStart = data.mapRoleToFinalResult.turnsFromStart.toString();
-    item.utilityWithoutDiscount = data.mapRoleToFinalResult.utilityWithoutDiscount.toString();
-    item.utilityWithDiscount = data.mapRoleToFinalResult.utilityWithDiscount.toString();
-    item.RowKey = data.userid;
-    item.PartitionKey = data.gameid;
+    for (result in results){
+      if(result !== 'agreement')
+        item[result] = results[result].toString();
+    }
+    item.role = role;
+    item.RowKey = userid;
+    item.PartitionKey = gameid;
+    console.log(item);
     self.FinalResultModel.add(item, function itemAdded(error) {
       if(error) {
         throw error;

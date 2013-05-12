@@ -1,10 +1,10 @@
 var azure = require('azure');
  // , uuid = require('node-uuid');
 
-module.exports = FinalResultModel;
+module.exports = FinalAgreementModel;
 
 
-function FinalResultModel(storageClient, tableName) {
+function FinalAgreementModel(storageClient, tableName) {
   this.storageClient = storageClient;
   this.tableName = tableName;
 
@@ -17,7 +17,7 @@ function FinalResultModel(storageClient, tableName) {
     });
 };
 
-FinalResultModel.prototype.add = function(item, callback) {
+FinalAgreementModel.prototype.add = function(item, callback) {
 	self = this;
   self.storageClient.insertOrReplaceEntity(self.tableName, item, 
     function entityInserted(error) {
@@ -28,7 +28,7 @@ FinalResultModel.prototype.add = function(item, callback) {
     });
 };
 
-FinalResultModel.prototype.deleteTable = function() {
+FinalAgreementModel.prototype.deleteTable = function() {
   self = this;
   self.storageClient.deleteTable(self.tableName, function(error){
     if(!error){
@@ -37,7 +37,7 @@ FinalResultModel.prototype.deleteTable = function() {
   });
 };
 
-FinalResultModel.prototype.find = function(query, callback) {
+FinalAgreementModel.prototype.find = function(query, callback) {
 	self = this;
   self.storageClient.queryEntities(query, 
     function entitiesQueried(error, entities){
@@ -49,7 +49,7 @@ FinalResultModel.prototype.find = function(query, callback) {
     });
 };
 
-FinalResultModel.prototype.updateItem = function(item, callback) {
+FinalAgreementModel.prototype.updateItem = function(item, callback) {
   self = this;
     self.storageClient.insertOrMergeEntity (self.tableName, item, 
     function entityInserted(error) {

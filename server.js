@@ -508,27 +508,35 @@ app.get('/:gametype/listAllGames' ,function (req,res){
 function gamesTable(gametype, game, unverified, action)
 {
 	if (action == "Connect"){
-		console.log(game)
 		if (game.startTime){
-			console.log(game.startTime);
 			games.addGames(gametype, game.gameid, game.startTime, unverified);
-			for (a in game.mapRoleToUserid){
-			    if (!game.mapRoleToUserid[a].indexOf('agent')){
-			        //console.log('!!!!!!!!!!!!!!!!!!'+game.mapRoleToUserid[a].indexOf('agent'));
-					player.addPlayer(game.gameid, game.mapRoleToUserid[a], a, 'agent', gametype);
+			for (user in game.mapRoleToUserid){
+			    if (!game.mapRoleToUserid[user].indexOf('agent')){
+					player.addPlayer(game.gameid, game.mapRoleToUserid[user], user, 'agent', gametype);
 				}
 				else{
-					player.addPlayer(game.gameid, game.mapRoleToUserid[a], a, 'humen', gametype);	
+					player.addPlayer(game.gameid, game.mapRoleToUserid[user], user, 'human', gametype);	
 				}
-
+			}
+		}
+	}
+	if (action == "Sign"){
+		for (role in game.mapRoleToFinalResult){
+			var a=0;
+			finalResult.addFinalResult(game.mapRoleToFinalResult[role], game.mapRoleToUserid[role], role, game.gameid);
+			if (!finalAgreement.check){
+				for (agree in game.mapRoleToFinalResult[role].agreement){
+					console.log(++a);
+					finalAgreement.addFinalAgreement(agree, game.mapRoleToFinalResult[role].agreement[agree], game.gameid);
+				}
 			}
 		}
 	}
 	if (action == "Disconnect" ){
 		game.endGame();
+		finalAgreement.check = false;
 		games.activeGames(game.gameid, game.endTime);
 	}
-	
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -549,6 +557,22 @@ app.get('/:gametype/listAllFinalResults' ,function (req,res){
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+///////////////////
+//Agreement
+///////////////////
+
+var FinalAgreement = require('./routes/finalAgreement');
+var FinalAgreementModel = require('./models/finalAgreementModel');
+var finalAgreementModel = new FinalAgreementModel (
+	azure.createTableService(accountName, accountKey)
+	, 'FinalAgreement');
+var finalAgreement = new FinalAgreement(finalAgreementModel);
+
+app.get('/:gametype/listAllFinalAgreements' ,function (req,res){
+	 finalAgreement.listAll(req,res,types);
+});
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
 /////////////////////
 //GameReport
 /////////////////////
@@ -558,7 +582,8 @@ var gameReport = new GameReport (questionnaireModel
 								,gamesModel
 								,gameActionModel
 								,finalResultModel
-								,playerModel);
+								,playerModel
+								,finalAgreementModel);
 
 app.get('/:gametype,:PartitionKey/gameReport' , function (req,res){
 	gameReport.gameInfo (req,res,types);

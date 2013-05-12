@@ -4,28 +4,23 @@ block content
  div.container
    br 
    br
-   h1 #{gametype.split("_")[0]} 
-    h1= title
-   
+   h1 Game List (#{gametype.split("_")[1]}) 
+  
    br
-
-
    form.scrol(action="/activeGames", method="post")
      table(class="table table-striped table-bordered")
        tr
-         td Game Id
-         td Timestamp
-         td Game Type
-         td Start Time
-         td End Time
-         td Active
+         th Game Id
+         th Game Type
+         th Start Time
+         th End Time
+         th Active
        - if (gamesList !== undefined) 
          each games in gamesList
           if (games.gametype == gametype || games.gametype == gametype.split("_")[0])
             tr
               td
                a(href='/#{gametype},#{games.PartitionKey}/gameReport') #{games.PartitionKey}
-              td #{games.Timestamp}
               td #{games.gametype}
               td #{games.startTime}
               td #{games.endTime}

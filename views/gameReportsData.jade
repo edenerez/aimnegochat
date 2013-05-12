@@ -4,44 +4,40 @@ block content
   br 
   br
   div.container
-   
-   h1 User Info
+    
+   h1 Game #{gameid} (#{gametype.split('_')[1]})
    br
+   h2 User Info
    div.scrol
      table(class="table table-striped table-bordered")
        tr
-         td Game Id
-         td User Id
-         td Type
-         td Role
+         th User Id
+         th Type
+         th Role
        - if (playerList !== undefined)
          each player in playerList 
           tr
-            td #{player.PartitionKey}
             td 
               a(href='/#{gametype},#{player.RowKey}/playerReport') #{player.RowKey}
             td #{player.type}
             td #{player.role}
    br
 
-    h1 Game Action List
-   br
+   h2 Game Action List
    div.scrol
      table(class="table table-striped table-bordered")
        tr
-         td Action's Number
-         td Timestamp
-         td Action
-         td Remaining Time
-         td Role
-         td User Id
-         td Issue
-         td Value
+         th Action's Number
+         th Action
+         th Remaining Time
+         th Role
+         th User Id
+         th Issue
+         th Value
        - if (GameActionList !== undefined) 
          each GameAction in GameActionList
           tr
             td #{GameAction.RowKey}
-            td #{GameAction.Timestamp}
             td #{GameAction.action}
             td #{GameAction.remainingTime}
             td #{GameAction.role}
@@ -50,37 +46,36 @@ block content
             td #{GameAction.value}
             
    br
-   h1 Final Result 
-   br
-   div.scrol
-     table(class="table table-striped table-bordered")
-         tr
-           td Game Id
-           td User Id
-           td Timestamp
-           td Job Description
-           td Leased Car
-           td Pension Fond
-           td Promotion Posibilities
-           td Salary
-           td Working Hours
-           td Time From Start
-           td Turns From Start
-           td Utility Without Discount
-           td Utility With Discount
-         - if (FinalResultList !== undefined) 
-           each FinalResult in FinalResultList
-            tr
-              td #{FinalResult.PartitionKey}
-              td #{FinalResult.RowKey}
-              td #{FinalResult.Timestamp}
-              td #{FinalResult.JobDescription}
-              td #{FinalResult.LeasedCar}
-              td #{FinalResult.PensionFond}
-              td #{FinalResult.PromotionPosibilities}
-              td #{FinalResult.Salary}
-              td #{FinalResult.WorkingHours}
-              td #{FinalResult.timeFromStart}
-              td #{FinalResult.turnsFromStart}
-              td #{FinalResult.utilityWithoutDiscount}
-              td #{FinalResult.utilityWithDiscount}       
+   div.final 
+      h2 Final Result 
+      div.scrol
+       table(class="table table-striped table-bordered")
+           tr
+             th Role
+             th Time From Start
+             th Turns From Start
+             th Utility Without Discount
+             th Utility With Discount
+           - if (FinalResultList !== undefined) 
+             each FinalResult in FinalResultList
+              tr
+                td #{FinalResult.role}
+                td #{FinalResult.timeFromStart}
+                td #{FinalResult.turnsFromStart}
+                td #{FinalResult.utilityWithoutDiscount}
+                td #{FinalResult.utilityWithDiscount}       
+
+   
+   div
+     h2 Agreement 
+     div.scrol
+         table(class="table table-striped table-bordered")
+           tr
+             th Issue
+             th Value
+
+           - if (FinalAgreementList !== undefined) 
+             each FinalResult in FinalAgreementList
+              tr 
+                  td #{FinalResult.issue}
+                  td #{FinalResult.value}

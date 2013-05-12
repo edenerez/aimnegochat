@@ -11,31 +11,17 @@ block content
    form.scrol(action="/activeGames", method="post")
      table(class="table table-striped table-bordered")
        tr
-         td Game Id
-         td User Id
-         td Timestamp
-         td JobDescription
-         td LeasedCar
-         td PensionFond
-         td PromotionPosibilities
-         td Salary
-         td WorkingHours
-         td timeFromStart
-         td turnsFromStart
-         td utilityWithoutDiscount
-         td utilityWithDiscount
+         th Game Id
+         th User Id
+         th timeFromStart
+         th turnsFromStart
+         th utilityWithoutDiscount
+         th utilityWithDiscount
        - if (FinalResultList !== undefined) 
          each FinalResult in FinalResultList
           tr
             td #{FinalResult.PartitionKey}
             td #{FinalResult.RowKey}
-            td #{FinalResult.Timestamp}
-            td #{FinalResult.JobDescription}
-            td #{FinalResult.LeasedCar}
-            td #{FinalResult.PensionFond}
-            td #{FinalResult.PromotionPosibilities}
-            td #{FinalResult.Salary}
-            td #{FinalResult.WorkingHours}
             td #{FinalResult.timeFromStart}
             td #{FinalResult.turnsFromStart}
             td #{FinalResult.utilityWithoutDiscount}

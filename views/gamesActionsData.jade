@@ -9,21 +9,19 @@ block content
   div.scrol
      table(class="table table-striped table-bordered")
        tr
-         td Game Id
-         td Action's Number
-         td Timestamp
-         td Action
-         td Remaining Time
-         td Role
-         td User Id
-         td Issue
-         td Value
+         th Game Id
+         th Action's Number
+         th Action
+         th Remaining Time
+         th Role
+         th User Id
+         th Issue
+         th Value
        - if (GameActionList !== undefined) 
          each GameAction in GameActionList
           tr
             td #{GameAction.PartitionKey}
             td #{GameAction.RowKey}
-            td #{GameAction.Timestamp}
             td #{GameAction.action}
             td #{GameAction.remainingTime}
             td #{GameAction.role}

@@ -2,46 +2,40 @@ extends shared
 
 block content
  div.container
-   h1= title
+   h1 Player #{player} Information (#{gametype.split('_')[1]})
    br
 
-   h1 User Info
-   br
+   h2 User Info
    div.scrol
      table(class="table table-striped table-bordered")
        tr
-         td Game Id
-         td User Id
-         td Type
-         td Role
+         th Game Id
+         th Type
+         th Role
        - if (playerList !== undefined)
          each player in playerList 
           tr
             td #{player.PartitionKey}
-            td #{player.RowKey}
             td #{player.type}
             td #{player.role}
    br
 
-   h1 Pre Questionnaire
-   br
+   h2 Pre Questionnaire
    div.scrol
      table(class="table table-striped table-bordered")
        tr
-         td User Id
-         td Gender
-         td Age
-         td Education
-         td Field
-         td Birth Country
-         td browser Type
-         td assisnmentid
-         td hitid
-         td workerid
+         th Gender
+         th Age
+         th Education
+         th Field
+         th Birth Country
+         th browser Type
+         th assisnmentid
+         th hitid
+         th workerid
        - if (questionnaireList !== undefined) 
          each questionnaire in questionnaireList
           tr
-            td #{questionnaire.RowKey}
             td #{questionnaire.gender}
             td #{questionnaire.age}
             td #{questionnaire.education}
@@ -52,19 +46,18 @@ block content
             td #{questionnaire.hitid}
             td #{questionnaire.workerid}
   
-   h1 Post Questionnaire
-   br
+   h2 Post Questionnaire
    div.scrol
      table(class="table table-striped table-bordered")
        tr
-         td computer_program
-         td fairness
-         td feedback
-         td happy
-         td instruction
-         td otherGender
-         td same_country
-         td type
+         th computer_program
+         th fairness
+         th feedback
+         th happy
+         th instruction
+         th otherGender
+         th same_country
+         th type
        - if (questionnaireList !== undefined) 
          each questionnaire in questionnaireList
           tr

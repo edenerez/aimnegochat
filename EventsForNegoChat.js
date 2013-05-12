@@ -122,7 +122,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		};
 		game.mapRoleToFinalResult[session_data.role] = finalResult;
 		session_data.mapRoleToFinalResult = finalResult;
-		finalResultTable.addFinalResult(session_data);
+		//finalResultTable.addFinalResult(session_data);
 		functions.messageLog(socket, game, "Sign", session_data, finalResult);
 		socket.emit('sign', {id: session_data.role, agreement: agreement, you: true});
 		socket.broadcast.to(game.gameid).emit('sign', {id: session_data.role, agreement: agreement, you: false});
