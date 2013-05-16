@@ -8,7 +8,7 @@ module.exports = GameAction;
 
 function GameAction(GameActionModel) {
   this.GameActionModel = GameActionModel;
-  this.RowKey = 0;
+  
   
 }
 
@@ -55,8 +55,8 @@ GameAction.prototype = {
     item.remainingTime = game.timer? game.timer.remainingTimeSeconds(): "-";
     item.action = action;
 
-    this.RowKey ++ ;
-    item.RowKey = this.RowKey.toString();
+    game.actionNum++;
+    item.RowKey = game.actionNum.toString();
     self.GameActionModel.add(item, function itemAdded(err) {
       if(err) {
         throw err;

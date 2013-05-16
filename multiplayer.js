@@ -108,6 +108,7 @@ Game = function(gametype, requiredRoles) {
     this.calculateMissingRoles();
     this.mapRoleToMapIssueToValue = {}; // for each role, we keep an issue=>value map.
     this.mapRoleToFinalResult = {};
+    this.actionNum = 0;
 };
 
 Game.prototype.isRoleInGame = function (role) {
