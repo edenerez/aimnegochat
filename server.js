@@ -59,25 +59,16 @@ function browserType (req){
 		req.session.data.browserType = 'firefox';
 }
 
-function setSessionForNewUser(req) {
+function setSessionForNewUser(req, gameServer) {
 	if (req.session && req.session.data) {
 		logger.writeEventLog("events", "OLDSESSION", req.session);
-		users[req.session.data.userid].urls.pop();
+		if (users[req.session.data.userid])
+			users[req.session.data.userid].urls.pop();
 	}
 	req.session.data = req.query;  // for Amazon Turk users, the query contains the hit id, assignment id and worker id. 
 	req.session.data.userid = req.ip + ":" + new Date().toISOString();
 	req.session.data.gametype = req.params.gametype;
-	var gameServer = gameServers[req.params.gametype];
 	
-	if (req.params.domain)
-		req.session.data.domain = req.params.domain;
-	else
-		req.session.data.domain = gameServer.data.domain;
-		  	
-	if (req.params.personality)
-		req.session.data.personality = req.params.personality;
-	else
-		req.session.data.personality = gameServer.data.defaultPersonality;
 		
 	if (req.params.role)
 		req.session.data.role = req.params.role;
@@ -90,6 +81,9 @@ function setSessionForNewUser(req) {
 	users[req.session.data.userid] = req.session.data;
 	users[req.session.data.userid].urls = [req.url.substr(0,60)];
 	logger.writeEventLog("events", "NEWSESSION",	 req.session);
+	
+	req.session.data.domain = (req.params.domain? req.params.domain: gameServer? gameServer.data.domain: null);
+	req.session.data.personality = (req.params.personality? req.params.personality: gameServer? gameServer.data.defaultPersonality: null);
 }
 
 
@@ -193,6 +187,21 @@ gameServers['negonlp_Neighbours'] = new multiplayer.GameServer(
 		 defaultPersonality: 'A'
 		});
 
+/**
+ * http://stackoverflow.com/questions/16649529/ending-an-http-request-prematurely/16650056?noredirect=1#16650056
+ * A middleware for getting the game server of the given game type. 
+ * If the game server does not exist - return an error message to the http response, and end the request.
+ */
+function getGameServer(req, res, next) {
+	var gametype          = req.params.gametype;
+	res.locals.gameServer = gameServers[gametype];
+
+	if (!res.locals.gameServer)
+		return res.end('Unknown game type "' + gametype + '"'); // end the request
+	next(); // this will call the next-in-line handler, which is your route handler below
+}
+
+
 for (gameType in gameServers){
 	gameServers[gameType].gametype = gameType;//.split("_")[0];
 	if (!types[gameType.split("_")[0]]){
@@ -260,22 +269,20 @@ app.get('/:gametype/gametype', function (req,res){
 
 // This is the entry point for an Amazon Turker with no role:
 //    It will select his role, then lead him to the preview or to the pre-questionnaire:
-app.get('/:gametype/beginner', function(req,res) {
-		var gameServer = gameServers[req.params.gametype];
-		setSessionForNewUser(req);
+app.get('/:gametype/beginner', getGameServer, function(req,res) {
+		setSessionForNewUser(req, res.locals.gameServer);
 		if (amt.isPreview(req.query)) {
 			 res.redirect('/'+req.params.gametype+'/preview');
 		} else {
-			req.session.data.role = gameServer.nextRole();
+			req.session.data.role = res.locals.gameServer.nextRole();
 			res.redirect('/prequestionnaireA');
 		}
 });
 
 // This is the entry point for an Amazon Turker with a pre-specified role:
 //    It will lead him to the preview or to the pre-questionnaire:
-app.get('/:gametype/beginner/:role', function(req,res) {
-		var gameServer = gameServers[req.params.gametype];
-		setSessionForNewUser(req);
+app.get('/:gametype/beginner/:role', getGameServer, function(req,res) {
+		setSessionForNewUser(req, res.locals.gameServer);
 		req.session.data.role = req.params.role;
 		if (amt.isPreview(req.query)) {
 			 res.redirect('/'+req.params.gametype+'/preview');
@@ -286,22 +293,20 @@ app.get('/:gametype/beginner/:role', function(req,res) {
 
 // This is the entry point for a developer with no role:
 //    It will select his role, then lead him directly to the game.
-app.get('/:gametype/advanced', function(req,res) {
-		var gameServer = gameServers[req.params.gametype];
-		setSessionForNewUser(req);
+app.get('/:gametype/advanced', getGameServer, function(req,res) {
+		setSessionForNewUser(req, res.locals.gameServer);
 		if (amt.isPreview(req.query)) {
 			 res.redirect('/'+req.params.gametype+'/preview');
 		} else {
-			req.session.data.role = gameServer.nextRole();
+			req.session.data.role = res.locals.gameServer.nextRole();
 			res.redirect('/entergame');
 		}
 });
 
 // This is the entry point for a developer with a pre-specified role:
 //    It will lead him directly to the game.
-app.get('/:gametype/advanced/:role', function(req,res) {
-		var gameServer = gameServers[req.params.gametype];
-		setSessionForNewUser(req);
+app.get('/:gametype/advanced/:role', getGameServer, function(req,res) {
+		setSessionForNewUser(req, res.locals.gameServer);
 		req.session.data.role = req.params.role;
 		if (amt.isPreview(req.query)) {
 			 res.redirect('/'+req.params.gametype+'/preview');
@@ -310,8 +315,8 @@ app.get('/:gametype/advanced/:role', function(req,res) {
 		}
 });
 
-app.get('/:gametype/watchgame/:gameid', function(req,res) {
-		setSessionForNewUser(req);	
+app.get('/:gametype/watchgame/:gameid', getGameServer, function(req,res) {
+		setSessionForNewUser(req, res.locals.gameServer);	
 		console.log('Watch mode start. session = '+JSON.stringify(req.session.data));
 		req.session.data.role = 'Watcher';
 		req.session.data.gameid = req.params.gameid;
@@ -357,17 +362,15 @@ app.get('/entergame', function(req,res) {
 	res.redirect('/'+req.session.data.gametype+"/play");
 });
 
-app.get('/:gametype/listactive', function(req,res) {
-		var gameServer = gameServers[req.params.gametype];
+app.get('/:gametype/listactive', getGameServer, function(req,res) {
 		res.render("MultiplayerGames",	{
 				title: 'Games on active server',
 				show_unverified_games: true,
 				timeToString: timer.timeToString, 
-				games: gameServer.getGames()});
+				games: res.locals.gameServer.getGames()});
 });
 //ariel
-app.get('/:gametype/listlogs', function(req,res) {
-		var gameServer = gameServers[req.params.gametype];
+app.get('/:gametype/listlogs', getGameServer, function(req,res) {
 		var pretty = req.query.pretty; // true to show only verified games
 		var finished = req.query.finished; // true to show only finished games
 		logger.readJsonLog('games.json', function(games) {
@@ -665,19 +668,14 @@ app.get('/VerifyQuestionnaire', function (req, res) {
 	}
 });
 
-app.get('/:gametype/play', function(req,res) {
+app.get('/:gametype/play', getGameServer, function(req,res) {
 		if (!req.session.data || req.session.data.gametype!=req.params.gametype) {  
 			// start a new session:
 				res.redirect("/"+req.params.gametype+"/advanced");
 				return;
 		}
-		var gameServer = gameServers[req.params.gametype];
 		var actualAgent = getActualAgent(req.session.data.domain, req.session.data.role, req.session.data.personality);
-		//console.log(domains[req.session.data.domain])
-		//var agentManager = new AgentManager(domains[gameServer.data.domain],gameServers)
-		//agentManager.playGame(req.params.gametype, req.session.data.gameid, users);
-		//agentManager.connectGame(req,res);
-		res.render(gameServer.data.roomTemplateName,	{
+		res.render(res.locals.gameServer.data.roomTemplateName,	{
 				gametype: req.params.gametype, 
 				role: req.session.data.role,
 				agent: actualAgent,
@@ -687,11 +685,10 @@ app.get('/:gametype/play', function(req,res) {
 				next_action:'/PostQuestionnaireA'});
 });
 
-app.get('/:gametype/preview', function(req,res) {
-		var gameServer = gameServers[req.params.gametype];
-		var roleForPreview = gameServer.requiredRolesArray[0];
+app.get('/:gametype/preview', getGameServer, function(req,res) {
+		var roleForPreview = res.locals.gameServer.requiredRolesArray[0];
 		var actualAgent = getActualAgent(req.session.data.domain, roleForPreview, req.session.data.personality);
-		res.render(gameServer.data.roomTemplateName,	{
+		res.render(res.locals.gameServer.data.roomTemplateName,	{
 				preview: true,
 				gametype: req.params.gametype, 
 				role: 'Previewer',

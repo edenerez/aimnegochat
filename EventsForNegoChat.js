@@ -61,7 +61,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 	// A human chat-player sent an English chat message - send it to all other users, and translate to semantics:
 	socket.on('English', function (text) {
 		functions.announcement(socket, game, "Message", session_data, text);
-		translator.sendToTranslationServer(text, /*forward=*/true);
+		if (translator) translator.sendToTranslationServer(text, /*forward=*/true);
 	});
 
 
