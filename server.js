@@ -351,7 +351,6 @@ function entergame(session) {
 		entergameSemaphore.leave();
 	});
 }
-var AgentManager  = require('./AgentManager');
 
 app.get('/entergame', function(req,res) {
 	entergame(req.session);  // sets req.session.data.gameid
