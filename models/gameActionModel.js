@@ -23,7 +23,8 @@ GameActionModel.prototype.add = function(item, callback) {
   self.storageClient.insertEntity(self.tableName, item, 
     function entityInserted(error) {
       if(error){  
-        callback(error);
+        console.log("Cannot create table: "+JSON.stringify(err));
+        callback(error + this.tableName);
       }
       callback(null);
     });

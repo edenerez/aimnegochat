@@ -22,10 +22,11 @@ function PlayerModel(storageClient, tableName, partitionKey) {
 PlayerModel.prototype.add = function(item, callback) {
 	self = this;
   //item.RowKey = uuid();
-  self.storageClient.insertEntity(self.tableName, item, 
+  self.storageClient.insertOrMergeEntity(self.tableName, item, 
     function entityInserted(error) {
       if(error){  
-        callback(error);
+        console.log("Cannot add player: "+JSON.stringify(error));
+        callback(error + this.tableName);
       }
       callback(null);
     });

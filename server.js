@@ -14,6 +14,7 @@ var express = require('express')
 	, logger = require('./logger')
 	, timer = require('./timer')
 	, useragent = require('useragent')
+	, net = require('net')	
 	;
 
 var cookieParser = express.cookieParser('biuailab')
@@ -28,8 +29,22 @@ nconf.env()
 .file({ file: 'config.json'});
 var partitionKey = nconf.get("PARTITION_KEY")
 , accountName = nconf.get("STORAGE_NAME")
-, accountKey = nconf.get("STORAGE_KEY");
+, accountKey = nconf.get("STORAGE_KEY")
+, agent = nconf.get("AGENT");
 
+
+var client = new net.Socket();
+if (agent == 'true'){
+	console.log(agent);
+	client.connect(4001, 'localhost', function() {
+		console.log('CONNECTED TO: ' + 'localhost' + ':' + 4001);
+	});
+}
+client.on('data', function(data) {
+	console.log('DATA: ' + data);
+	// Close the client socket completely
+	//client.destroy();
+});
 
 //
 // Step 0: Users and sessions:
@@ -348,6 +363,7 @@ function entergame(session) {
 				console.log("--- Searching for "+session.data.gametype+" game waiting for "+session.data.role);
 				game = gameServer.gameWaitingForRole(session.data.role);
 			}
+			console.log("!!!!!!!!!!!!!!!!!!" + game + "!!!!!!!!!!!!")
 			session.data.gameid = game.gameid;
 			console.log("--- Entered "+session.data.gametype+" game: "+session.data.gameid);
 		}
@@ -513,7 +529,7 @@ function gamesTable(gametype, game, unverified, action)
 		if (game.startTime){
 			games.addGames(gametype, game.gameid, game.startTime, unverified);
 			for (user in game.mapRoleToUserid){
-			    if (!game.mapRoleToUserid[user].indexOf('agent')){
+  				if ((!game.mapRoleToUserid[user].indexOf('agent')) || (!game.mapRoleToUserid[user].indexOf('EchoAgent'))){
 					player.addPlayer(game.gameid, game.mapRoleToUserid[user], user, 'agent', gametype);
 				}
 				else{
@@ -675,6 +691,16 @@ app.get('/:gametype/play', getGameServer, function(req,res) {
 				return;
 		}
 		var actualAgent = getActualAgent(req.session.data.domain, req.session.data.role, req.session.data.personality);
+		
+		if (agent == 'true'){
+			var agentRole;
+			for (role in res.locals.gameServer.data.requiredRoles){
+				if (role !== req.session.data.role)
+					agentRole = role;
+			}
+            client.write(JSON.stringify({gametype:req.params.gametype, role:agentRole}));
+		}
+
 		res.render(res.locals.gameServer.data.roomTemplateName,	{
 				gametype: req.params.gametype, 
 				role: req.session.data.role,

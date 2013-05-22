@@ -52,7 +52,7 @@ GameAction.prototype = {
     item.PartitionKey = game.gameid;
     item.userid = user.userid;
     item.role = user.role;
-    item.remainingTime = game.timer? game.timer.remainingTimeSeconds(): "-";
+    item.remainingTime = game.timer? game.timer.remainingTimeSeconds().toString(): "-";
     item.action = action;
 
     game.actionNum++;

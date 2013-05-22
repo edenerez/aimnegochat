@@ -19,10 +19,11 @@ function GamesModel(storageClient, tableName) {
 
 GamesModel.prototype.add = function(item, callback) {
 	self = this;
-  self.storageClient.insertEntity(self.tableName, item, 
+  self.storageClient.insertOrMergeEntity(self.tableName, item, 
     function entityInserted(error) {
-      if(error){  
-        callback(error);
+      if(error){ 
+      console.log("Cannot create table: "+JSON.stringify(err)); 
+        callback(error + this.tableName);
       }
       callback(null);
     });
