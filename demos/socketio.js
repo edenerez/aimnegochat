@@ -19,6 +19,7 @@ app.get('/', function(req,res) {
 	"<html>\n"+
 	"	<body>\n"+
 	"	<h1>SocketIO demo</h1>\n"+
+	"	<p><a href='https://github.com/rothariel/aimnegochat/blob/master/demos/socketio.js'>Source code</a></p>\n"+
 	"	<p id='status'>Connecting...</p>\n"+
 	"		<script src='/socket.io/socket.io.js'></script>\n"+
 	"		<script>\n"+
