@@ -41,15 +41,6 @@ httpserver.listen(app.get('port'));
 
 var io = require('socket.io').listen(httpserver);
 
-var supportInternetExplorerOnAzure = (process.argv.length>=3 && process.argv[2] !== 'supportJava');
-
-io.configure(function () { 
-	io.set('log level', 1);
-	//if (supportInternetExplorerOnAzure)
-	//	io.set("transports", ["xhr-polling"]);
-	io.set("polling duration", 10); 
-});
-
 // adapted from http://socket.io/  (server)
 io.sockets.on('connection', function (socket) {
 	socket.emit('news', "Hello, client!");
