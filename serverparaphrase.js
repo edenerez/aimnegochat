@@ -1,5 +1,8 @@
 /**
- * Module dependencies.
+ * A Node.js server for paraphrase collection via Amazon Mechanical Turk. 
+ * 
+ * @author Erel Segal-Halevi erelsgl@gmail.com
+ * @since 2013-03
  */
 
 var express = require('express')

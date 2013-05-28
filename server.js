@@ -1,5 +1,10 @@
 /**
- * Module dependencies.
+ * A server for multiplayer negotiation games. 
+ * 
+ * @author Ariel Roth  roth.ariel.phil@gmail.com
+ * @author Erel Segal-Halevi erelsgl@gmail.com
+ * @author Osnat Airy  osnatairy@gmail.com
+ * @since 2013-02
  */
 
 var express = require('express')
