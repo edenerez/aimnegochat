@@ -767,8 +767,8 @@ var supportInternetExplorerOnAzure = (process.argv.length>=3 && process.argv[2] 
 
 io.configure(function () { 
 	io.set('log level', 1);
-	if (supportInternetExplorerOnAzure)
-		io.set("transports", ["xhr-polling"]);
+	//if (supportInternetExplorerOnAzure)
+	//	io.set("transports", ["xhr-polling"]);
 	io.set("polling duration", 10); 
 });
 
