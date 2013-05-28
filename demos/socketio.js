@@ -11,7 +11,7 @@ var express = require('express')
 	;
 
 var app = express();
-app.set('port', 4002);
+app.set('port', process.env.PORT || 4002);
 
 // adapted from http://socket.io/ (client)
 app.get('/', function(req,res) {
