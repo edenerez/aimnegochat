@@ -47,7 +47,7 @@ Report.prototype = {
               playerModel.find(queryPlayer, function itemsFound(error, player) {
                     // Erel: sort gameActions by increasing timestamp, then by row key:
                     //console.dir(gameActions);
-                    gameActions.sort(function(a, b){
+                    if (gameActions) gameActions.sort(function(a, b){
                         var diff = new Date(a.Timestamp) - new Date(b.Timestamp);
                         if (diff==0) 
                            diff = Integer.valueOf(a.RowKey) - Integer.valueOf(b.RowKey);
