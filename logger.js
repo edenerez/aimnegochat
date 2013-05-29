@@ -25,7 +25,7 @@ if (!fs.appendFile) {
 
 /**
  * reads a log file that contains a single JSON object.
- * @return the single object..
+ * @return the single object.
  */
 exports.readSingleJsonObjectSync = function(pathToLog) {
   var json = fs.readFileSync(pathToLog, 'utf8');
