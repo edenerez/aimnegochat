@@ -1,6 +1,6 @@
 // Connects to socket.io, and defines handlers for events common to all games:
 
-var socket = io.connect('/');
+var socket = io.connect();
 
 function bidToString(bid) {
 	var result='';

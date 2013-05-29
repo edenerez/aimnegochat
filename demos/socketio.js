@@ -23,7 +23,7 @@ app.get('/', function(req,res) {
 	"	<p id='status'>Connecting...</p>\n"+
 	"		<script src='/socket.io/socket.io.js'></script>\n"+
 	"		<script>\n"+
-	"		var socket = io.connect('http://localhost');\n"+
+	"		var socket = io.connect();\n"+
 	"		socket.on('news', function (data) {\n"+
 	"			console.log(data);\n"+
 	"			document.getElementById('status').innerHTML=('The server says: '+data);\n"+

@@ -10,7 +10,7 @@ function logWithTimestamp(message) {
 	console.log(new Date().toISOString()+" "+message);
 }
 
-exports.PLIS = function(translatorName) {
+PLIS = function(translatorName) {
 	logWithTimestamp(translatorName+" tries to connect to PLIS at "+HOST+":"+SETTINGS.port);
 	this.translatorName = translatorName;
 	this.translationSocket = require('socket.io-client').connect(HOST, SETTINGS); 
@@ -31,7 +31,7 @@ exports.PLIS = function(translatorName) {
 }
 
 
-exports.PLIS.prototype.entail = function(text, hypothesis, transitivity) {
+PLIS.prototype.entail = function(text, hypothesis, transitivity) {
 	logWithTimestamp(this.translatorName+" asks: '" + text + "' - '"+hypothesis+"'");
 	this.translationSocket.emit("entail", {
 		text: text,
@@ -45,9 +45,13 @@ exports.PLIS.prototype.entail = function(text, hypothesis, transitivity) {
 		);
 }
 
-exports.PLIS.prototype.abortOtherThreads = function() {
+PLIS.prototype.abortOtherThreads = function() {
 	this.translationSocket.emit("abort");
 }
+
+module.exports = PLIS;
+
+
 
 
 
@@ -60,8 +64,8 @@ if (process.argv[1] === __filename) {
 	if (process.argv[3]) SETTINGS.port = process.argv[3];
 	logWithTimestamp(process.argv[1]+" unitest start");
 
-	var translator1 = new exports.PLIS("translator1");
-	var translator2 = new exports.PLIS("translator2");
+	var translator1 = new PLIS("translator1");
+	var translator2 = new PLIS("translator2");
 
 	translator1.entail("The footballer kicked the ball towards the cottage.", "jugador:n chuto:v pelota:n casa:n",3);
 	translator2.abortOtherThreads();
