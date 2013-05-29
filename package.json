@@ -22,7 +22,7 @@
     "async": "~0.2.5",
     "nconf": "~0.6.7",
     "azure": "~0.6.10",
-    "semaphore": "*"
+    "semaphore": "*",
     "browserType": "~0.2.0",
     "useragent": "~2.0.2"
   }

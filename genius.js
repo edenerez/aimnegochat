@@ -1,4 +1,8 @@
-// Genius classes
+/**
+ * Classes related to GENIUS (domains and utility spaces).
+ * @author Erel Segal-Halevi
+ * @since 2013-02
+ */
 
 
 var xml2js = require('xml2js')
