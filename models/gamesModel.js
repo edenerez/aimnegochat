@@ -51,13 +51,22 @@ GamesModel.prototype.find = function(query, callback) {
 };
 
 GamesModel.prototype.updateItem = function(item, callback) {
+  if (!('PartitionKey' in item))
+    throw new Error("item does not contain PartitionKey: "+JSON.stringify(item));
+  if (!('RowKey' in item))
+    throw new Error("item does not contain RowKey: "+JSON.stringify(item));
   self = this;
-    self.storageClient.insertOrMergeEntity (self.tableName, item, 
-    function entityInserted(error) {
-      if(error){  
-        callback(error);
-      }
-      callback(null);
-    });
+  try {
+    self.storageClient.insertOrMergeEntity (self.tableName, item,
+      function entityInserted(error) {
+        if(error){  
+          callback(error);
+        }
+        callback(null);
+      });
+  } catch (err) {
+    console.error("Error trying to updateItem: "+JSON.stringify(item));
+    throw err;
+  }
 };
  
