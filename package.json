@@ -24,6 +24,7 @@
     "azure": "~0.6.10",
     "semaphore": "*",
     "browserType": "~0.2.0",
-    "useragent": "~2.0.2"
+    "useragent": "~2.0.2",
+    "zombie": "~2.0.0-alpha19"
   }
 }
