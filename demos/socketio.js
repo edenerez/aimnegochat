@@ -38,7 +38,6 @@ app.get('/', function(req,res) {
 
 var httpserver = http.createServer(app);
 httpserver.listen(app.get('port'));
-
 var io = require('socket.io').listen(httpserver);
 
 // adapted from http://socket.io/  (server)
@@ -48,3 +47,5 @@ io.sockets.on('connection', function (socket) {
 		console.log("The client says: "+data);
 	});
 });
+
+console.log("Listening on port "+app.get('port'));
