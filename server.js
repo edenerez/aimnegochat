@@ -801,7 +801,7 @@ io.sockets.on('connection', function (socket) {
 		
 		var gameServer = gameServers[session_data.gametype];
 		if (!gameServer) {
-			console.error("Can't find game server "+session.data.gametype);
+			console.error("Can't find game server "+session_data.gametype);
 			return;
 		}
 		

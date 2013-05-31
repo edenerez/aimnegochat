@@ -11,8 +11,8 @@ function GameActionModel(storageClient, tableName, partitionKey) {
 
 
   this.storageClient.createTableIfNotExists(tableName, 
-    function tableCreated(err) {
-      if(err) {
+    function tableCreated(error) {
+      if(error) {
         throw error;
       }
     });
@@ -23,20 +23,11 @@ GameActionModel.prototype.add = function(item, callback) {
   self.storageClient.insertEntity(self.tableName, item, 
     function entityInserted(error) {
       if(error){  
-        console.log("Cannot create table: "+JSON.stringify(err));
+        console.log("Cannot add to table: "+JSON.stringify(error));
         callback(error + this.tableName);
       }
       callback(null);
     });
-};
-
-GameActionModel.prototype.deleteTable = function() {
-  self = this;
-  self.storageClient.deleteTable(self.tableName, function(error){
-    if(!error){
-        // Table deleted
-    }
-  });
 };
 
 GameActionModel.prototype.find = function(query, callback) {
@@ -44,7 +35,8 @@ GameActionModel.prototype.find = function(query, callback) {
   self.storageClient.queryEntities(query, 
     function entitiesQueried(error, entities){
       if(error) {
-        callback(error);
+        console.log("Cannot find table: "+JSON.stringify(error));
+        callback(error + this.tableName);
       } else {
         callback(null, entities);
       }
@@ -56,7 +48,8 @@ GameActionModel.prototype.updateItem = function(item, callback) {
     self.storageClient.insertOrMergeEntity (self.tableName, item, 
     function entityInserted(error) {
       if(error){  
-        callback(error);
+        console.log("Cannot update to table: "+JSON.stringify(error));
+        callback(error + this.tableName);
       }
       callback(null);
     });

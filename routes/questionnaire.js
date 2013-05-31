@@ -27,7 +27,6 @@ Questionnaire.prototype = {
     var self = this;      
     var item = req.body.item;
     item.RowKey = req.session.data.userid;
-    req.session.data.RowKey = item.RowKey;
     item.userid = req.session.data.userid;
     item.gametype = req.session.data.gametype;
     item.browserType = req.session.data.browserType + req.session.data.browserVersion;
@@ -58,7 +57,7 @@ Questionnaire.prototype = {
   activeQuestionnaire: function(req,res) {
     var self = this;
     var item = req.body.item;
-    item.RowKey = req.session.data.RowKey;
+    item.RowKey = req.session.data.userid;
     self.questionnaireModel.updateItem(item, function itemAdded(err) {
       if(err) {
         throw err;

@@ -32,21 +32,14 @@ PlayerModel.prototype.add = function(item, callback) {
     });
 };
 
-PlayerModel.prototype.deleteTable = function() {
-  self = this;
-  self.storageClient.deleteTable(self.tableName, function(error){
-    if(!error){
-        // Table deleted
-    }
-  });
-};
 
 PlayerModel.prototype.find = function(query, callback) {
   self = this;
   self.storageClient.queryEntities(query, 
     function entitiesQueried(error, entities){
       if(error) {
-        callback(error);
+        console.log("Cannot find table: "+JSON.stringify(error));
+        callback(error + this.tableName);
       } else {
         callback(null, entities);
       }
@@ -61,7 +54,8 @@ PlayerModel.prototype.findOne = function(query, callback) {
                                  query.rowKey, 
     function entitiesQueried(error, entity){
       if(error) {
-        callback(error);
+        console.log("Cannot find one in table: "+JSON.stringify(error));
+        callback(error + this.tableName);
       } else {
         callback(null, entity);
       }
@@ -74,7 +68,8 @@ PlayerModel.prototype.updateItem = function(item, callback) {
     self.storageClient.insertOrMergeEntity (self.tableName, item, 
     function entityInserted(error) {
       if(error){  
-        callback(err);
+        console.log("Cannot update to table: "+JSON.stringify(error));
+        callback(error + this.tableName);
       }
       callback(null);
     });

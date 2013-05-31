@@ -13,7 +13,7 @@ function QuestionnaireModel(storageClient, tableName, partitionKey) {
   this.storageClient.createTableIfNotExists(tableName, 
     function tableCreated(err) {
       if(err) {
-        console.log("Cannot create table: "+JSON.stringify(err));
+        console.log("Cannot create table: "+ tableName +JSON.stringify(err));
         // throw err;
       }
     });
@@ -29,19 +29,11 @@ QuestionnaireModel.prototype.add = function(item, callback) {
   self.storageClient.insertEntity(self.tableName, item, 
     function entityInserted(error) {
       if(error){  
-        callback(error);
+        console.log("Cannot add to table: "+ tableName+JSON.stringify(error));
+        callback(error + this.tableName);
       }
       callback(null);
     });
-};
-
-QuestionnaireModel.prototype.deleteTable = function() {
-  self = this;
-  self.storageClient.deleteTable(self.tableName, function(error){
-    if(!error){
-        // Table deleted
-    }
-  });
 };
 
 QuestionnaireModel.prototype.find = function(query, callback) {
@@ -49,7 +41,8 @@ QuestionnaireModel.prototype.find = function(query, callback) {
   self.storageClient.queryEntities(query, 
     function entitiesQueried(error, entities){
       if(error) {
-        callback(error);
+        console.log("Cannot find table: "+JSON.stringify(error));
+        callback(error + this.tableName);
       } else {
         callback(null, entities);
       }
@@ -77,7 +70,8 @@ QuestionnaireModel.prototype.updateItem = function(item, callback) {
     self.storageClient.insertOrMergeEntity (self.tableName, item, 
     function entityInserted(error) {
       if(error){  
-        callback(err);
+        console.log("Cannot update to table: "+JSON.stringify(error));
+        callback(error + this.tableName);
       }
       callback(null);
     });
