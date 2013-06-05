@@ -127,4 +127,9 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		socket.emit('sign', {id: session_data.role, agreement: agreement, you: true});
 		socket.broadcast.to(game.gameid).emit('sign', {id: session_data.role, agreement: agreement, you: false});
 	});
+
+	socket.on("opt-out", function (data){
+		functions.messageLog(socket, game, "Opt-out", session_data, data);
+
+	})
 }

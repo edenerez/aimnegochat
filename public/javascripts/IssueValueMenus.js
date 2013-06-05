@@ -21,6 +21,7 @@ $(function() {
 
 	$("#btnOptOut").click(function() {
 		if (confirm("Are you sure you want to leave the negotiation?")) {
+			socket.emit("opt-out", "");
 			bye();
 		}
 	});	

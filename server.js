@@ -544,21 +544,32 @@ function gamesTable(gametype, game, unverified, action)
 		}
 	}
 	if (action == "Sign"){
-		for (role in game.mapRoleToFinalResult){
-			var a=0;
-			finalResult.addFinalResult(game.mapRoleToFinalResult[role], game.mapRoleToUserid[role], role, game.gameid);
-			if (!finalAgreement.check){
-				for (agree in game.mapRoleToFinalResult[role].agreement){
-					console.log(++a);
-					finalAgreement.addFinalAgreement(agree, game.mapRoleToFinalResult[role].agreement[agree], game.gameid);
+		var len = 0;
+		for (var o in game.mapRoleToUserid) {
+		    len++;
+		}
+		for (var o in game.mapRoleToFinalResult) {
+		    len--;
+		}
+		if (len == 0){
+			for (role in game.mapRoleToFinalResult){
+				var a=0;
+				finalResult.addFinalResult(game.mapRoleToFinalResult[role], game.mapRoleToUserid[role], role, game.gameid);
+				if (!finalAgreement.check){
+					for (agree in game.mapRoleToFinalResult[role].agreement){
+						console.log(++a);
+						finalAgreement.addFinalAgreement(agree, game.mapRoleToFinalResult[role].agreement[agree], game.gameid);
+					}
 				}
 			}
 		}
 	}
 	if (action == "Disconnect" ){
-		game.endGame();
-		finalAgreement.check = false;
-		games.activeGames(game.gameid, game.endTime);
+		if (game.startTime){
+			game.endGame();
+			finalAgreement.check = false; 
+			games.activeGames(game.gameid, game.endTime);
+		}
 	}
 }
 

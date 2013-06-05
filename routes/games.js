@@ -8,6 +8,8 @@ module.exports = Games;
 
 function Games(GamesModel) {
   this.GamesModel = GamesModel;
+  this.RowKey;
+  this.PartitionKey;
 }
 
 Games.prototype = {
