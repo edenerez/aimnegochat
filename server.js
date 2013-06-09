@@ -543,7 +543,7 @@ function gamesTable(gametype, game, unverified, action)
 			}
 		}
 	}
-	if (action == "Sign"){
+	if (action == "Sign" || action =="Opt-out" || action == "TimeOut"){
 		var len = 0;
 		for (var o in game.mapRoleToUserid) {
 		    len++;
@@ -868,6 +868,7 @@ io.sockets.on('connection', function (socket) {
 					if (remainingTimeSeconds<=1) {
 						game.endGame();
 						if (!game.endLogged) {
+							io.sockets.in(game.gameid).emit('EndGame');
 							logger.writeJsonLog("games",	{
 								gametype: session.data.gametype,
 								gameid: game.gameid,

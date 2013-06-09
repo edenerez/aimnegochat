@@ -80,10 +80,10 @@ var UtilitySpace = function (pathToXmlFile) {
     });
 
     // Initialize simple parameters:
-    this.reservation = utility_space.reservation[0].$.value;
-    this.optout = utility_space.optout[0].$.value;
-    this.timeeffect = utility_space.timeeffect? utility_space.timeeffect[0].$.value: 0;
-    this.weightmultiplyer = utility_space.weightmultiplyer[0].$.value;
+    this.reservation =  parseInt(utility_space.reservation[0].$.value);
+    this.optout = parseInt(utility_space.optout[0].$.value);
+    this.timeeffect =  parseInt(utility_space.timeeffect? utility_space.timeeffect[0].$.value: 0);
+    this.weightmultiplyer =  parseInt(utility_space.weightmultiplyer[0].$.value);
 
     // Initialize weights and issues:
     var weightByIndex = {};    

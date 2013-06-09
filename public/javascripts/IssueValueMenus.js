@@ -19,10 +19,40 @@ $(function() {
 		$("#utility").html(utility);
 	});
 
+	socket.on('yourOptOutUtility', function (utility) {
+			if (iClicketOptOut){
+				if (confirm("Are you sure you want to leave the negotiation? Your utility will be " + utility)) {
+					socket.emit("opt-out", false);
+					bye();
+				}
+			}
+			else{
+				alert("Your partner opted-out, we are sorry for you. Your utility is " + utility);
+				socket.emit("opt-out", true);
+				bye();
+			}
+	});
+	var iClicketOptOut = false;
+
 	$("#btnOptOut").click(function() {
-		if (confirm("Are you sure you want to leave the negotiation?")) {
-			socket.emit("opt-out", "");
-			bye();
-		}
+		iClicketOptOut = true;
+		socket.emit("giveMeMyOptOutUtility")
 	});	
+
+	socket.on("yourPartnerOpt-out", function (){
+		iClicketOptOut = false;
+		socket.emit("giveMeMyOptOutUtility");
+	});
+
+	socket.on('yourReservationUtility', function (utility) {
+		alert("Time out, we are sorry for you. Your utility is " + utility);
+		bye();
+
+	});
+
+	socket.on("EndGame", function(){
+		socket.emit("giveMeMyReservationUtility");
+	});
+
+	
 });

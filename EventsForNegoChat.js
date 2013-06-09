@@ -114,11 +114,11 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		var utilityWithDiscount = Math.round(agent.utility_space_object.getUtilityWithDiscount(utilityWithoutDiscount, turnsFromStart))
 		var finalResult = {
 			agreement: agreement,
-			
-			timeFromStart:					 timeFromStart,
+			endedIn: "agreement",
+			timeFromStart:					timeFromStart,
 			turnsFromStart:					turnsFromStart,
-			utilityWithoutDiscount:	utilityWithoutDiscount,
-			utilityWithDiscount:		 utilityWithDiscount
+			utilityWithoutDiscount:			utilityWithoutDiscount,
+			utilityWithDiscount:			utilityWithDiscount
 		};
 		game.mapRoleToFinalResult[session_data.role] = finalResult;
 		session_data.mapRoleToFinalResult = finalResult;
@@ -127,9 +127,66 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		socket.emit('sign', {id: session_data.role, agreement: agreement, you: true});
 		socket.broadcast.to(game.gameid).emit('sign', {id: session_data.role, agreement: agreement, you: false});
 	});
+	
 
-	socket.on("opt-out", function (data){
-		functions.messageLog(socket, game, "Opt-out", session_data, data);
+	socket.on("giveMeMyOptOutUtility", function (){
+		var utilityOptOut = agent.utility_space_object.optout;
+		var turnsFromStart = game.turnsFromStart? game.turnsFromStart: 0;
+		var timeFromStart = game.timer? game.timer.timeFromStartSeconds(): 0;
+		var utilityWithDiscount = Math.round(agent.utility_space_object.getUtilityWithDiscount(utilityOptOut, turnsFromStart));
+		socket.emit("yourOptOutUtility", utilityWithDiscount);
+	});
 
-	})
+	socket.on("giveMeMyReservationUtility", function (){
+		var utilityReservation = agent.utility_space_object.reservation;
+		var turnsFromStart = game.turnsFromStart? game.turnsFromStart: 0;
+		var timeFromStart = game.timer? game.timer.timeFromStartSeconds(): 0;
+		var utilityWithDiscount = Math.round(agent.utility_space_object.getUtilityWithDiscount(utilityReservation, turnsFromStart));
+		var finalResult = {
+			endedIn: "timeOut",
+			timeFromStart:					timeFromStart,
+			turnsFromStart:					turnsFromStart,
+			utilityWithoutDiscount:			utilityReservation,
+			utilityWithDiscount:			utilityWithDiscount
+		};
+		game.mapRoleToFinalResult[session_data.role] = finalResult;
+		session_data.mapRoleToFinalResult = finalResult;
+		functions.messageLog(socket, game, "TimeOut", session_data, "");
+		socket.emit("yourReservationUtility", utilityWithDiscount);
+	});
+
+
+	socket.on("opt-out", function (partnerInitiative){ //this value is false when the player click optout and true when the partner forced the player optout.  
+		var utilityOptOut = agent.utility_space_object.optout;
+		var turnsFromStart = game.turnsFromStart? game.turnsFromStart: 0;
+		var timeFromStart = game.timer? game.timer.timeFromStartSeconds(): 0;
+		var utilityWithDiscount = Math.round(agent.utility_space_object.getUtilityWithDiscount(utilityOptOut, turnsFromStart));
+		if (!partnerInitiative){
+			var finalResult = {
+				endedIn: "optoutByMe",
+
+				timeFromStart:					timeFromStart,
+				turnsFromStart:					turnsFromStart,
+				utilityWithoutDiscount:			utilityOptOut,
+				utilityWithDiscount:		 	utilityWithDiscount
+			};
+		}
+		else{
+			var finalResult = {
+				endedIn: "optoutByOpponent",
+				timeFromStart:					timeFromStart,
+				turnsFromStart:					turnsFromStart,
+				utilityWithoutDiscount:			utilityOptOut,
+				utilityWithDiscount:		 	utilityWithDiscount
+			};
+		}
+		game.mapRoleToFinalResult[session_data.role] = finalResult;
+		session_data.mapRoleToFinalResult = finalResult;
+		functions.messageLog(socket, game, "Opt-out", session_data, "");
+		if (!partnerInitiative){//tell all other players in this game that their partner optout.
+			socket.broadcast.to(game.gameid).emit('yourPartnerOpt-out', "");
+		}
+	});
+	
+
 }
