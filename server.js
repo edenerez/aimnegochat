@@ -774,14 +774,14 @@ httpserver.listen(app.get('port'), function(){
 
 var io = require('socket.io').listen(httpserver);
 
-var supportInternetExplorerOnAzure = (process.argv.length>=3 && process.argv[2] !== 'supportJava');
+//var supportInternetExplorerOnAzure = (process.argv.length>=3 && process.argv[2] !== 'supportJava');
 
-io.configure(function () { 
+/*io.configure(function () { 
 	io.set('log level', 1);
 	if (supportInternetExplorerOnAzure)
 		io.set("transports", ["xhr-polling"]);
 	io.set("polling duration", 10); 
-});
+});*/
 
 /*
 function mymessageLog(socket, game, action, user, data) { 
