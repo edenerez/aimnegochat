@@ -18,24 +18,24 @@ function FinalAgreementModel(storageClient, tableName) {
 };
 
 FinalAgreementModel.prototype.add = function(item, callback) {
-	self = this;
+	var self = this;
   self.storageClient.insertOrReplaceEntity(self.tableName, item, 
     function entityInserted(error) {
       if(error){  
         console.log("Cannot add to table: "+JSON.stringify(error));
-        callback(error + this.tableName);
+        callback(error + self.tableName);
       }
       callback(null);
     });
 };
 
 FinalAgreementModel.prototype.find = function(query, callback) {
-	self = this;
+	var self = this;
   self.storageClient.queryEntities(query, 
     function entitiesQueried(error, entities){
       if(error) {
         console.log("Cannot find table: "+JSON.stringify(error));
-        callback(error + this.tableName);
+        callback(error + self.tableName);
       } else {
         callback(null, entities);
       }
@@ -43,12 +43,12 @@ FinalAgreementModel.prototype.find = function(query, callback) {
 };
 
 FinalAgreementModel.prototype.updateItem = function(item, callback) {
-  self = this;
+  var self = this;
     self.storageClient.insertOrMergeEntity (self.tableName, item, 
     function entityInserted(error) {
       if(error){  
         console.log("Cannot find update to table: "+JSON.stringify(error));
-        callback(error + this.tableName);
+        callback(error + self.tableName);
       }
       callback(null);
     });

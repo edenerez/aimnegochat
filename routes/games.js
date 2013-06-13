@@ -38,7 +38,7 @@ Games.prototype = {
 
 
   listAll: function(req, res,types) {
-    self = this;
+    var self = this;
     var query = azure.TableQuery
       .select()
       .from(self.GamesModel.tableName);
@@ -60,6 +60,9 @@ Games.prototype = {
   activeGames: function(gameid, endTime) {
     var self = this;
     var item = {};
+    if (!self.RowKey){
+      throw new Error("self does not contain RowKey: "+JSON.stringify(self));
+    }
     item.RowKey = self.RowKey;
     item.PartitionKey = gameid;
     item.endTime = JSON.stringify(endTime);

@@ -20,7 +20,7 @@ function QuestionnaireModel(storageClient, tableName, partitionKey) {
 };
 
 QuestionnaireModel.prototype.add = function(item, callback) {
-	self = this;
+	var self = this;
   //item.RowKey = uuid();
   item.PartitionKey = self.partitionKey;
   item.datastatus = 0;
@@ -29,20 +29,20 @@ QuestionnaireModel.prototype.add = function(item, callback) {
   self.storageClient.insertEntity(self.tableName, item, 
     function entityInserted(error) {
       if(error){  
-        console.log("Cannot add to table: "+ tableName+JSON.stringify(error));
-        callback(error + this.tableName);
+        console.log("Cannot add to table: "+ self.tableName+JSON.stringify(error));
+        callback(error + self.tableName);
       }
       callback(null);
     });
 };
 
 QuestionnaireModel.prototype.find = function(query, callback) {
-  self = this;
+  var self = this;
   self.storageClient.queryEntities(query, 
     function entitiesQueried(error, entities){
       if(error) {
         console.log("Cannot find table: "+JSON.stringify(error));
-        callback(error + this.tableName);
+        callback(error + self.tableName);
       } else {
         callback(null, entities);
       }

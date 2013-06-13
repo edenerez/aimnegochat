@@ -151,7 +151,6 @@ app.configure('development', function(){
 });
 
 
-
 //
 // Step 2: MultiPlayer application[s]
 // 
@@ -232,7 +231,29 @@ for (gameType in gameServers){
 		types[gameType.split("_")[0]][types[gameType.split("_")[0]].length] = gameType.split("_")[1];
 }
 
-	
+function verifySessionData(req, res, next){
+	if(!req.session.data){
+		console.error("no session");
+		console.dir(req.session);
+		return res.end('no session');
+	}
+	next();
+}
+/*
+function addTypesToSession(req, res, next){
+	for (gameType in gameServers){
+		gameServers[gameType].gametype = gameType;//.split("_")[0];
+		if (!types[gameType.split("_")[0]]){
+			types[gameType.split("_")[0]] = [];
+			types[gameType.split("_")[0]][0] = gameType.split("_")[1];
+		}
+		else
+			types[gameType.split("_")[0]][types[gameType.split("_")[0]].length] = gameType.split("_")[1];
+	}
+	if(!req.session.data){
+	req.session.data.types = types;
+}
+	*/
 function getActualAgent(domainName, roleName, personality) {
 	var domain = domains[domainName];
 	if (!domain) {
@@ -355,6 +376,7 @@ var entergameSemaphore = require('semaphore')(1);
 function entergame(session) {
 	entergameSemaphore.take(function() {
 		var gameServer = gameServers[session.data.gametype];
+		
 		console.log('Enter game. session = '+JSON.stringify(session.data));
 
 		var game;
@@ -368,7 +390,6 @@ function entergame(session) {
 				console.log("--- Searching for "+session.data.gametype+" game waiting for "+session.data.role);
 				game = gameServer.gameWaitingForRole(session.data.role);
 			}
-			console.log("!!!!!!!!!!!!!!!!!!" + game + "!!!!!!!!!!!!")
 			session.data.gameid = game.gameid;
 			console.log("--- Entered "+session.data.gametype+" game: "+session.data.gameid);
 		}
@@ -378,7 +399,7 @@ function entergame(session) {
 	});
 }
 
-app.get('/entergame', function(req,res) {
+app.get('/entergame', verifySessionData, function(req,res) {
 	entergame(req.session);  // sets req.session.data.gameid
 	res.redirect('/'+req.session.data.gametype+"/play");
 });
@@ -528,7 +549,7 @@ app.get('/:gametype/listAllGames' ,function (req,res){
 	 games.listAll(req,res,types);
 });
 
-function gamesTable(gametype, game, unverified, action)
+function gamesTable(gametype, game, unverified, action) //insert information to different tables
 {
 	if (action == "Connect"){
 		if (game.startTime){
@@ -648,7 +669,7 @@ app.get('/UtilityOfPartner/:domain/:role', function(req,res) {
 });
 
 //ariel
-app.get('/WriteQuestionnaireAnswers/:logFileName', function(req,res) {
+app.get('/WriteQuestionnaireAnswers/:logFileName', verifySessionData, function(req,res) {
 		var nextAction = req.query.next_action;	delete req.query.next_action;
 		if (!req.session.data.alreadyLogged) {
 			logger.writeJsonLog('user_'+req.session.data.userid, 
@@ -669,7 +690,7 @@ app.get('/LogToXml/:logFileName', function(req,res) {
 		});
 });
 
-app.get('/PreQuestionnaireExam', function(req,res) {
+app.get('/PreQuestionnaireExam',verifySessionData, function(req,res) {
 		res.render("PreQuestionnaireExam",	{
 				action:'/VerifyQuestionnaire',
 				next_action:'/entergame',
@@ -728,8 +749,9 @@ app.get('/:gametype/play', getGameServer, function(req,res) {
 });
 
 app.get('/:gametype/preview', getGameServer, function(req,res) {
+		console.dir(res.locals.gameServer);
 		var roleForPreview = res.locals.gameServer.requiredRolesArray[0];
-		var actualAgent = getActualAgent(req.session.data.domain, roleForPreview, req.session.data.personality);
+		var actualAgent = getActualAgent(res.locals.gameServer.data.domain, roleForPreview, res.locals.gameServer.data.defaultPersonality);
 		res.render(res.locals.gameServer.data.roomTemplateName,	{
 				preview: true,
 				gametype: req.params.gametype, 
@@ -774,14 +796,14 @@ httpserver.listen(app.get('port'), function(){
 
 var io = require('socket.io').listen(httpserver);
 
-//var supportInternetExplorerOnAzure = (process.argv.length>=3 && process.argv[2] !== 'supportJava');
+var supportInternetExplorerOnAzure = (process.argv.length>=3 && process.argv[2] !== 'supportJava');
 
-/*io.configure(function () { 
+io.configure(function () { 
 	io.set('log level', 1);
 	if (supportInternetExplorerOnAzure)
 		io.set("transports", ["xhr-polling"]);
 	io.set("polling duration", 10); 
-});*/
+});
 
 /*
 function mymessageLog(socket, game, action, user, data) { 

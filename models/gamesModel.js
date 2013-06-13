@@ -18,7 +18,7 @@ function GamesModel(storageClient, tableName) {
 };
 
 GamesModel.prototype.add = function(item, callback) {
-	self = this;
+	var self = this;
   self.storageClient.insertOrMergeEntity(self.tableName, item, 
     function entityInserted(error) {
       if(error){ 
@@ -30,7 +30,7 @@ GamesModel.prototype.add = function(item, callback) {
 };
 
 GamesModel.prototype.find = function(query, callback) {
-	self = this;
+	var self = this;
   self.storageClient.queryEntities(query, 
     function entitiesQueried(error, entities){
       if(error) {
@@ -47,7 +47,7 @@ GamesModel.prototype.updateItem = function(item, callback) {
     throw new Error("item does not contain PartitionKey: "+JSON.stringify(item));
   if (!('RowKey' in item))
     throw new Error("item does not contain RowKey: "+JSON.stringify(item));
-  self = this;
+  var self = this;
   try {
     self.storageClient.insertOrMergeEntity (self.tableName, item,
       function entityInserted(error) {
