@@ -63,3 +63,15 @@ GamesModel.prototype.updateItem = function(item, callback) {
   }
 };
  
+
+ GamesModel.prototype.deleteItem = function(item, callback) {
+  var self = this;
+  self.storageClient.deleteEntity (self.tableName, item, 
+    function entityDeleted(error) {
+      if(error){  
+        console.log("Cannot delete from table: "+self.tableName);
+        callback(error + JSON.stringify(error));
+      }
+      callback(null);
+    });
+};

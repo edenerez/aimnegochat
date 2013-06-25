@@ -62,6 +62,22 @@ GameAction.prototype = {
         throw err;
       }
     });
+  },
+
+  deleteItem: function(req,res){
+    var self = this;
+    var gametype = req.params.gametype;
+    var partition = req.params.PartitionKey;
+    var row = req.params.RowKey;
+    var item = {};
+    item.PartitionKey = partition;
+    item.RowKey = row;
+    self.GameActionModel.deleteItem(item, function itemDeleted(err) {
+      if(err) {
+        throw err;
+      }
+      res.redirect('/'+gametype+'/listAllGameAction');
+    });
   }
 
 }

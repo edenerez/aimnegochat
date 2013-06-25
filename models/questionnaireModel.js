@@ -76,4 +76,18 @@ QuestionnaireModel.prototype.updateItem = function(item, callback) {
       callback(null);
     });
 };
+
+
+QuestionnaireModel.prototype.deleteItem = function(item, callback) {
+  var self = this;
+  self.storageClient.deleteEntity (self.tableName, item, 
+    function entityDeleted(error) {
+      if(error){  
+        console.log("Cannot delete from table: "+JSON.stringify(error));
+        callback(error + this.tableName);
+      }
+      callback(null);
+    });
+};
+
  

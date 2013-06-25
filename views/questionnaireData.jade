@@ -35,6 +35,7 @@ block content
          th type
          th Completed
          th Active
+         th deleteMe
        - if (questionnaireList !== undefined) 
          each questionnaire in questionnaireList
           if (questionnaire.gametype == gametype || questionnaire.gametype == gametype.split("_")[0])
@@ -65,5 +66,7 @@ block content
                td
                  input(type="hidden", name="#{questionnaire.RowKey}", value="#{questionnaire.RowKey}")
                  input(type="checkbox", name="active", value="#{!questionnaire.active}", checked=questionnaire.active)
+               td 
+                 a(href= "/#{questionnaire.gametype},#{questionnaire.RowKey},#{questionnaire.PartitionKey}/deleteQuestionnaire") deleteMe 
                   
      

@@ -39,5 +39,21 @@ FinalAgreement.prototype = {
     self.FinalAgreementModel.find(query, function itemsFound(err, items) {
       res.render('FinalAgreementsData',{title: 'Final Agreement List', FinalAgreementList: items, gametype: req.params.gametype, gametypes: types});
     });
+  },
+
+  deleteItem: function(req,res){
+    var self = this;
+    var gametype = req.params.gametype;
+    var partition = req.params.PartitionKey;
+    var row = req.params.RowKey;
+    var item = {};
+    item.PartitionKey = partition;
+    item.RowKey = row;
+    self.FinalAgreementModel.deleteItem(item, function itemAdded(err) {
+      if(err) {
+        throw err;
+      }
+      res.redirect('/'+gametype+'/listAllFinalAgreements');
+    });
   }
 }

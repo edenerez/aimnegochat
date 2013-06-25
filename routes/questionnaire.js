@@ -64,6 +64,22 @@ Questionnaire.prototype = {
       }
       res.redirect('/ThankYou');
     });
+  },
+
+  deleteItem: function(req,res){
+    var self = this;
+    var gametype = req.params.gametype;
+    var partition = req.params.PartitionKey;
+    var row = req.params.RowKey;
+    var item = {};
+    item.PartitionKey = partition;
+    item.RowKey = row;
+    self.questionnaireModel.deleteItem(item, function itemAdded(err) {
+      if(err) {
+        throw err;
+      }
+      res.redirect('/'+gametype+'/listAllQuestionnaire');
+    });
   }
 
 }
