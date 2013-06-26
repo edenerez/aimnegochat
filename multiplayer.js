@@ -253,7 +253,7 @@ if (process.argv[1] === __filename) {
 	
 	  var pathToJade = path.join(__dirname,"views","MultiplayerGames.jade");
 	  var fn = jade.compile(fs.readFileSync(pathToJade), {pretty:true, filename:pathToJade});
-	  console.log(fn({games: gameServer.getGames(), title: 'Unit test', show_unverified_games:true, AMTStatus: '-', sprintf: require('sprintf').sprintf, format:"%1.0f"}));
+	  console.log(fn({games: gameServer.getGames(), title: 'Unit test', show_unverified_games:true, AMTStatus: '-', /*sprintf: require('sprintf').sprintf,*/ format:"%1.0f"}));
 	  
 	  console.log("multiplayer.js unitest end");
   }

@@ -3,7 +3,7 @@
  * 
  * @author Ariel Roth  roth.ariel.phil@gmail.com
  * @author Erel Segal-Halevi erelsgl@gmail.com
- * @author Osnat Airy  osnatairy@gmail.com
+ * @author Osnat Drain  osnatairy@gmail.com
  * @since 2013-02
  */
 
@@ -229,21 +229,8 @@ function verifySessionData(req, res, next){
 	}
 	next();
 }
-/*
-function addTypesToSession(req, res, next){
-	for (gameType in gameServers){
-		gameServers[gameType].gametype = gameType;//.split("_")[0];
-		if (!types[gameType.split("_")[0]]){
-			types[gameType.split("_")[0]] = [];
-			types[gameType.split("_")[0]][0] = gameType.split("_")[1];
-		}
-		else
-			types[gameType.split("_")[0]][types[gameType.split("_")[0]].length] = gameType.split("_")[1];
-	}
-	if(!req.session.data){
-	req.session.data.types = types;
-}
-	*/
+
+
 function getActualAgent(domainName, roleName, personality) {
 	var domain = domains[domainName];
 	if (!domain) {
@@ -306,7 +293,7 @@ app.get('/:gametype/beginner', getGameServer, function(req,res) {
 			 res.redirect('/'+req.params.gametype+'/preview');
 		} else {
 			req.session.data.role = res.locals.gameServer.nextRole();
-			res.redirect('/prequestionnaireA');
+			res.redirect('/'+req.params.gametype+'/prequestionnaireA');
 		}
 });
 
@@ -440,8 +427,19 @@ var questionnaire = new Questionnaire(questionnaireModel);
 app.get('/:gametype/listAllQuestionnaire' ,function (req,res){
 	 questionnaire.listAll(req,res,types);
 });
-app.get('/prequestionnaireA', questionnaire.demographyQuestionnaire.bind(questionnaire));
-app.post('/addquestionnaire', questionnaire.addQuestionnaire.bind(questionnaire));
+
+app.get('/:gametype/prequestionnaireA', questionnaire.demographyQuestionnaire.bind(questionnaire));
+app.post('/:gametype/addquestionnaire', function (req,res){
+	if(!req.session.data){
+		var someValue = req.body.item;
+		var gametype = req.params.gametype;
+		res.redirect('/'+gametype+'/beginner');
+	}
+	else{
+		questionnaire.addQuestionnaire(req.body.item, req, res);	
+	}
+	
+});
 app.get('/:gametype,:RowKey,:PartitionKey/deleteQuestionnaire', questionnaire.deleteItem.bind(questionnaire));
 app.post('/activeQuestionnaire', questionnaire.activeQuestionnaire.bind(questionnaire));
 
@@ -467,16 +465,9 @@ app.get('/:gametype,:RowKey,:PartitionKey/deleteGameAction', function (req,res){
 function messageLog(socket, game, action, user, data) {
 	console.log(action +"  " +game.gameid, 
 		{role: user.role, remainingTime: game.timer? game.timer.remainingTimeSeconds(): "-", user: (action=='Connect'? user: user.userid), action: action, data: data});
-	//console.log('events', action+" '"+JSON.stringify(data).replace(/\n/g,",")+"'", user);
 //I think we can change the call of the "massageLog" function to "gameAction.activeGameAction" instead and it will still work. and we don't need the socket here
 	gameAction.activeGameAction(game, action, user, data);
-	/*
-	if (action == "Disconnect" )
-	{	
-		gamesTable(user.gametype, game, true);
-		//finalResult.addFinalResult(game.gameid,game.mapRoleToFinalResult.Candidate, game.mapRoleToUserid.Candidate);
-		//finalResult.addFinalResult(game.gameid,game.mapRoleToFinalResult.Employer, game.mapRoleToUserid.Employer);
-	}*/
+
 	gamesTable(user.gametype, game, true, action);
 }
 
