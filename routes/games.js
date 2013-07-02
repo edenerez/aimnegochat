@@ -61,6 +61,7 @@ Games.prototype = {
     var self = this;
     var item = {};
     if (!self.RowKey){
+      item.RowKey+uuid();
       throw new Error("self does not contain RowKey: "+JSON.stringify(self));
     }
     item.RowKey = self.RowKey;
@@ -71,6 +72,22 @@ Games.prototype = {
       if(error) {
         throw error;
       }
+    });
+  },
+
+  deleteItem: function(req,res){
+    var self = this;
+    var gametype = req.params.gametype;
+    var partition = req.params.PartitionKey;
+    var row = req.params.RowKey;
+    var item = {};
+    item.PartitionKey = partition;
+    item.RowKey = row;
+    self.GamesModel.deleteItem(item, function itemAdded(err) {
+      if(err) {
+        throw err;
+      }
+      res.redirect('/'+gametype+'/listAllGames');
     });
   }
 

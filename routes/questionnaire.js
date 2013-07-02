@@ -23,9 +23,9 @@ Questionnaire.prototype = {
   },
 
 
-  addQuestionnaire: function(req,res) {
+  addQuestionnaire: function(item,req,res) {
     var self = this;      
-    var item = req.body.item;
+    var item = item;
     item.RowKey = req.session.data.userid;
     item.userid = req.session.data.userid;
     item.gametype = req.session.data.gametype;
@@ -44,7 +44,7 @@ Questionnaire.prototype = {
   },
   
   demographyQuestionnaire: function(req,res) {
-    res.render("PreQuestionnaireDemographyA");
+    res.render("PreQuestionnaireDemographyA", {gametype: req.params.gametype});
   },
 
   deleteQuestionnaireTable: function(req,res) {
@@ -63,6 +63,22 @@ Questionnaire.prototype = {
         throw err;
       }
       res.redirect('/ThankYou');
+    });
+  },
+
+  deleteItem: function(req,res){
+    var self = this;
+    var gametype = req.params.gametype;
+    var partition = req.params.PartitionKey;
+    var row = req.params.RowKey;
+    var item = {};
+    item.PartitionKey = partition;
+    item.RowKey = row;
+    self.questionnaireModel.deleteItem(item, function itemAdded(err) {
+      if(err) {
+        throw err;
+      }
+      res.redirect('/'+gametype+'/listAllQuestionnaire');
     });
   }
 

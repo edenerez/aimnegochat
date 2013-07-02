@@ -15,6 +15,7 @@ block content
          th Start Time
          th End Time
          th Active
+         th Delete
        - if (gamesList !== undefined) 
          each games in gamesList
           if (games.gametype == gametype || games.gametype == gametype.split("_")[0])
@@ -27,4 +28,5 @@ block content
               td
                 input(type="hidden", name="#{games.RowKey}", value="#{games.RowKey}")
                 input(type="checkbox", name="active", value="#{!games.active}", checked=games.active)
-       
+              td 
+                 a(href= "/#{gametype},#{games.RowKey},#{games.PartitionKey}/deleteGame") deleteMe 

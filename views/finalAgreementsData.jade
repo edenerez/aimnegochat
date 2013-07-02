@@ -14,10 +14,13 @@ block content
          th Game Id
          th Issue
          th Value
-
+         th Delete
        - if (FinalAgreementList !== undefined) 
          each FinalResult in FinalAgreementList
           tr 
               td #{FinalResult.PartitionKey}
               td #{FinalResult.issue}
               td #{FinalResult.value}
+              td 
+                a(href= "/#{gametype},#{FinalResult.RowKey},#{FinalResult.PartitionKey}/deleteFinalAgreements") deleteMe 
+                

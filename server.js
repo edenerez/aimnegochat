@@ -3,7 +3,7 @@
  * 
  * @author Ariel Roth  roth.ariel.phil@gmail.com
  * @author Erel Segal-Halevi erelsgl@gmail.com
- * @author Osnat Airy  osnatairy@gmail.com
+ * @author Osnat Drain  osnatairy@gmail.com
  * @since 2013-02
  */
 
@@ -13,10 +13,10 @@ var express = require('express')
 	, url = require('url')
 	, fs = require('fs')
 	, util = require('util')
-	, extend = require('xtend')
+	//, extend = require('xtend')
 	, amt = require('./amazonturk')
 	, multiplayer = require('./multiplayer')
-	, logger = require('./logger')
+	//, logger = require('./logger')
 	, timer = require('./timer')
 	, useragent = require('useragent')
 	, net = require('net')	
@@ -34,24 +34,10 @@ nconf.env()
 .file({ file: 'config.json'});
 var partitionKey = nconf.get("PARTITION_KEY")
 , accountName = nconf.get("STORAGE_NAME")
-, accountKey = nconf.get("STORAGE_KEY")
-, agent = nconf.get("AGENT");
+, accountKey = nconf.get("STORAGE_KEY");
 
 
-var client = new net.Socket();
-if (agent == 'true'){
-	console.log(agent);
-	client.connect(4001, 'localhost', function() {
-		console.log('CONNECTED TO: ' + 'localhost' + ':' + 4001);
-	});
-}
-client.on('data', function(data) {
-	console.log('DATA: ' + data);
-	// Close the client socket completely
-	//client.destroy();
-});
 
-//
 // Step 0: Users and sessions:
 //
 //ariel
@@ -81,7 +67,7 @@ function browserType (req){
 
 function setSessionForNewUser(req, gameServer) {
 	if (req.session && req.session.data) {
-		logger.writeEventLog("events", "OLDSESSION", req.session);
+		console.log(new Date().toISOString(), "events OLDSESSION ", (JSON.stringify(req.session)).replace(/\n/g,","));
 		if (users[req.session.data.userid])
 			users[req.session.data.userid].urls.pop();
 	}
@@ -100,7 +86,7 @@ function setSessionForNewUser(req, gameServer) {
 	
 	users[req.session.data.userid] = req.session.data;
 	users[req.session.data.userid].urls = [req.url.substr(0,60)];
-	logger.writeEventLog("events", "NEWSESSION",	 req.session);
+	console.log(new Date().toISOString(), "events NEWSESSION ",	 (JSON.stringify(req.session)).replace(/\n/g,","));
 	
 	req.session.data.domain = (req.params.domain? req.params.domain: gameServer? gameServer.data.domain: null);
 	req.session.data.personality = (req.params.personality? req.params.personality: gameServer? gameServer.data.defaultPersonality: null);
@@ -122,6 +108,7 @@ app.configure(function(){
 	// Middleware - order is important!
 	app.use(express.favicon());
 
+
 	app.use(express.bodyParser());	 // Request body parsing middleware supporting JSON, urlencoded, and multipart requests. This middleware is simply a wrapper the json(), urlencoded(), and multipart() middleware
 	app.use(cookieParser);
 	app.use(express.session({store:	sessionStore, secret: 'biuailab'}));
@@ -131,7 +118,7 @@ app.configure(function(){
 	app.use(function(req,res,next) {
 		if (!/\/assets\//.test(req.url) && !/\/stylesheets\//.test(req.url) && !/\/javascripts\//.test(req.url)) {
 			// task 1 - logging the URL: 
-			logger.writeEventLog("events", req.method+" "+req.url, extend({remoteAddress: req.ip}, req.headers));
+			console.log("events", req.method+" "+req.url /*, extend({remoteAddress: req.ip}, req.headers)*/);
 			// task 2 - remembering the user's location:
 			if (req.session.data && req.session.data.userid && users[req.session.data.userid])
 				users[req.session.data.userid].urls.push(req.url.substr(0,60));
@@ -141,6 +128,9 @@ app.configure(function(){
 
 	app.use(app.router);
 	app.use(express.static(path.join(__dirname, 'public')));
+		//middleware for logger
+	app.use(express.logger({ immediate: true, format: 'dev'}));
+	//app.use(express.logger.token('type', function(req, res){ return req.headers['content-type']; }));
 
 	// Application local variables are provided to all templates rendered within the application:
 	app.locals.pretty = true;
@@ -239,21 +229,8 @@ function verifySessionData(req, res, next){
 	}
 	next();
 }
-/*
-function addTypesToSession(req, res, next){
-	for (gameType in gameServers){
-		gameServers[gameType].gametype = gameType;//.split("_")[0];
-		if (!types[gameType.split("_")[0]]){
-			types[gameType.split("_")[0]] = [];
-			types[gameType.split("_")[0]][0] = gameType.split("_")[1];
-		}
-		else
-			types[gameType.split("_")[0]][types[gameType.split("_")[0]].length] = gameType.split("_")[1];
-	}
-	if(!req.session.data){
-	req.session.data.types = types;
-}
-	*/
+
+
 function getActualAgent(domainName, roleName, personality) {
 	var domain = domains[domainName];
 	if (!domain) {
@@ -281,7 +258,7 @@ domains['Neighbours'] = new genius.Domain(path.join(__dirname,'domains','neighbo
 
 // Variables that will be available to all JADE templates:
 app.locals.turnLengthInSeconds = 2*60;
-app.locals.sprintf = require('sprintf').sprintf;
+//app.locals.sprintf = require('sprintf').sprintf;
 app.locals.format = "%+1.0f";
 
 
@@ -316,7 +293,7 @@ app.get('/:gametype/beginner', getGameServer, function(req,res) {
 			 res.redirect('/'+req.params.gametype+'/preview');
 		} else {
 			req.session.data.role = res.locals.gameServer.nextRole();
-			res.redirect('/prequestionnaireA');
+			res.redirect('/'+req.params.gametype+'/prequestionnaireA');
 		}
 });
 
@@ -358,7 +335,7 @@ app.get('/:gametype/advanced/:role', getGameServer, function(req,res) {
 
 app.get('/:gametype/watchgame/:gameid', getGameServer, function(req,res) {
 		setSessionForNewUser(req, res.locals.gameServer);	
-		console.log('Watch mode start. session = '+JSON.stringify(req.session.data));
+		console.log('Watch mode start. session = '+JSON.stringify(req.session.data).replace(/\n/g,","));
 		req.session.data.role = 'Watcher';
 		req.session.data.gameid = req.params.gameid;
 		req.session.data.silentEntry = true;
@@ -377,7 +354,7 @@ function entergame(session) {
 	entergameSemaphore.take(function() {
 		var gameServer = gameServers[session.data.gametype];
 		
-		console.log('Enter game. session = '+JSON.stringify(session.data));
+		console.log('Enter game. session = '+JSON.stringify(session.data).replace(/\n/g,","));
 
 		var game;
 		if (session.data.gameid && gameServer.gameById(session.data.gameid)) { // gameid already exists - a watcher is entering an existing game, or a player is re-entering after disconnection
@@ -411,52 +388,6 @@ app.get('/:gametype/listactive', getGameServer, function(req,res) {
 				timeToString: timer.timeToString, 
 				games: res.locals.gameServer.getGames()});
 });
-//ariel
-app.get('/:gametype/listlogs', getGameServer, function(req,res) {
-		var pretty = req.query.pretty; // true to show only verified games
-		var finished = req.query.finished; // true to show only finished games
-		logger.readJsonLog('games.json', function(games) {
-			if (games.readFileError) {
-					res.contentType('text/xml');
-					res.render("LogToXml",	{log: games});
-			}
-			else res.render(finished? "MultiplayerFinishedGames": "MultiplayerGames",	{
-				title: 'Games in log',
-				timeToString: timer.timeToString, 
-				show_unverified_games: !pretty,
-				games: games});
-		});
-});
-
-///////////////////
-//KBAgent
-///////////////////
-/*
-
-//in my opinion the kbagent supposed to initialize when we start the game or
-//something, but then we suold check what happened with the unsync running.
-var KBAgent  = require('./agents/KBAgent');
-var kbagent = new KBAgent();
-//kbagent.initializeKBAgent();
-
-*/
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-///////////////////
-//NewKBAgent
-///////////////////
-/*
-var NewKBAgent  = require('./agents/NewKBAgent');
-var newkbagent = new NewKBAgent();
-newkbagent.initializeNewKBAgent(domains['Job']);
-app.get('/:gametype/listNewKBAgentInit', function(req,res){
-	newkbagent.listAllInitData(req,res,gameServers);
-});
-
-*/
-///////////////////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////
 // Player
@@ -472,6 +403,10 @@ var player = new Player(playerModel);
 
 app.get('/:gametype/listAllPlayers' ,function (req,res){
 	 player.listAll(req,res,types);
+});
+
+app.get('/:gametype,:RowKey,:PartitionKey/deletePlayer', function (req,res){
+	player.deleteItem(req, res);
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -492,9 +427,20 @@ var questionnaire = new Questionnaire(questionnaireModel);
 app.get('/:gametype/listAllQuestionnaire' ,function (req,res){
 	 questionnaire.listAll(req,res,types);
 });
-app.get('/prequestionnaireA', questionnaire.demographyQuestionnaire.bind(questionnaire));
-app.post('/addquestionnaire', questionnaire.addQuestionnaire.bind(questionnaire));
-app.post('/deleteQuestionnaireTable', questionnaire.deleteQuestionnaireTable.bind(questionnaire));
+
+app.get('/:gametype/prequestionnaireA', questionnaire.demographyQuestionnaire.bind(questionnaire));
+app.post('/:gametype/addquestionnaire', function (req,res){
+	if(!req.session.data){
+		var someValue = req.body.item;
+		var gametype = req.params.gametype;
+		res.redirect('/'+gametype+'/beginner');
+	}
+	else{
+		questionnaire.addQuestionnaire(req.body.item, req, res);	
+	}
+	
+});
+app.get('/:gametype,:RowKey,:PartitionKey/deleteQuestionnaire', questionnaire.deleteItem.bind(questionnaire));
 app.post('/activeQuestionnaire', questionnaire.activeQuestionnaire.bind(questionnaire));
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -512,19 +458,16 @@ var gameActionModel = new GameActionModel (
 	, partitionKey);
 var gameAction = new GameAction(gameActionModel);
 
+app.get('/:gametype,:RowKey,:PartitionKey/deleteGameAction', function (req,res){
+	gameAction.deleteItem(req, res);
+});
+
 function messageLog(socket, game, action, user, data) {
-	logger.writeJsonLog('actions_'+game.gameid, 
+	console.log(action +"  " +game.gameid, 
 		{role: user.role, remainingTime: game.timer? game.timer.remainingTimeSeconds(): "-", user: (action=='Connect'? user: user.userid), action: action, data: data});
-	logger.writeEventLog('events', action+" '"+JSON.stringify(data)+"'", user);
 //I think we can change the call of the "massageLog" function to "gameAction.activeGameAction" instead and it will still work. and we don't need the socket here
 	gameAction.activeGameAction(game, action, user, data);
-	/*
-	if (action == "Disconnect" )
-	{	
-		gamesTable(user.gametype, game, true);
-		//finalResult.addFinalResult(game.gameid,game.mapRoleToFinalResult.Candidate, game.mapRoleToUserid.Candidate);
-		//finalResult.addFinalResult(game.gameid,game.mapRoleToFinalResult.Employer, game.mapRoleToUserid.Employer);
-	}*/
+
 	gamesTable(user.gametype, game, true, action);
 }
 
@@ -547,6 +490,10 @@ var games = new Games(gamesModel);
 
 app.get('/:gametype/listAllGames' ,function (req,res){
 	 games.listAll(req,res,types);
+});
+
+app.get('/:gametype,:RowKey,:PartitionKey/deleteGame', function (req,res){
+	games.deleteItem(req, res);
 });
 
 function gamesTable(gametype, game, unverified, action) //insert information to different tables
@@ -578,7 +525,6 @@ function gamesTable(gametype, game, unverified, action) //insert information to 
 				finalResult.addFinalResult(game.mapRoleToFinalResult[role], game.mapRoleToUserid[role], role, game.gameid);
 				if (!finalAgreement.check){
 					for (agree in game.mapRoleToFinalResult[role].agreement){
-						console.log(++a);
 						finalAgreement.addFinalAgreement(agree, game.mapRoleToFinalResult[role].agreement[agree], game.gameid);
 					}
 				}
@@ -610,6 +556,11 @@ var finalResult = new FinalResult(finalResultModel);
 app.get('/:gametype/listAllFinalResults' ,function (req,res){
 	 finalResult.listAll(req,res,types);
 });
+
+app.get('/:gametype,:RowKey,:PartitionKey/deleteFinalResult', function (req,res){
+	finalResult.deleteItem(req, res);
+});
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////
@@ -625,6 +576,10 @@ var finalAgreement = new FinalAgreement(finalAgreementModel);
 
 app.get('/:gametype/listAllFinalAgreements' ,function (req,res){
 	 finalAgreement.listAll(req,res,types);
+});
+
+app.get('/:gametype,:RowKey,:PartitionKey/deleteFinalAgreements', function (req,res){
+	finalAgreement.deleteItem(req, res);
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -668,28 +623,6 @@ app.get('/UtilityOfPartner/:domain/:role', function(req,res) {
 		res.render("GeniusUtilityOfPartner",	{agents: otherAgents});
 });
 
-//ariel
-app.get('/WriteQuestionnaireAnswers/:logFileName', verifySessionData, function(req,res) {
-		var nextAction = req.query.next_action;	delete req.query.next_action;
-		if (!req.session.data.alreadyLogged) {
-			logger.writeJsonLog('user_'+req.session.data.userid, 
-				{user: req.session.data});
-			req.session.data.alreadyLogged = true;
-		}
-		logger.writeJsonLog(req.params.logFileName, 
-			{user: req.session.data, answers: req.query});
-		logger.writeJsonLog('user_'+req.session.data.userid, 
-			{questionnaire: req.params.logFileName, answers: req.query});
-		res.redirect(nextAction);
-});
-
-app.get('/LogToXml/:logFileName', function(req,res) {
-		res.contentType('text/xml');
-		logger.readJsonLog(req.params.logFileName+".json", function(object) {
-			res.render("LogToXml",	{log: object});
-		});
-});
-
 app.get('/PreQuestionnaireExam',verifySessionData, function(req,res) {
 		res.render("PreQuestionnaireExam",	{
 				action:'/VerifyQuestionnaire',
@@ -729,15 +662,6 @@ app.get('/:gametype/play', getGameServer, function(req,res) {
 		}
 		var actualAgent = getActualAgent(req.session.data.domain, req.session.data.role, req.session.data.personality);
 		
-		if (agent == 'true'){
-			var agentRole;
-			for (role in res.locals.gameServer.data.requiredRoles){
-				if (role !== req.session.data.role)
-					agentRole = role;
-			}
-            client.write(JSON.stringify({gametype:req.params.gametype, role:agentRole}));
-		}
-
 		res.render(res.locals.gameServer.data.roomTemplateName,	{
 				gametype: req.params.gametype, 
 				role: req.session.data.role,
@@ -784,7 +708,7 @@ var httpserver = http.createServer(app);
 var serverStartTime = null;
 
 httpserver.listen(app.get('port'), function(){
-	logger.writeEventLog("events", "START", {port:app.get('port')});
+	console.log("events", "START", {port:app.get('port')});
 	serverStartTime = new Date();
 });
 
@@ -804,14 +728,6 @@ io.configure(function () {
 		io.set("transports", ["xhr-polling"]);
 	io.set("polling duration", 10); 
 });
-
-/*
-function mymessageLog(socket, game, action, user, data) { 
-	logger.writeJsonLog('actions_'+game.gameid, 
-		{role: user.role, remainingTime: game.timer? game.timer.remainingTimeSeconds(): "-", user: (action=='Connect'? user: user.userid), action: action, data: data});
-	logger.writeEventLog('events', action+" '"+JSON.stringify(data)+"'", user);
-}
-*/
 
 
 /**
@@ -866,7 +782,7 @@ io.sockets.on('connection', function (socket) {
 			io.sockets.in(game.gameid).emit('status', {key: 'remainingTime', value: '-'});
 		} else {							 // game started!
 			if (!game.startLogged) {
-				logger.writeJsonLog("games", {
+				console.log("games", {
 					gametype: session.data.gametype,
 					gameid: game.gameid,
 					startTime: game.startTime,
@@ -891,7 +807,7 @@ io.sockets.on('connection', function (socket) {
 						game.endGame();
 						if (!game.endLogged) {
 							io.sockets.in(game.gameid).emit('EndGame');
-							logger.writeJsonLog("games",	{
+							console.log("games",	{
 								gametype: session.data.gametype,
 								gameid: game.gameid,
 								startTime: game.startTime,
@@ -934,6 +850,6 @@ process.on('uncaughtException', function(err){
 //
  
 process.on('exit', function (){
-	logger.writeEventLog("events", "END", {port:app.get('port')});
+	console.log("events", "END", {port:app.get('port')});
 	console.log('Goodbye!');
 });

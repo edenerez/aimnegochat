@@ -55,3 +55,14 @@ GameActionModel.prototype.updateItem = function(item, callback) {
     });
 };
  
+ GameActionModel.prototype.deleteItem = function(item, callback) {
+  self = this;
+  self.storageClient.deleteEntity (self.tableName, item, 
+    function entityDeleted(error) {
+      if(error){  
+        console.log("Cannot delete from table: "+JSON.stringify(error));
+        callback(error + self.tableName);
+      }
+      callback(null);
+    });
+};

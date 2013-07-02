@@ -28,4 +28,5 @@ block content
               td #{player.type}
               td
                 input(type="checkbox", name="active", value="#{!player.active}", checked=player.active)
-       
+              td 
+                 a(href= "/#{player.gametype},#{player.RowKey},#{player.PartitionKey}/deletePlayer") deleteMe 
