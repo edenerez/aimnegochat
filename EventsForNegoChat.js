@@ -3,7 +3,7 @@ var translation = require('./translation');
 
 exports.initializeEventHandlers = function(socket, game, session_data, io, finalResultTable, functions) {
 	var translator;
-	if (/^negonlp/.test(game.gametype))
+	if (game.hasTranslator)
 		translator = new translation.Translator("translator-of-"+session_data.role);
 
 	var agent = null, allIssues = null;
@@ -54,6 +54,11 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 	});
 
 	// A player sent an informative message - just send it to all other users
+	socket.on('Connect', function (text) {
+		console.log("!!!!!!!! I CAN SEND THE AGENT FROM HERE!!!!!!!!!");
+	});
+
+	// A player sent an informative message - just send it to all other users
 	socket.on('message', function (text) {
 		functions.announcement(socket, game, "Message", session_data, text);
 	});
@@ -98,12 +103,26 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		io.sockets.in(game.gameid).emit('issueAgreed', {issue: data.issue, agreed: currentIssueAgreed, allAgreed: allIssuesAgreed});
 		agreement = game.valuesOfPlayer(session_data.role);
 
+		console.dir(game.mapRoleToMapIssueToValue);
+
 		// calculate new utility for the player:
 		var utilityWithoutDiscount = Math.round(agent.utility_space_object.getUtilityWithoutDiscount(agreement));
 		var timeFromStart = game.timer? game.timer.timeFromStartSeconds(): 0;
 		var turnsFromStart = game.turnsFromStart? game.turnsFromStart: 0;
 		var utilityWithDiscount = Math.round(agent.utility_space_object.getUtilityWithDiscount(utilityWithoutDiscount, turnsFromStart))
 		socket.emit('yourUtility', utilityWithDiscount);
+	});
+
+	socket.on('enterAgentBidToMapRoleToMapIssueToValue', function (data) {
+		console.log (" THIS IS THE PLACE THE BID OF THE AGENT GET IN!!!!");
+		for (issue in data.bid){
+			console.log (game.playerChangesValue(data.role, issue, data.bid[issue]));
+			functions.messageLog(socket, game, "AgentChange", session_data, data);
+			var currentIssueAgreed = game.arePlayerValuesEqual(issue);
+			//var allIssuesAgreed = game.arePlayerValuesToAllIssuesEqual(allIssues);
+			io.sockets.in(game.gameid).emit('issueAgreed', {issue: issue, agreed: currentIssueAgreed, allAgreed: false});
+		}
+		console.dir(game.mapRoleToMapIssueToValue);
 	});
 
 	// A player finished playing (e.g. by clicking a "finish" button):
@@ -188,5 +207,6 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		}
 	});
 	
+
 
 }

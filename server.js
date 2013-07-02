@@ -34,8 +34,42 @@ nconf.env()
 .file({ file: 'config.json'});
 var partitionKey = nconf.get("PARTITION_KEY")
 , accountName = nconf.get("STORAGE_NAME")
-, accountKey = nconf.get("STORAGE_KEY");
+, accountKey = nconf.get("STORAGE_KEY")
+, agentType = nconf.get('AGENT_TYPE');
 
+
+//adding the agent option.
+
+var HOST = '127.0.0.1';
+var PORT = 4001;
+var socktToAgentManager;
+//var agent = require('./AgentManager');
+var server = net.createServer();
+server.listen(PORT, HOST);
+console.log('Server listening To Agent Manager ' + HOST +':'+ PORT);
+//console.log('Server listening on ' + server.address().address +':'+ server.address().port);
+server.on('connection', function(sock) {
+	socktToAgentManager = sock;
+    //var agent = require('./AgentManager');
+	console.log("New agent manager connected");
+    
+    // Add a 'close' event handler to this instance of socket
+    sock.on('close', function(data) {
+    	socktToAgentManager = null;
+    	console.log("Agent mnager disconnected");
+        console.log('CLOSED: ' + sock.remoteAddress +' '+ sock.remotePort);
+    });
+
+    sock.on('error', function(error){
+    	console.log('error ecured '+ error);
+    })
+
+    sock.on('data', function(data) {
+	console.log('INFO: ' + data);
+	// Close the client socket completely
+	//client.destroy();
+	});
+});
 
 
 // Step 0: Users and sessions:
@@ -153,7 +187,9 @@ gameServers['negomenus_JobCandidate'] = new multiplayer.GameServer(
 		 maxTimeSeconds:   30*60,
 		 events: require('./EventsForNegoChat'),
 		 domain: 'Job',
-		 defaultPersonality: 'short-term'
+		 defaultPersonality: 'short-term',
+		 hasAgent: true,
+		 hasTranslator: false
 		});
 gameServers['negomenus_Neighbours'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Alex','Deniz'],
@@ -161,7 +197,9 @@ gameServers['negomenus_Neighbours'] = new multiplayer.GameServer(
 		 maxTimeSeconds:   30*60,
 		 events: require('./EventsForNegoChat'),
 		 domain: 'Neighbours',
-		 defaultPersonality: 'A'
+		 defaultPersonality: 'A',
+		 hasAgent: true,
+		 hasTranslator: false
 		});
 gameServers['negochat_JobCandidate'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Employer', 'Candidate'], 
@@ -169,7 +207,9 @@ gameServers['negochat_JobCandidate'] = new multiplayer.GameServer(
 		 maxTimeSeconds:   30*60,
 		 events: require('./EventsForNegoChat'),
 		 domain: 'Job',
-		 defaultPersonality: 'short-term'
+		 defaultPersonality: 'short-term',
+		 hasAgent: false,
+		 hasTranslator: false
 		});
 gameServers['negochat_Neighbours'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Alex','Deniz'],
@@ -177,7 +217,9 @@ gameServers['negochat_Neighbours'] = new multiplayer.GameServer(
 		 maxTimeSeconds:   30*60,
 		 events: require('./EventsForNegoChat'),
 		 domain: 'Neighbours',
-		 defaultPersonality: 'A'
+		 defaultPersonality: 'A',
+		 hasAgent: false,
+		 hasTranslator: false
 		});
 gameServers['negonlp_JobCandidate'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Employer', 'Candidate'],
@@ -185,7 +227,9 @@ gameServers['negonlp_JobCandidate'] = new multiplayer.GameServer(
 		 maxTimeSeconds:   30*60,
 		 events: require('./EventsForNegoChat'),
 		 domain: 'Job',
-		 defaultPersonality: 'short-term'
+		 defaultPersonality: 'short-term',
+		 hasAgent: true,
+		 hasTranslator: true
 		});
 gameServers['negonlp_Neighbours'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Alex','Deniz'],
@@ -193,7 +237,9 @@ gameServers['negonlp_Neighbours'] = new multiplayer.GameServer(
 		 maxTimeSeconds:   30*60,
 		 events: require('./EventsForNegoChat'),
 		 domain: 'Neighbours',
-		 defaultPersonality: 'A'
+		 defaultPersonality: 'A',
+		 hasAgent: true,
+		 hasTranslator: true
 		});
 
 /**
@@ -466,6 +512,8 @@ function messageLog(socket, game, action, user, data) {
 	console.log(action +"  " +game.gameid, 
 		{role: user.role, remainingTime: game.timer? game.timer.remainingTimeSeconds(): "-", user: (action=='Connect'? user: user.userid), action: action, data: data});
 //I think we can change the call of the "massageLog" function to "gameAction.activeGameAction" instead and it will still work. and we don't need the socket here
+	
+
 	gameAction.activeGameAction(game, action, user, data);
 
 	gamesTable(user.gametype, game, true, action);
@@ -662,6 +710,23 @@ app.get('/:gametype/play', getGameServer, function(req,res) {
 		}
 		var actualAgent = getActualAgent(req.session.data.domain, req.session.data.role, req.session.data.personality);
 		
+		if (res.locals.gameServer.data.hasAgent && socktToAgentManager){// if there is a connection to the agent system
+			var agentRole;
+			var opponentRole;
+			for (role in res.locals.gameServer.requiredRoles){
+				if (role !== req.session.data.role)
+					agentRole = role;
+				else
+					opponentRole = role;
+
+			}
+			//send the info. of player role, opponent role, agent name, game type and game id to the agent system.
+            setTimeout(function(){
+            	socktToAgentManager.write(JSON.stringify({gametype:req.params.gametype, opponentRole:opponentRole, role:agentRole, agent: agentType, gameid: req.session.data.gameid}));
+            },3000);
+            //socktToAgentManager.write(JSON.stringify({gametype:req.params.gametype, opponentRole:opponentRole, role:agentRole, agent: agentType, gameid: req.session.data.gameid}));
+		}
+		
 		res.render(res.locals.gameServer.data.roomTemplateName,	{
 				gametype: req.params.gametype, 
 				role: req.session.data.role,
@@ -670,6 +735,7 @@ app.get('/:gametype/play', getGameServer, function(req,res) {
 				session_data: req.session.data,
 				AMTStatus: JSON.stringify(req.session.data),
 				next_action:'/PostQuestionnaireA'});
+	   
 });
 
 app.get('/:gametype/preview', getGameServer, function(req,res) {

@@ -58,7 +58,7 @@ exports.GameServer.prototype.gameWaitingForRole = function(role) {
   }
 
   // B. ... or create a fresh new game:
-  var gameWithRoleMissing = new Game(this.gametype, this.requiredRoles);
+  var gameWithRoleMissing = new Game(this.gametype, this.requiredRoles, this.data.hasTranslator);
   this.games.push(gameWithRoleMissing);
   return gameWithRoleMissing;
 };
@@ -97,7 +97,7 @@ exports.GameServer.prototype.gameById = function(gameid) {
 /**
  * Creates a new game, but doesn't start it yet.
  */
-Game = function(gametype, requiredRoles) {
+Game = function(gametype, requiredRoles, hasTranslator) {
     this.gametype = gametype;
     this.requiredRoles = requiredRoles;
     this.gameid = new Date().toISOString();  // create a unique id for the game
@@ -109,6 +109,7 @@ Game = function(gametype, requiredRoles) {
     this.mapRoleToMapIssueToValue = {}; // for each role, we keep an issue=>value map.
     this.mapRoleToFinalResult = {};
     this.actionNum = 0;
+    this.hasTranslator = hasTranslator;
 };
 
 Game.prototype.isRoleInGame = function (role) {
@@ -152,7 +153,7 @@ Game.prototype.playerEntersGame = function(userid, role) {
  */
 Game.prototype.playerChangesValue = function(role, issue, value) {
     var map = this.mapRoleToMapIssueToValue[role];
-    if (map[issue]===value)
+    if (map[issue]==value)
       return false;
    
     if (!map[issue] && !value)

@@ -50,7 +50,7 @@ Report.prototype = {
                     if (gameActions) gameActions.sort(function(a, b){
                         var diff = new Date(a.Timestamp) - new Date(b.Timestamp);
                         if (diff==0) 
-                           diff = Integer.valueOf(a.RowKey) - Integer.valueOf(b.RowKey);
+                           diff = parseInt(a.RowKey) - parseInt(b.RowKey);
                         return diff;
                     });                
 
