@@ -223,7 +223,7 @@ gameServers['negochat_Neighbours'] = new multiplayer.GameServer(
 		});
 gameServers['negonlp_JobCandidate'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Employer', 'Candidate'],
-		{roomTemplateName: 'RoomForNegoNlp',
+		{roomTemplateName: 'RoomForNegoChat',
 		 maxTimeSeconds:   30*60,
 		 events: require('./EventsForNegoChat'),
 		 domain: 'Job',
@@ -233,7 +233,7 @@ gameServers['negonlp_JobCandidate'] = new multiplayer.GameServer(
 		});
 gameServers['negonlp_Neighbours'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Alex','Deniz'],
-		{roomTemplateName: 'RoomForNegoNlp',
+		{roomTemplateName: 'RoomForNegoChat',
 		 maxTimeSeconds:   30*60,
 		 events: require('./EventsForNegoChat'),
 		 domain: 'Neighbours',

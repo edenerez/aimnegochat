@@ -153,13 +153,15 @@ Game.prototype.playerEntersGame = function(userid, role) {
  */
 Game.prototype.playerChangesValue = function(role, issue, value) {
     var map = this.mapRoleToMapIssueToValue[role];
-    if (map[issue]==value)
-      return false;
-   
+
     if (!map[issue] && !value)
       return false;
 
+    if (map[issue] === value)
+      return false;
+   
     map[issue] = value;
+
     return true;
 }
 
