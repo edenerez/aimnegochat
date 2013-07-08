@@ -5,7 +5,7 @@
  * @return the merged object (target).
  */
 exports.deepMerge = function (source, target) {
-	console.log("  deepMerge "+JSON.stringify(source)+" into "+JSON.stringify(target));
+	//console.log("  deepMerge "+JSON.stringify(source)+" into "+JSON.stringify(target));
 	for (var key in source) {
 		var value = source[key];
 		if (!target[key]) {
