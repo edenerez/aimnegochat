@@ -734,7 +734,7 @@ app.get('/:gametype/play', getGameServer, function(req,res) {
 			null:
 			getActualAgent(req.session.data.domain, req.session.data.role, req.session.data.personality);
 		
-		if (res.locals.gameServer.data.hasAgent && socktToAgentManager){// if there is a connection to the agent system
+		if (res.locals.gameServer.data.hasAgent && socktToAgentManager && req.session.data.role !='Watcher'){// if there is a connection to the agent system
 			var agentRole;
 			var opponentRole;
 			for (role in res.locals.gameServer.requiredRoles){
