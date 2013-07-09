@@ -34,14 +34,16 @@ function translationToHtml(translation, withDelete) {
 
 /** Convert the translations received from the server to HTML */
 function translationsToHtml(translations, withDelete) {
-	if (translations==null)
-		return "null";
-	if (translations.length==0)
-		return "no translations";
-	var html = "";
-	for (i=0; i<translations.length; ++i)
-		html += translationToHtml(translations[i],withDelete);
-	return "<table id='translationsTable'>\n"+html+"</table>\n";
+	if (translations==null || translations.length==0) {
+		return "<p>The computer didn't understand what you said. Please select from the following list:</p>\n"+
+			"<table id='translationsTable'></table>\n";
+	} else {
+		var html = "";
+		for (i=0; i<translations.length; ++i)
+			html += translationToHtml(translations[i],withDelete);
+		return "<p>This is what the computer understands from what you said. Please correct or approve:</p>" + 
+			"<table id='translationsTable'>\n"+html+"</table>\n";
+	}
 }
 
 function setOptionsFromArray(idOfSelectElement, arrayOfOptions, titleForDefaultOption) {
@@ -74,7 +76,6 @@ $(document).ready(function() {
 	translationSocket.on('translation', function(translations) {
 		console.log("CLIENT: got a translation: "+JSON.stringify(translations));
 		$("#translationsDiv").html(
-			"<p>This is what the computer understands from what you said. Please correct or approve:</p>"+
 			translationsToHtml(translations.translations, /*withdelete=*/true)+
 			"<div><select id='classToAdd'></select></div>"+
 			"<button onClick='approve(); return false;'>approve</button>"
@@ -119,7 +120,7 @@ $(document).ready(function() {
 	// it sends the message to our private translator:
 	var sendMessage = function() {
 		var msg = $('#chatMessage').val();
-		//translationSocket.emit('English', msg);
+		socket.emit('English', msg);
 		var request = {
 			text: msg,
 			forward: true,

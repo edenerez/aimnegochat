@@ -681,7 +681,9 @@ app.get('/PreQuestionnaireDemography', function(req,res) {
 });
 
 app.get('/UtilityOfCurrent/:domain/:role/:personality', function(req,res) {
-		var actualAgent = getActualAgent(req.params.domain, req.params.role, req.params.personality);
+		var actualAgent = req.session.data.role=='Watcher'? 
+			null:
+			getActualAgent(req.session.data.domain, req.session.data.role, req.session.data.personality);
 		res.render("GeniusUtilityOfCurrent",	{agent: actualAgent});
 });
 
@@ -728,7 +730,9 @@ app.get('/:gametype/play', getGameServer, function(req,res) {
 				res.redirect("/"+req.params.gametype+"/advanced");
 				return;
 		}
-		var actualAgent = getActualAgent(req.session.data.domain, req.session.data.role, req.session.data.personality);
+		var actualAgent = req.session.data.role=='Watcher'? 
+			null:
+			getActualAgent(req.session.data.domain, req.session.data.role, req.session.data.personality);
 		
 		if (res.locals.gameServer.data.hasAgent && socktToAgentManager){// if there is a connection to the agent system
 			var agentRole;
