@@ -33,6 +33,11 @@ var templates = {
 		"I quit",
 		"I blow up the negotiation"
 	],
+	'Great': [
+		"Hi there",
+		"Hello",
+		"Nice to meet you"
+	],
 };
 
 // A new message has been received, the data comes through as a JSON object with 
