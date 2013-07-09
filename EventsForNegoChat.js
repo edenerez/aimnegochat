@@ -33,6 +33,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 	}
 
 	var onNegoActions = function (actions, announce) {
+		console.log("negoactions: "+JSON.stringify(actions));
 		if (!actions) {
 			misunderstanding("I didn't understand what you mean because the actions list is empty");
 			return;
@@ -49,7 +50,6 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 
 	// An agent or a human menu-player sent a list of negotiation actions:
 	socket.on('negoactions', function(actions) {
-		console.log("negoactions: "+JSON.stringify(actions));
 		onNegoActions(actions, true);
 	});
 
@@ -68,28 +68,28 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		functions.announcement(socket, game, "Message", session_data, text);
 		if (translator) translator.sendToTranslationServer(text, /*forward=*/true);
 	});
-
-
-	// The translator returned the semantic translation of the human's chat message
-	if (translator) translator.onTranslation(function(text,translations) {
-		//console.log("TranslationServer serving "+JSON.stringify(session_data));
+	
+	var onTranslation = function(text, translations) {
 		if (!translations || translations.length==0) {
 			misunderstanding("I didn't understand your message: '"+text+"'. Please say this in other words");
 			return;
 		}
-		var actions = [];
-		for (var i=0; i<translations.length; ++i) {
-			try {
-				var action = JSON.parse(translations[i]);
-				actions.push(action);
-			} catch (ex) {
-				console.log("Illegal json string '"+translations[i]+"'");
-				console.dir(ex);
-			}
+		try {
+			var actions = translations.map(JSON.parse);
+		} catch (ex) {
+			console.log("Cannot parse JSON");
+			console.dir(translations);
+			console.dir(ex);
 		}
 		onNegoActions(actions, false);
-	});
+	}
 
+	// The translator returned the semantic translation of the human's chat message
+	if (translator) translator.onTranslation(onTranslation);
+
+	socket.on('approveTranslations', function(request) {
+		onTranslation(request.text, request.translations);
+	});
 
 	
 	// A player changed the value for one of his issues:

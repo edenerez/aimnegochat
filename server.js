@@ -19,7 +19,7 @@ var express = require('express')
 	//, logger = require('./logger')
 	, timer = require('./timer')
 	, useragent = require('useragent')
-	, net = require('net')	
+	, net = require('net')
 	;
 
 var cookieParser = express.cookieParser('biuailab')
@@ -241,6 +241,26 @@ gameServers['negonlp_Neighbours'] = new multiplayer.GameServer(
 		 hasAgent: true,
 		 hasTranslator: true
 		});
+gameServers['negotranslate_JobCandidate'] = new multiplayer.GameServer(
+		/*requiredRoles=*/['Employer', 'Candidate'],
+		{roomTemplateName: 'RoomForNegoTranslate',
+		 maxTimeSeconds:   30*60,
+		 events: require('./EventsForNegoChat'),
+		 domain: 'Job',
+		 defaultPersonality: 'short-term',
+		 hasAgent: true,
+		 hasTranslator: false
+		});
+gameServers['negotranslate_Neighbours'] = new multiplayer.GameServer(
+		/*requiredRoles=*/['Alex','Deniz'],
+		{roomTemplateName: 'RoomForNegoTranslate',
+		 maxTimeSeconds:   30*60,
+		 events: require('./EventsForNegoChat'),
+		 domain: 'Neighbours',
+		 defaultPersonality: 'A',
+		 hasAgent: true,
+		 hasTranslator: false
+		});
 
 /**
  * http://stackoverflow.com/questions/16649529/ending-an-http-request-prematurely/16650056?noredirect=1#16650056
@@ -304,7 +324,7 @@ domains['Neighbours'] = new genius.Domain(path.join(__dirname,'domains','neighbo
 
 // Variables that will be available to all JADE templates:
 app.locals.turnLengthInSeconds = 2*60;
-//app.locals.sprintf = require('sprintf').sprintf;
+app.locals.sprintf = require('sprintf').sprintf;
 app.locals.format = "%+1.0f";
 
 

@@ -19,7 +19,7 @@ $(function() {
 	// Send the input value to the server, recording our own message since `socket.io` 
 	// wont re-broadcast the message back to the client who sent it. Clear the input
 	// field out when we are finished so it is ready to send another
-	function send() {
+	var sendMessage = function() {
 		var msg = $('#chatMessage').val();
 		socket.emit('English', msg);
 		$('#chatMessage').val('');
@@ -27,13 +27,13 @@ $(function() {
 	};
 	// Listen to a `click` event on the submit button to the message through:
 	$('#btnSendChat').click(function() {
-		send();
+		sendMessage();
 	});
 
 	// Create a keystroke listener on the input element, since we are not sending a 
 	// traditional form, it would be nice to send the message when we hit `enter`
 	$('#chatMessage').keypress(function(event) {
-		if (event.keyCode == 13)	send();
+		if (event.keyCode == 13)	sendMessage();
 	});
 
 
