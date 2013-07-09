@@ -77,9 +77,10 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		try {
 			var actions = translations.map(JSON.parse);
 		} catch (ex) {
-			console.log("Cannot parse JSON");
+			console.error("Cannot parse JSON");
 			console.dir(translations);
 			console.dir(ex);
+			return;
 		}
 		onNegoActions(actions, false);
 	}
@@ -87,6 +88,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 	// The translator returned the semantic translation of the human's chat message
 	if (translator) translator.onTranslation(onTranslation);
 
+	// The human manually approved the translations of the translator 
 	socket.on('approveTranslations', function(request) {
 		onTranslation(request.text, request.translations);
 	});
