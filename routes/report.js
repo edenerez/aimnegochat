@@ -46,11 +46,13 @@ Report.prototype = {
               .where('PartitionKey eq ?' , key);
               playerModel.find(queryPlayer, function itemsFound(error, player) {
                     // Erel: sort gameActions by increasing timestamp, then by row key:
-                    //console.dir(gameActions);
+                    console.dir(gameActions);
                     if (gameActions) gameActions.sort(function(a, b){
                         var diff = new Date(a.Timestamp) - new Date(b.Timestamp);
-                        if (diff==0) 
+                        if (Math.abs(diff)<2000)  // Sometimes, later rows have an earlier timestamp! allow a tolerance of 2 seconds. 
                            diff = parseInt(a.RowKey) - parseInt(b.RowKey);
+                        if (a.RowKey=='7')
+                          console.log(JSON.stringify(a)+"\n"+JSON.stringify(b)+"\n"+diff);
                         return diff;
                     });                
 
