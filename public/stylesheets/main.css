@@ -383,3 +383,9 @@ table.userdata td, table.userdata th {
 a.delete { margin-bottom: 10px; width: 18px; height:18px; display:block; background:transparent url('delete.png') center top no-repeat;}
 a.delete:hover {  background-image: url('delete_sharp.png') ; }
 .deleted {	text-decoration: line-through }
+
+.help {
+	font-size:16px; 	
+	margin: 0 6px;
+}
+

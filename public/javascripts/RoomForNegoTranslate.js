@@ -120,7 +120,6 @@ $(document).ready(function() {
 	// it sends the message to our private translator:
 	var sendMessage = function() {
 		var msg = $('#chatMessage').val();
-		socket.emit('English', msg);
 		var request = {
 			text: msg,
 			forward: true,
@@ -156,6 +155,7 @@ function approve() {
 	translationSocket.emit('approve', request);
 	socket.emit("approveTranslations", request);
 	$("#translationsDiv").html("");
+	socket.emit('English', msg);
 	$('#chatMessage').val('');
 }
 

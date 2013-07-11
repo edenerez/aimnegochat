@@ -3,6 +3,7 @@ $(function() {
 	// When the user clicks on of the "show score" buttons - show the utility table in a dialog box:
 	var utilityDiv = $("<div/>");
 	var utilityOptions = { /* no options */ };
+	var helpOptions = { width:300 };
 	var utilityPosition = {
 		my: "left top",
 		at: "right top",
@@ -19,6 +20,11 @@ $(function() {
 	$("#btnOppUtility").click(function() {
 		var utilityUrl = '/UtilityOfPartner/'+session_data.domain+"/"+session_data.role;
 		utilityDiv.load(utilityUrl, function() { utilityDiv.dialog(utilityOptions).dialog('widget').position(utilityPosition); }); 
+		return false;
+	});
+	$("#btnHelp").click(function() {
+		var utilityUrl = '/Help/'+session_data.gametype+"/"+session_data.domain+"/"+session_data.role;
+		utilityDiv.load(utilityUrl, function() { utilityDiv.dialog(helpOptions).dialog('widget').position(utilityPosition); }); 
 		return false;
 	});
 });

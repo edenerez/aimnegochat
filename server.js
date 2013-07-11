@@ -693,6 +693,13 @@ app.get('/UtilityOfPartner/:domain/:role', function(req,res) {
 		res.render("GeniusUtilityOfPartner",	{agents: otherAgents});
 });
 
+app.get('/Help/:gametype/:domain/:role', getGameServer, function(req,res) {
+		res.render(res.locals.gameServer.data.roomTemplateName+"Help",	{
+				role: req.params.role,
+				domain_description: req.params.domain.description,
+				});
+});
+
 app.get('/PreQuestionnaireExam',verifySessionData, function(req,res) {
 		res.render("PreQuestionnaireExam",	{
 				action:'/VerifyQuestionnaire',
