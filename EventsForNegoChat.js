@@ -119,7 +119,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		console.log (" THIS IS THE PLACE THE BID OF THE AGENT GET IN!!!!");
 		for (issue in data.bid){
 			console.log (game.playerChangesValue(data.role, issue, data.bid[issue]));
-			functions.messageLog(socket, game, "Change", session_data, {issue: issue, value:data.bid[issue]});
+			//functions.messageLog(socket, game, "Change", session_data, {issue: issue, value:data.bid[issue]});
 			var currentIssueAgreed = game.arePlayerValuesEqual(issue);
 			var allIssuesAgreed = game.arePlayerValuesToAllIssuesEqual(allIssues);
 			io.sockets.in(game.gameid).emit('issueAgreed', {issue: issue, agreed: currentIssueAgreed, allAgreed: allIssuesAgreed});
