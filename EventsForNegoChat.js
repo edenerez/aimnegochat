@@ -46,6 +46,9 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 				functions.announcement(socket, game, key, session_data, mergedAction[key]); // send ALL players a textual description of the offer
 			}
 		}
+		else{
+			functions.messageLog(socket, game, "Translation", session_data, mergedAction);
+		}
 	};
 
 	// An agent or a human menu-player sent a list of negotiation actions:
@@ -55,7 +58,6 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 
 	// A player sent an informative message - just send it to all other users
 	socket.on('Connect', function (text) {
-		console.log("!!!!!!!! I CAN SEND THE AGENT FROM HERE!!!!!!!!!");
 	});
 
 	// A player sent an informative message - just send it to all other users
