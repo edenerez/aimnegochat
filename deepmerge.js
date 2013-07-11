@@ -1,22 +1,35 @@
-// deep merge of Javascript objects
+/**
+ * deep merge of Javascript objects
+ * 
+ * @author Erel Segal
+ * @since 2013-02
+ */
 
 /**
  * Merge "source" into "target". If fields have equal name, merge them recursively.
  * @return the merged object (target).
  */
-exports.deepMerge = function (source, target) {
+var deepMerge = exports.deepMerge = function (source, target) {
 	//console.log("  deepMerge "+JSON.stringify(source)+" into "+JSON.stringify(target));
 	for (var key in source) {
 		var value = source[key];
-		if (!target[key]) {
+		if (!(key in target)) {
 			// new value for "key":
 			target[key] = value;
 		} else {
 			// existing value for "key" - recursively deep merge:
-			if (typeof value == 'object') {
-				target[key] = exports.deepMerge(value, target[key]);
+			if (value instanceof Object) {
+				deepMerge(value, target[key]);
+			} else if (value instanceof Array && target[key] instanceof Array) {
+				target[key] = target[key].concat(value);
+			} else if (target[key] instanceof Array) {
+				target[key].push(value);
+			} else if (value instanceof Array) {
+				var first = target[key];
+				target[key] = value;
+				target[key].push(first);
 			} else {
-				target[key] = value; // new value overrides old value
+				target[key] = [target[key], value]; // create an array from old and new values
 			}
 		}
 	}
@@ -28,7 +41,7 @@ exports.deepMerge = function (source, target) {
  * @param sources
  * @return the merged object.
  */
-exports.deepMergeArray = function(sources) {
+var deepMergeArray = exports.deepMergeArray = function(sources) {
 	if (!Array.isArray(sources))
 		return sources; // nothing to merge
 	var merged = {};
@@ -44,12 +57,16 @@ exports.deepMergeArray = function(sources) {
 //
 
 if (process.argv[1] === __filename) {
+	require('should');
+	
+	deepMerge ({insist: "Car"},{insist: "Salary"}).
+	should.eql({insist: ["Salary","Car"]});
+
 	var a = {offer: {issue1: 'value1'}, accept: true};
 	var b = {offer: {issue2: 'value2'}, reject: false};
-	var expected = {"offer":{"issue2":"value2","issue1":"value1"},"reject":false,"accept":true}
-	console.log(JSON.stringify(a)+ " + " + JSON.stringify(b)+" = "+JSON.stringify(exports.deepMerge(a,b)));
-	
-	var arr = [a];
-	console.log(JSON.stringify(exports.deepMergeArray(a)));
-	console.log(JSON.stringify(exports.deepMergeArray(arr)));
+	deepMerge(a,b).should.eql(
+		{offer:{issue2:"value2",issue1:"value1"}, reject:false, accept:true});
+
+	deepMergeArray(a).should.eql(a);
+	deepMergeArray([a]).should.eql(a);
 }
