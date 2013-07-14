@@ -472,7 +472,7 @@ app.get('/:gametype/listAllPlayers' ,function (req,res){
 	 player.listAll(req,res,types);
 });
 
-app.get('/:gametype,:RowKey,:PartitionKey/deletePlayer', function (req,res){
+app.get('/:gametype,:RowKey,:PartitionKey/deletePlayer', express.basicAuth('biu','biu'), function (req,res){
 	player.deleteItem(req, res);
 });
 
@@ -507,7 +507,7 @@ app.post('/:gametype/addquestionnaire', function (req,res){
 	}
 	
 });
-app.get('/:gametype,:RowKey,:PartitionKey/deleteQuestionnaire', questionnaire.deleteItem.bind(questionnaire));
+app.get('/:gametype,:RowKey,:PartitionKey/deleteQuestionnaire', express.basicAuth('biu','biu'), questionnaire.deleteItem.bind(questionnaire));
 app.post('/activeQuestionnaire', questionnaire.activeQuestionnaire.bind(questionnaire));
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -525,7 +525,7 @@ var gameActionModel = new GameActionModel (
 	, partitionKey);
 var gameAction = new GameAction(gameActionModel);
 
-app.get('/:gametype,:RowKey,:PartitionKey/deleteGameAction', function (req,res){
+app.get('/:gametype,:RowKey,:PartitionKey/deleteGameAction', express.basicAuth('biu','biu'), function (req,res){
 	gameAction.deleteItem(req, res);
 });
 
@@ -561,7 +561,7 @@ app.get('/:gametype/listAllGames' ,function (req,res){
 	 games.listAll(req,res,types);
 });
 
-app.get('/:gametype,:RowKey,:PartitionKey/deleteGame', function (req,res){
+app.get('/:gametype,:RowKey,:PartitionKey/deleteGame', express.basicAuth('biu','biu'), function (req,res){
 	games.deleteItem(req, res);
 });
 
@@ -626,7 +626,7 @@ app.get('/:gametype/listAllFinalResults' ,function (req,res){
 	 finalResult.listAll(req,res,types);
 });
 
-app.get('/:gametype,:RowKey,:PartitionKey/deleteFinalResult', function (req,res){
+app.get('/:gametype,:RowKey,:PartitionKey/deleteFinalResult', express.basicAuth('biu','biu'), function (req,res){
 	finalResult.deleteItem(req, res);
 });
 
@@ -647,7 +647,7 @@ app.get('/:gametype/listAllFinalAgreements' ,function (req,res){
 	 finalAgreement.listAll(req,res,types);
 });
 
-app.get('/:gametype,:RowKey,:PartitionKey/deleteFinalAgreements', function (req,res){
+app.get('/:gametype,:RowKey,:PartitionKey/deleteFinalAgreements', express.basicAuth('biu','biu'), function (req,res){
 	finalAgreement.deleteItem(req, res);
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////////
