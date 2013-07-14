@@ -779,7 +779,7 @@ app.get('/:gametype/preview', getGameServer, function(req,res) {
 				role: roleForPreview,
 				agent: actualAgent,
 				session_data: {gametype: req.params.gametype, domain: res.locals.gameServer.data.domain, role: roleForPreview, personality: res.locals.gameServer.data.defaultPersonality},
-				AMTStatus: JSON.stringify(req.session.data),
+				//AMTStatus: JSON.stringify(req.session.data),
 				next_action: ''});
 });
 
