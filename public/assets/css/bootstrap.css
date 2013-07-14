@@ -4361,7 +4361,7 @@ input[type="submit"].btn.btn-mini {
 }
 
 body.negochatstoragetest .navbar .container {
-  background: red; /* Mark the test environment with a red border, for warning */
+  background: #3DCAF7; /* Mark the test environment with a red border, for warning */
 }
 
 .navbar-inner {
