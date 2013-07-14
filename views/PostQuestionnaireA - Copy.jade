@@ -45,6 +45,29 @@ block body
               option(value='') -- select --
               for v in [1, 2, 3, 4, 5]
                 option(value='#{v}') #{v}
+        tr.human
+           td.left Well... it was a human.
+        tr.human
+           td.left Can you estimate the <b>type</b> of person you've negotiated with?
+           td.field
+            select(name='item[type]')
+              option(value='') -- select --
+              for v in ['Short-term', 'Compromise', 'Long-term']
+                option(value='#{v}') #{v}
+        tr.human
+           td.left Can you estimate the <b>gender</b> of person you've negotiated with?
+           td.field
+            select(name='item[otherGender]')
+              option(value='') -- select --
+              for v in ['Male', 'Female']
+                option(value='#{v}') #{v}
+        tr.human
+           td.left How likely is it that the negotiation partner was from the <b>same country</b> as you are? (1 - not likely, 5 - very likely)
+           td.field
+            select(name='item[same_country]')
+              option(value='') -- select --
+              for v in [1, 2, 3, 4, 5]
+                option(value='#{v}') #{v}
         tr
            td.label General feedback:
            td.field
