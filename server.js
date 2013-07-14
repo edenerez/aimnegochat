@@ -682,9 +682,9 @@ app.get('/PreQuestionnaireDemography', function(req,res) {
 });
 
 app.get('/UtilityOfCurrent/:domain/:role/:personality', function(req,res) {
-		var actualAgent = req.session.data.role=='Watcher'? 
+		var actualAgent = req.params.role=='Watcher'? 
 			null:
-			getActualAgent(req.session.data.domain, req.session.data.role, req.session.data.personality);
+			getActualAgent(req.params.domain, req.params.role, req.params.personality);
 		res.render("GeniusUtilityOfCurrent",	{agent: actualAgent});
 });
 
@@ -771,14 +771,14 @@ app.get('/:gametype/play', getGameServer, function(req,res) {
 });
 
 app.get('/:gametype/preview', getGameServer, function(req,res) {
-		console.dir(res.locals.gameServer);
 		var roleForPreview = res.locals.gameServer.requiredRolesArray[0];
 		var actualAgent = getActualAgent(res.locals.gameServer.data.domain, roleForPreview, res.locals.gameServer.data.defaultPersonality);
 		res.render(res.locals.gameServer.data.roomTemplateName,	{
 				preview: true,
 				gametype: req.params.gametype, 
-				role: 'Previewer',
+				role: roleForPreview,
 				agent: actualAgent,
+				session_data: {gametype: req.params.gametype, domain: res.locals.gameServer.data.domain, role: roleForPreview, personality: res.locals.gameServer.data.defaultPersonality},
 				AMTStatus: JSON.stringify(req.session.data),
 				next_action: ''});
 });
