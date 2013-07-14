@@ -326,7 +326,8 @@ domains['Neighbours'] = new genius.Domain(path.join(__dirname,'domains','neighbo
 app.locals.turnLengthInSeconds = 2*60;
 app.locals.sprintf = require('sprintf').sprintf;
 app.locals.format = "%+1.0f";
-
+app.locals.accountName = accountName; // For differentiating between test and real environment
+console.log("accountName: "+accountName);
 
 
 //

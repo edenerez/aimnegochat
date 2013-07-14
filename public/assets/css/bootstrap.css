@@ -4360,6 +4360,10 @@ input[type="submit"].btn.btn-mini {
   overflow: visible;
 }
 
+body.negochatstoragetest .navbar .container {
+  background: red; /* Mark the test environment with a red border, for warning */
+}
+
 .navbar-inner {
   min-height: 40px;
   padding-right: 20px;

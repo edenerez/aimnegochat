@@ -7,6 +7,10 @@ body,table,thead,tbody,th,tr,td,form {
 	border-spacing: 0;
 }
 
+body.negochatstoragetest div#mainStatusRow {	
+	background: red; /* Mark the test environment with a red border, for warning */ 
+}
+
 #index {
     margin: 30px;
 }

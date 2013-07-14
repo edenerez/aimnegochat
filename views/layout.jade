@@ -6,7 +6,7 @@ html
     link(rel='stylesheet', href='/stylesheets/main.css')
     script(src='http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.js')
     
-  body
+  body(class="#{accountName}") 
     div.mainSection#noJavascriptSupport Sorry, your browser doesn't support Javascript, so you cannot play the game!
       script $("div#noJavascriptSupport").hide();
     block body

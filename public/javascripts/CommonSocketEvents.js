@@ -33,7 +33,7 @@ var templates = {
 		"I quit",
 		"I blow up the negotiation"
 	],
-	'Great': [
+	'Greet': [
 		"Hi there",
 		"Hello",
 		"Nice to meet you"
