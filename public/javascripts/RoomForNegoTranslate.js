@@ -141,6 +141,8 @@ $(document).ready(function() {
 	$('#chatMessage').keypress(function(event) {
 		if (event.keyCode == 13)	sendMessage();
 	});
+	
+	$("#btnHelp").click();
 });
 
 
