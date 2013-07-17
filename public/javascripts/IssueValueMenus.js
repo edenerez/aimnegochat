@@ -1,4 +1,5 @@
 // Client side support for the issue-value menus and opt-out button used in negotiation
+var isFirstChange = true;
 $(function() {
 	// Send all initial values to the server (this is relevant for form-values that are kept after refresh):
 	$("select.issue").each(function() {
@@ -12,13 +13,19 @@ $(function() {
 		socket.emit('change', {
 			issue: $(this).attr('title'), 
 			value: $(this).val()});
+		if(isFirstChange){
+			alert("REMEMBER: the other player DOES NOT know what you do in the menus\nYou must write whatever you want to offer in the chat");
+			isFirstChange = false;
+		}
 	});
+
 
 	// The server tells us what is our utility on the current agreement draft:
 	socket.on('yourUtility', function (utility) {
 		$("#utility").html(utility);
 	});
 
+	
 	socket.on('yourOptOutUtility', function (utility) {
 			if (iClicketOptOut){
 				if (confirm("Are you sure you want to leave the negotiation? Your utility will be " + utility)) {
@@ -53,6 +60,4 @@ $(function() {
 	socket.on("EndGame", function(){
 		socket.emit("giveMeMyReservationUtility");
 	});
-
-	
 });

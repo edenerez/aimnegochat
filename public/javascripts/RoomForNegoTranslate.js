@@ -129,6 +129,11 @@ $(document).ready(function() {
 		console.log("CLIENT: sent a request to translate: "+JSON.stringify(request));
 	};
 
+	var makeAlert = function() {
+		socket.emit('pop');
+		
+	};
+
 	// Listen to a `click` event on the submit button to the message through:
 	$('#btnSendChat').unbind();
 	$('#btnSendChat').click(function() {
@@ -143,6 +148,8 @@ $(document).ready(function() {
 	});
 	
 	$("#btnHelp").click();
+
+	
 });
 
 
@@ -155,9 +162,10 @@ function approve() {
 		translations: translations,
 	};
 	translationSocket.emit('approve', request);
+	socket.emit('English', msg);
 	socket.emit("approveTranslations", request);
 	$("#translationsDiv").html("");
-	socket.emit('English', msg);
+	
 	$('#chatMessage').val('');
 }
 

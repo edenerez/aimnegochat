@@ -21,11 +21,11 @@ Questionnaire.prototype = {
       res.render('questionnaireData',{title: 'Questionnaire List', questionnaireList: items ,gametype: req.params.gametype,  gametypes: types});
     });
   },
+  
 
-
-  addQuestionnaire: function(item,req,res) {
+  makeQestionnaire: function(req, res){
     var self = this;      
-    var item = item;
+    var item = {};
     item.RowKey = req.session.data.userid;
     item.userid = req.session.data.userid;
     item.gametype = req.session.data.gametype;
@@ -35,6 +35,26 @@ Questionnaire.prototype = {
     item.hitId = req.session.data.hitId ? req.session.data.hitId : NaN;
     item.workerId = req.session.data.workerId ? req.session.data.workerId : NaN; 
     self.questionnaireModel.add(item, function itemAdded(err) {
+      if(err) {
+        throw err;
+      }
+      //res.redirect('/PostQuestionnaireA');
+      return;
+    });
+  },
+
+  addQuestionnaire: function(item,req,res) {
+    var self = this;      
+    var item = item;
+    item.RowKey = req.session.data.userid;
+    //item.userid = req.session.data.userid;
+    //item.gametype = req.session.data.gametype;
+    //item.browserType = req.session.data.browserType + req.session.data.browserVersion;
+    //item.gameid = req.session.data.gameid ? req.session.data.gameid : NaN; // doesn't work either - why?
+    //item.assignmentId = req.session.data.assignmentId ? req.session.data.assignmentId : NaN; //null throw the program. undefine ignore it. mayby to put some string like "no amazonTurk"
+    //item.hitId = req.session.data.hitId ? req.session.data.hitId : NaN;
+    //item.workerId = req.session.data.workerId ? req.session.data.workerId : NaN; 
+    self.questionnaireModel.updateItem(item, function itemAdded(err) {
       if(err) {
         throw err;
       }

@@ -110,6 +110,7 @@ Game = function(gametype, requiredRoles, hasTranslator) {
     this.mapRoleToFinalResult = {};
     this.actionNum = 0;
     this.hasTranslator = hasTranslator;
+    this.endedIn;
 };
 
 Game.prototype.isRoleInGame = function (role) {

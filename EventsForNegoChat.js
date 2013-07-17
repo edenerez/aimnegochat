@@ -32,7 +32,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		socket.emit('announcement', {action: "Misunderstanding", id: "Translator", you: false, msg: message});
 	}
 
-	var onNegoActions = function (actions, announce) {
+	var onNegoActions = function (actions, announce, text) {
 		console.log("negoactions: "+JSON.stringify(actions));
 		if (!actions) {
 			misunderstanding("I didn't understand what you mean because the actions list is empty");
@@ -47,7 +47,10 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 			}
 		}
 		else{
-			functions.messageLog(socket, game, "Translation", session_data, mergedAction);
+			var translateData = {};
+			translateData.translate = mergedAction;
+			translateData.text = text;
+			functions.announcement(socket, game, "Translation", session_data, translateData);
 		}
 	};
 
@@ -84,7 +87,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 			console.dir(ex);
 			return;
 		}
-		onNegoActions(actions, false);
+		onNegoActions(actions, false, text);
 	}
 
 	// The translator returned the semantic translation of the human's chat message
@@ -137,12 +140,13 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		var utilityWithDiscount = Math.round(agent.utility_space_object.getUtilityWithDiscount(utilityWithoutDiscount, turnsFromStart))
 		var finalResult = {
 			agreement: agreement,
-			endedIn: "agreement",
+			endedIn: 						"agreement",
 			timeFromStart:					timeFromStart,
 			turnsFromStart:					turnsFromStart,
 			utilityWithoutDiscount:			utilityWithoutDiscount,
 			utilityWithDiscount:			utilityWithDiscount
 		};
+		game.endedIn = "agreement";
 		game.mapRoleToFinalResult[session_data.role] = finalResult;
 		session_data.mapRoleToFinalResult = finalResult;
 		//finalResultTable.addFinalResult(session_data);
@@ -166,12 +170,13 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		var timeFromStart = game.timer? game.timer.timeFromStartSeconds(): 0;
 		var utilityWithDiscount = Math.round(agent.utility_space_object.getUtilityWithDiscount(utilityReservation, turnsFromStart));
 		var finalResult = {
-			endedIn: "timeOut",
+			endedIn : 						"timeOut",
 			timeFromStart:					timeFromStart,
 			turnsFromStart:					turnsFromStart,
 			utilityWithoutDiscount:			utilityReservation,
 			utilityWithDiscount:			utilityWithDiscount
 		};
+		game.endedIn = "timeOut";
 		game.mapRoleToFinalResult[session_data.role] = finalResult;
 		session_data.mapRoleToFinalResult = finalResult;
 		functions.messageLog(socket, game, "TimeOut", session_data, "");
@@ -184,24 +189,26 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		var turnsFromStart = game.turnsFromStart? game.turnsFromStart: 0;
 		var timeFromStart = game.timer? game.timer.timeFromStartSeconds(): 0;
 		var utilityWithDiscount = Math.round(agent.utility_space_object.getUtilityWithDiscount(utilityOptOut, turnsFromStart));
+
 		if (!partnerInitiative){
 			var finalResult = {
-				endedIn: "optoutByMe",
-
+				endedIn: 						"optoutByMe",
 				timeFromStart:					timeFromStart,
 				turnsFromStart:					turnsFromStart,
 				utilityWithoutDiscount:			utilityOptOut,
 				utilityWithDiscount:		 	utilityWithDiscount
 			};
+			game.endedIn = "Opt-out"
 		}
 		else{
 			var finalResult = {
-				endedIn: "optoutByOpponent",
+				endedIn: 						"optoutByOpponent",
 				timeFromStart:					timeFromStart,
 				turnsFromStart:					turnsFromStart,
 				utilityWithoutDiscount:			utilityOptOut,
 				utilityWithDiscount:		 	utilityWithDiscount
 			};
+			game.endedIn = "Opt-out";
 		}
 		game.mapRoleToFinalResult[session_data.role] = finalResult;
 		session_data.mapRoleToFinalResult = finalResult;

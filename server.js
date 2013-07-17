@@ -26,27 +26,28 @@ var cookieParser = express.cookieParser('biuailab')
 	, sessionStore = new express.session.MemoryStore()
 	;
 
-
+var configFileName = (process.argv[2]);
 //windows azure definitions 
 var azure = require('azure')
 , nconf = require('nconf');
 nconf.env()
-.file({ file: 'config.json'});
+.file({ file: configFileName});
 var partitionKey = nconf.get("PARTITION_KEY")
 , accountName = nconf.get("STORAGE_NAME")
 , accountKey = nconf.get("STORAGE_KEY")
-, agentType = nconf.get('AGENT_TYPE');
+, agentType = nconf.get('AGENT_TYPE')
+, gamePort = nconf.get('PORT');
 
 
 //adding the agent option.
 
 var HOST = '127.0.0.1';
-var PORT = 4001;
+var AGENT_PORT = 4001;
 var socktToAgentManager;
 //var agent = require('./AgentManager');
 var server = net.createServer();
-server.listen(PORT, HOST);
-console.log('Server listening To Agent Manager ' + HOST +':'+ PORT);
+server.listen(AGENT_PORT, HOST);
+console.log('Server listening To Agent Manager ' + HOST +':'+ AGENT_PORT);
 //console.log('Server listening on ' + server.address().address +':'+ server.address().port);
 server.on('connection', function(sock) {
 	socktToAgentManager = sock;
@@ -124,6 +125,7 @@ function setSessionForNewUser(req, gameServer) {
 	
 	req.session.data.domain = (req.params.domain? req.params.domain: gameServer? gameServer.data.domain: null);
 	req.session.data.personality = (req.params.personality? req.params.personality: gameServer? gameServer.data.defaultPersonality: null);
+	questionnaire.makeQestionnaire(req);
 }
 
 
@@ -134,7 +136,7 @@ function setSessionForNewUser(req, gameServer) {
 var app = express();
 app.configure(function(){
 	// Settings:
-	app.set('port', process.env.PORT || 4000);
+	app.set('port', process.env.PORT || gamePort);
 	app.set('views', path.join(__dirname, 'views'));		// The view directory path
 	app.set('view engine', 'jade');						// The default engine extension to use when omitted
 	app.set('case sensitive routing', false);	// Enable case sensitivity, disabled by default, treating "/Foo" and "/foo" as same
@@ -355,10 +357,11 @@ app.get('/:gametype/gametype', function (req,res){
 // This is the entry point for an Amazon Turker with no role:
 //    It will select his role, then lead him to the preview or to the pre-questionnaire:
 app.get('/:gametype/beginner', getGameServer, function(req,res) {
-		setSessionForNewUser(req, res.locals.gameServer);
+		
 		if (amt.isPreview(req.query)) {
 			 res.redirect('/'+req.params.gametype+'/preview');
 		} else {
+			setSessionForNewUser(req, res.locals.gameServer);
 			req.session.data.role = res.locals.gameServer.nextRole();
 			res.redirect('/'+req.params.gametype+'/prequestionnaireA');
 		}
@@ -367,11 +370,12 @@ app.get('/:gametype/beginner', getGameServer, function(req,res) {
 // This is the entry point for an Amazon Turker with a pre-specified role:
 //    It will lead him to the preview or to the pre-questionnaire:
 app.get('/:gametype/beginner/:role', getGameServer, function(req,res) {
-		setSessionForNewUser(req, res.locals.gameServer);
-		req.session.data.role = req.params.role;
+		
 		if (amt.isPreview(req.query)) {
 			 res.redirect('/'+req.params.gametype+'/preview');
 		} else {
+			setSessionForNewUser(req, res.locals.gameServer);
+			req.session.data.role = req.params.role;
 			res.redirect('/PreQuestionnaireDemography');
 		}
 });
@@ -379,10 +383,11 @@ app.get('/:gametype/beginner/:role', getGameServer, function(req,res) {
 // This is the entry point for a developer with no role:
 //    It will select his role, then lead him directly to the game.
 app.get('/:gametype/advanced', getGameServer, function(req,res) {
-		setSessionForNewUser(req, res.locals.gameServer);
+		
 		if (amt.isPreview(req.query)) {
 			 res.redirect('/'+req.params.gametype+'/preview');
 		} else {
+			setSessionForNewUser(req, res.locals.gameServer);
 			req.session.data.role = res.locals.gameServer.nextRole();
 			res.redirect('/entergame');
 		}
@@ -391,11 +396,12 @@ app.get('/:gametype/advanced', getGameServer, function(req,res) {
 // This is the entry point for a developer with a pre-specified role:
 //    It will lead him directly to the game.
 app.get('/:gametype/advanced/:role', getGameServer, function(req,res) {
-		setSessionForNewUser(req, res.locals.gameServer);
-		req.session.data.role = req.params.role;
+
 		if (amt.isPreview(req.query)) {
 			 res.redirect('/'+req.params.gametype+'/preview');
 		} else {
+			setSessionForNewUser(req, res.locals.gameServer);
+			req.session.data.role = req.params.role;			
 			res.redirect('/entergame');
 		}
 });
@@ -508,7 +514,7 @@ app.post('/:gametype/addquestionnaire', function (req,res){
 	
 });
 app.get('/:gametype,:RowKey,:PartitionKey/deleteQuestionnaire', express.basicAuth('biu','biu'), questionnaire.deleteItem.bind(questionnaire));
-app.post('/activeQuestionnaire', questionnaire.activeQuestionnaire.bind(questionnaire));
+//app.post('/activeQuestionnaire', questionnaire.activeQuestionnaire.bind(questionnaire));
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -604,7 +610,7 @@ function gamesTable(gametype, game, unverified, action) //insert information to 
 		if (game.startTime){
 			game.endGame();
 			finalAgreement.check = false; 
-			games.activeGames(game.gameid, game.endTime);
+			games.activeGames(game.gameid, game.endedIn, game.endTime);
 		}
 	}
 }
@@ -818,7 +824,8 @@ httpserver.listen(app.get('port'), function(){
 
 var io = require('socket.io').listen(httpserver);
 
-var supportInternetExplorerOnAzure = (process.argv.length>=3 && process.argv[2] !== 'supportJava');
+var supportInternetExplorerOnAzure = (process.argv.length>=4 && process.argv[3] !== 'supportJava');
+
 
 io.configure(function () { 
 	io.set('log level', 1);

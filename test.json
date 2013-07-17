@@ -3,5 +3,6 @@
     "STORAGE_KEY": "Oy5oEIUXsAU23CqTpQM5BXLsq2EYkR7Hj5vwfShTHQcy2FSwn04NmUijNoM8pwlVaP7QN4DKg+GVK0K/QjzY/Q==",
     "PARTITION_KEY": "gameid",
     "TABLE_NAME": "tasks",
-    "AGENT_TYPE": "KBAgent"
+    "AGENT_TYPE": "KBAgent",
+    "PORT" : "4002"
 }

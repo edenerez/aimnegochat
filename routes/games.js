@@ -57,7 +57,7 @@ Games.prototype = {
   },
 
   
-  activeGames: function(gameid, endTime) {
+  activeGames: function(gameid, endedIn, endTime) {
     var self = this;
     var item = {};
     if (!self.RowKey){
@@ -67,6 +67,12 @@ Games.prototype = {
     item.RowKey = self.RowKey;
     item.PartitionKey = gameid;
     item.endTime = JSON.stringify(endTime);
+    if (endedIn){
+      item.endedIn = endedIn;
+    }
+    else{
+      item.endedIn = "Disconnect";
+    }
     
     self.GamesModel.updateItem(item, function itemAdded(error) {
       if(error) {
