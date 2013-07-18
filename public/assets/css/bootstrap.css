@@ -12,6 +12,7 @@
   *zoom: 1;
 }
 
+
 .clearfix:before,
 .clearfix:after {
   display: table;
@@ -2255,6 +2256,10 @@ table th[class*="span"],
 
 .table tbody tr.info > td {
   background-color: #d9edf7;
+}
+
+.table tbody tr.employer{
+  color: DodgerBlue ;
 }
 
 .table-hover tbody tr.success:hover > td {
