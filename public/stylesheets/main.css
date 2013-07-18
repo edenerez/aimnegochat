@@ -5,10 +5,12 @@ body,table,thead,tbody,th,tr,td,form {
 	padding: 0;
 	border-collapse: collapse;
 	border-spacing: 0;
+
 }
 
-body.negochatstoragetest div#mainStatusRow {	
-	background: red; /* Mark the test environment with a red border, for warning */ 
+body.negochatstoragetest /*div#mainStatusRow */{	
+	background-image: url(test2.png);
+	/*background: red; /* Mark the test environment with a red border, for warning */ 
 }
 
 #index {
@@ -39,6 +41,7 @@ h1 {
 }
 
 body {
+
 	color: #000000;
 	position: relative;
 	overflow-x: hidden;

@@ -4360,8 +4360,8 @@ input[type="submit"].btn.btn-mini {
   overflow: visible;
 }
 
-body.negochatstoragetest .navbar .container {
-  background: #3DCAF7; /* Mark the test environment with a red border, for warning */
+body.negochatstoragetest  {
+  background-image: url(test.png); /* Mark the test environment with a red border, for warning */
 }
 
 .navbar-inner {
