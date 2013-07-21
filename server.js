@@ -514,7 +514,7 @@ app.post('/:gametype/addquestionnaire', function (req,res){
 	
 });
 app.get('/:gametype,:RowKey,:PartitionKey/deleteQuestionnaire', express.basicAuth('biu','biu'), questionnaire.deleteItem.bind(questionnaire));
-//app.post('/activeQuestionnaire', questionnaire.activeQuestionnaire.bind(questionnaire));
+app.post('/activeQuestionnaire', questionnaire.activeQuestionnaire.bind(questionnaire));
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
