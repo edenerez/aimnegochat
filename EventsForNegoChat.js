@@ -46,11 +46,12 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 				functions.announcement(socket, game, key, session_data, mergedAction[key]); // send ALL players a textual description of the offer
 			}
 		}
-		else{
+		else{ // this is a translation - write it to the log:
 			var translateData = {};
 			translateData.translate = mergedAction;
 			translateData.text = text;
-			functions.announcement(socket, game, "Translation", session_data, translateData);
+			//functions.announcement(socket, game, "Translation", session_data, translateData);
+			functions.messageLog(socket, game, "Translation", session_data, translateData);
 		}
 	};
 
