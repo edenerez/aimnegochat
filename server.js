@@ -703,7 +703,7 @@ app.get('/UtilityOfPartner/:domain/:role', function(req,res) {
 app.get('/Help/:gametype/:domain/:role', getGameServer, function(req,res) {
 		res.render(res.locals.gameServer.data.roomTemplateName+"Help",	{
 				role: req.params.role,
-				domain_description: req.params.domain.description,
+				domain_description: domains[req.session.data.domain].description,
 				});
 });
 
