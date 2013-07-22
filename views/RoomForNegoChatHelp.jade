@@ -1,0 +1,13 @@
+extends layoutForUtilities
+block title
+    title Help
+block body
+    div.help
+      h1 Instructions
+      | This is a game of <b>negotiation</b> #{domain_description}
+      ul
+       li You are the <b>#{role}</b>. 
+       li The negotiation relates to several <b>issues</b>. For each issue, there are several possible <b>values</b>.
+       li Your score depends on the <b>values</b> in the final agreement, and on <b>time</b>. Click "Your scores" for details.
+       li You will get a bonus in cents: <b>score/4</b>. For example, a score of 400 means 1 dollar bonus. 
+      | Good luck!
