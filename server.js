@@ -263,6 +263,16 @@ gameServers['negotranslate_Neighbours'] = new multiplayer.GameServer(
 		 hasAgent: true,
 		 hasTranslator: false
 		});
+gameServers['negonlp2_JobCandidate'] = new multiplayer.GameServer(
+		/*requiredRoles=*/['Employer', 'Candidate'],
+		{roomTemplateName: 'RoomForNegoNlp2',
+		 maxTimeSeconds:   30*60,
+		 events: require('./EventsForNegoChat'),
+		 domain: 'Job',
+		 defaultPersonality: 'short-term',
+		 hasAgent: true,
+		 hasTranslator: true
+		});
 
 /**
  * http://stackoverflow.com/questions/16649529/ending-an-http-request-prematurely/16650056?noredirect=1#16650056
