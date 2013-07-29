@@ -134,6 +134,9 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 
 	// A player finished playing (e.g. by clicking a "finish" button):
 	socket.on('sign', function (agreement) {
+		if (!agent){
+			return;
+		} 
 		var utilityWithoutDiscount = Math.round(agent.utility_space_object.getUtilityWithoutDiscount(agreement));
 		var timeFromStart = game.timer? game.timer.timeFromStartSeconds(): 0;
 		var turnsFromStart = game.turnsFromStart? game.turnsFromStart: 0;
@@ -157,6 +160,9 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 	
 
 	socket.on("giveMeMyOptOutUtility", function (){
+		if (!agent){
+			return;
+		} 
 		var utilityOptOut = agent.utility_space_object.optout;
 		var turnsFromStart = game.turnsFromStart? game.turnsFromStart: 0;
 		var timeFromStart = game.timer? game.timer.timeFromStartSeconds(): 0;
@@ -165,6 +171,9 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 	});
 
 	socket.on("giveMeMyReservationUtility", function (){
+		if (!agent){
+			return;
+		} 
 		var utilityReservation = agent.utility_space_object.reservation;
 		var turnsFromStart = game.turnsFromStart? game.turnsFromStart: 0;
 		var timeFromStart = game.timer? game.timer.timeFromStartSeconds(): 0;
@@ -184,7 +193,10 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 	});
 
 
-	socket.on("opt-out", function (partnerInitiative){ //this value is false when the player click optout and true when the partner forced the player optout.  
+	socket.on("opt-out", function (partnerInitiative){ //this value is false when the player click optout and true when the partner forced the player optout. 
+		if (!agent){
+			return;
+		} 
 		var utilityOptOut = agent.utility_space_object.optout;
 		var turnsFromStart = game.turnsFromStart? game.turnsFromStart: 0;
 		var timeFromStart = game.timer? game.timer.timeFromStartSeconds(): 0;
