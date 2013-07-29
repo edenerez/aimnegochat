@@ -35,7 +35,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 	var onNegoActions = function (actions, announce, text) {
 		console.log("negoactions: "+JSON.stringify(actions));
 		if (!actions) {
-			misunderstanding("I didn't understand what you mean because the actions list is empty");
+			//misunderstanding("I didn't understand what you mean because the actions list is empty");
 			return;
 		}
 		var mergedAction = deepmerge.deepMergeArray(actions);
@@ -122,9 +122,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 	});
 
 	socket.on('enterAgentBidToMapRoleToMapIssueToValue', function (data) {
-		console.log (" THIS IS THE PLACE THE BID OF THE AGENT GET IN!!!!");
 		for (issue in data.bid){
-			console.log (game.playerChangesValue(data.role, issue, data.bid[issue]));
 			//functions.messageLog(socket, game, "Change", session_data, {issue: issue, value:data.bid[issue]});
 			var currentIssueAgreed = game.arePlayerValuesEqual(issue);
 			var allIssuesAgreed = game.arePlayerValuesToAllIssuesEqual(allIssues);
