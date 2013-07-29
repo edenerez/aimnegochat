@@ -546,8 +546,8 @@ app.get('/:gametype,:RowKey,:PartitionKey/deleteGameAction', express.basicAuth('
 });
 
 function messageLog(socket, game, action, user, data) {
-	console.log(action +"  " +game.gameid, 
-		{role: user.role, remainingTime: game.timer? game.timer.remainingTimeSeconds(): "-", user: (action=='Connect'? user: user.userid), action: action, data: data});
+	//console.log(action +"  " +game.gameid, 
+	//	{role: user.role, remainingTime: game.timer? game.timer.remainingTimeSeconds(): "-", user: (action=='Connect'? user: user.userid), action: action, data: data});
 //I think we can change the call of the "massageLog" function to "gameAction.activeGameAction" instead and it will still work. and we don't need the socket here
 	
 

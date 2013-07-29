@@ -34,6 +34,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 
 	var onNegoActions = function (actions, announce, text) {
 		console.log("negoactions: "+JSON.stringify(actions));
+		console.log("-------------------------------------------");
 		if (!actions) {
 			//misunderstanding("I didn't understand what you mean because the actions list is empty");
 			return;
@@ -111,7 +112,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		io.sockets.in(game.gameid).emit('issueAgreed', {issue: data.issue, agreed: currentIssueAgreed, allAgreed: allIssuesAgreed});
 		agreement = game.valuesOfPlayer(session_data.role);
 
-		console.dir(game.mapRoleToMapIssueToValue);
+		//console.dir(game.mapRoleToMapIssueToValue);
 
 		// calculate new utility for the player:
 		var utilityWithoutDiscount = Math.round(agent.utility_space_object.getUtilityWithoutDiscount(agreement));
@@ -128,7 +129,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 			var allIssuesAgreed = game.arePlayerValuesToAllIssuesEqual(allIssues);
 			io.sockets.in(game.gameid).emit('issueAgreed', {issue: issue, agreed: currentIssueAgreed, allAgreed: allIssuesAgreed});
 		}
-		console.dir(game.mapRoleToMapIssueToValue);
+		//console.dir(game.mapRoleToMapIssueToValue);
 	});
 
 	// A player finished playing (e.g. by clicking a "finish" button):
