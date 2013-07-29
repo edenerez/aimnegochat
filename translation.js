@@ -8,26 +8,45 @@ var SETTINGS = {
 	'force new connection': true, 
 	'sync disconnect on unload': true
 };
+var socket_io_client = require('socket.io-client');
 
 function logWithTimestamp(message) {
 	console.log(new Date().toISOString()+" "+message);
 }
 
-exports.Translator = function(translatorName) {
+function newTranslationSocket(translatorName) {
 	logWithTimestamp(translatorName+" tries to connect to translation server at "+HOST+":"+SETTINGS.port);
-	this.translatorName = translatorName;
-	this.translationSocket = require('socket.io-client').connect(HOST, SETTINGS); 
+	var translationSocket = socket_io_client.connect(HOST, SETTINGS); 
 
-	this.translationSocket.on('connect', function () { 
+	translationSocket.on('connect', function () { 
 		logWithTimestamp(translatorName+" connected to translation server at "+HOST+":"+SETTINGS.port);
 	});
 	
-	this.translationSocket.on('translation', function (result) {
+	translationSocket.on('translation', function (result) {
 		logWithTimestamp(translatorName + " receives "+result.translations.length+" translations to '"+result.text + "': "+JSON.stringify(result.translations));
 	});
+
+	translationSocket.on('disconnect', function () { 
+		logWithTimestamp(translatorName+" disconnected from translation server at "+HOST+":"+SETTINGS.port);
+	});
+
+	translationSocket.on('reconnect_failed', function () { 
+		logWithTimestamp(translatorName+" FAILED to connect translation server at "+HOST+":"+SETTINGS.port);
+	});
+
+	return translationSocket;
+}
+
+exports.Translator = function(translatorName) {
+	this.translatorName = translatorName;
+	this.translationSocket = newTranslationSocket(translatorName);
 }
 
 exports.Translator.prototype.sendToTranslationServer = function(text, forward) {
+	if (!this.translationSocket.connected) {
+		logWithTimestamp(this.translatorName+" tries to re-connect to translation server at "+HOST+":"+SETTINGS.port);
+		this.translationSocket.socket.reconnect();
+	}
 	logWithTimestamp(this.translatorName+" asks: '" + text + "'");
 	this.translationSocket.emit("translate", {
 		text: text,
