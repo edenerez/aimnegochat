@@ -713,7 +713,7 @@ app.get('/UtilityOfPartner/:domain/:role', function(req,res) {
 app.get('/Help/:gametype/:domain/:role', getGameServer, function(req,res) {
 		res.render(res.locals.gameServer.data.roomTemplateName+"Help",	{
 				role: req.params.role,
-				domain_description: domains[req.session.data.domain].description,
+				domain_description: domains[res.locals.gameServer.data.domain].description,
 				});
 });
 
@@ -779,7 +779,7 @@ app.get('/:gametype/play', getGameServer, function(req,res) {
 				gametype: req.params.gametype, 
 				role: req.session.data.role,
 				agent: actualAgent,
-				domain_description: domains[req.session.data.domain].description,
+				domain_description: domains[res.locals.gameServer.data.domain].description,
 				session_data: req.session.data,
 				AMTStatus: JSON.stringify(req.session.data),
 				next_action:'/PostQuestionnaireA'});
@@ -794,8 +794,8 @@ app.get('/:gametype/preview', getGameServer, function(req,res) {
 				gametype: req.params.gametype, 
 				role: roleForPreview,
 				agent: actualAgent,
+				domain_description: domains[res.locals.gameServer.data.domain].description,
 				session_data: {gametype: req.params.gametype, domain: res.locals.gameServer.data.domain, role: roleForPreview, personality: res.locals.gameServer.data.defaultPersonality},
-				//AMTStatus: JSON.stringify(req.session.data),
 				next_action: ''});
 });
 
