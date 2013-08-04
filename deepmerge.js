@@ -50,6 +50,32 @@ var deepMergeArray = exports.deepMergeArray = function(sources) {
 	return merged;
 }
 
+/**
+ * Convert a single JSON object to an array of simpler objects, each with a single action-key-value.
+ * @param mergedObject
+ * @return an array of simple objects.
+ */
+var unmerge = exports.unmerge = function(mergedObject, targetArray) {
+	if (mergedObject instanceof Array)
+		return mergedObject;
+	if (!targetArray) targetArray=[];
+	for (var key in mergedObject) {
+		var value = mergedObject[key];
+		if (value instanceof Object || value instanceof Array) {
+			var valueAsArray = unmerge(value);
+			for (var i=0; i<valueAsArray.length; ++i) {
+				var simpleObject = {};
+				simpleObject[key] = valueAsArray[i];
+				targetArray.push(simpleObject)
+			}
+		} else {
+			var simpleObject = {};
+			simpleObject[key]=value;
+			targetArray.push(simpleObject);
+		}
+	}
+	return targetArray;
+}
 
 
 //
@@ -59,14 +85,30 @@ var deepMergeArray = exports.deepMergeArray = function(sources) {
 if (process.argv[1] === __filename) {
 	require('should');
 	
+	// should merge: 
+	
 	deepMerge ({insist: "Car"},{insist: "Salary"}).
-	should.eql({insist: ["Salary","Car"]});
+		should.eql({insist: ["Salary","Car"]});
 
 	var a = {offer: {issue1: 'value1'}, accept: true};
 	var b = {offer: {issue2: 'value2'}, reject: false};
 	deepMerge(a,b).should.eql(
 		{offer:{issue2:"value2",issue1:"value1"}, reject:false, accept:true});
 
+	// should merge array: 
+
 	deepMergeArray(a).should.eql(a);
 	deepMergeArray([a]).should.eql(a);
+
+	// should unmerge: 
+		
+	unmerge({insist: ["Salary","Car"]}).
+		should.eql([{insist: "Salary"},{insist: "Car"}]);
+	
+	unmerge({offer:{issue2:"value2",issue1:"value1"}, reject:false, accept:true}).
+		should.eql([ 
+			{ offer: { issue2: 'value2' } },
+			{ offer: { issue1: 'value1' } },
+			{ reject: false },
+			{ accept: true } ] );
 }

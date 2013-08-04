@@ -23,7 +23,7 @@ function newTranslationSocket(translatorName) {
 	});
 	
 	translationSocket.on('translation', function (result) {
-		logWithTimestamp(translatorName + " receives "+result.translations.length+" translations to '"+result.text + "': "+JSON.stringify(result.translations));
+		logWithTimestamp(translatorName + " receives "+result.translations.length+" translations to "+JSON.stringify(result.text) + ": "+JSON.stringify(result.translations));
 	});
 
 	translationSocket.on('disconnect', function () { 
@@ -43,20 +43,22 @@ exports.Translator = function(translatorName) {
 }
 
 exports.Translator.prototype.sendToTranslationServer = function(text, forward) {
-	if (!this.translationSocket.connected) {
+	if (!this.translationSocket.socket.connected && !this.translationSocket.socket.connecting && !this.translationSocket.socket.reconnecting) {
 		logWithTimestamp(this.translatorName+" tries to re-connect to translation server at "+HOST+":"+SETTINGS.port);
 		this.translationSocket.socket.reconnect();
 	}
-	logWithTimestamp(this.translatorName+" asks: '" + text + "'");
+	logWithTimestamp(this.translatorName+" asks to "+(forward? "translate ": "generate ")+ JSON.stringify(text));
+	var multiple = !(text instanceof Array);
 	this.translationSocket.emit("translate", {
 		text: text,
 		forward: forward,
+		multiple: multiple,
 	});
 }
 
 exports.Translator.prototype.onTranslation = function(translationHandler) {
 	this.translationSocket.on('translation', function (result) {
-		translationHandler(result.text, result.translations);
+		translationHandler(result.text, result.translations, result.forward);
 	});
 }
 
@@ -78,11 +80,14 @@ if (process.argv[1] === __filename) {
 	
 	translator1.translationSocket.on('connect', function() {
 		translator1.sendToTranslationServer("I agree to offer a wage of 20000 NIS and 10% pension without a car.", true);
+		translator1.sendToTranslationServer("{\"Offer\": {\"Pension Fund\": \"10%\"}}", false);
+		translator1.sendToTranslationServer(["{\"Offer\": {\"Pension Fund\": \"10%\"}}", "{\"Offer\": {\"Salary\": \"20,000 NIS\"}}"], false);
 	});
 	translator2.sendToTranslationServer("I agree to your offer.", true);
+	translator2.sendToTranslationServer("{\"Accept\": \"previous\"}", false);
 
 	// After several seconds, you should see 2 results:
-	//   "translator1 receives 4 translations to 'I offer...
+	//   "translator1 receives 3 translations to 'I offer...
 	//   "translator2 receives 1 translations to 'I agree...
 	//			[ '{"Accept": "previous"}' ]
 
