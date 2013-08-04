@@ -22,19 +22,20 @@ block body
   div#mainPanel
     if (locals.preview)
       block previewNotes
-    div.mainSection#mainStatusRow <!-- row #2: status and buttons -->
-      table
-        tr
-          td Your role: <b id='role'>#{role}</b>.
-          td#phase
-            span.value Status: #{locals.preview? "This is a preview only!": "Connecting..."}
-          td#remainingTime
-            span.key Remaining time:
-            span.value
-          td
-            button#btnUtility Your scores
-          td
-            button#btnOppUtility Partner's scores
+    block statusAndButtons
+      div.mainSection#mainStatusRow <!-- row #2: status and buttons -->
+        table
+          tr
+            td Your role: <b id='role'>#{role}</b>.
+            td#phase
+              span.value Status: #{locals.preview? "This is a preview only!": "Connecting..."}
+            td#remainingTime
+              span.key Remaining time:
+              span.value
+            td
+              button#UtilityOfCurrent.btnUtility Your scores
+            td
+              button#UtilityOfPartner.btnUtility Partner's scores
 
     block mainGui
 

@@ -6,6 +6,19 @@ block roomScripts
 
 block previewNotes 
 
+block statusAndButtons
+      div.mainSection#mainStatusRow <!-- row #2: status and buttons -->
+        table
+          tr
+            td Your role: <b id='role'>#{role}</b>.
+            td#phase
+              span.value Status: #{locals.preview? "This is a preview only!": "Connecting..."}
+            td#remainingTime
+              span.key Remaining time:
+              span.value
+            td
+              button#UtilityOfCurrentNaturalLanguage.btnUtility Your scores
+
 block mainGui
     if (locals.agent)
      div.mainSection <!-- row #3: explanations to the user; possible values and utils -->

@@ -704,7 +704,14 @@ app.get('/UtilityOfCurrent/:domain/:role/:personality', function(req,res) {
 		res.render("GeniusUtilityOfCurrent",	{agent: actualAgent});
 });
 
-app.get('/UtilityOfPartner/:domain/:role', function(req,res) {
+app.get('/UtilityOfCurrentNaturalLanguage/:domain/:role/:personality', function(req,res) {
+		var actualAgent = req.params.role=='Watcher'? 
+			null:
+			getActualAgent(req.params.domain, req.params.role, req.params.personality);
+		res.render("GeniusUtilityOfCurrentNaturalLanguage",	{agent: actualAgent});
+});
+
+app.get('/UtilityOfPartner/:domain/:role*', function(req,res) {
 		var domain = domains[req.params.domain];
 		var otherAgents	= domain.agentsOfOtherRole(req.params.role.toLowerCase());
 		res.render("GeniusUtilityOfPartner",	{agents: otherAgents});

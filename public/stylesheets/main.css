@@ -396,3 +396,10 @@ a.delete:hover {  background-image: url('delete_sharp.png') ; }
 	margin: 0 6px;
 }
 
+
+.UtilityNaturalLanguage .issue {color: blue; font-weight: bold}
+.UtilityNaturalLanguage .value {color: green; font-weight: bold}
+.UtilityNaturalLanguage .score {color: red}
+
+
+
