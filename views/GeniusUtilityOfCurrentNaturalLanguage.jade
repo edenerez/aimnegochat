@@ -8,15 +8,26 @@ block body
 	if (!locals.agent)
 		p ERROR: no agent!
 	else
-		p These are the issues and values you can offer (the number in parenthesis is the score of each value):
-			ul.UtilityNaturalLanguage
-				for issue in agent.utility_space_object.issueByIndex
-					li Regarding <span class='issue'>#{issue.name}</span>, you can offer either&nbsp;
-						each item, i in issue.itemByIndex
-							span.value #{item.value}&nbsp;
-							span.score (#{sprintf(format,item.evaluation * issue.weight * agent.utility_space_object.weightmultiplyer)})
-							if i < Object.keys(issue.itemByIndex).length-1
-								span &nbsp; or &nbsp;
-							else if i == Object.keys(issue.itemByIndex).length-1
-								span &nbsp; or &nbsp;
-						|.
+		div.UtilityNaturalLanguage
+			p These are the issues and values you may offer. Each value gives you a certain score, shown in parentheses. Your goal is to reach an agreement with maximal score.
+				ul
+					for issue in agent.utility_space_object.issueByIndex
+						li Regarding <span class='issue'>#{issue.name}</span>, you may offer either&nbsp;
+							each item, i in issue.itemByIndex
+								span.value #{item.value}&nbsp;
+								span.score (#{sprintf(format,item.evaluation * issue.weight * agent.utility_space_object.weightmultiplyer)})
+								if i < Object.keys(issue.itemByIndex).length-1
+									span &nbsp; or &nbsp;
+								else if i == Object.keys(issue.itemByIndex).length-1
+									span &nbsp; or &nbsp;
+							|.
+			p If you <b>opt out</b> of the negotiation without an agreement, you get  
+				span.score #{sprintf(format, 1*agent.utility_space_object.optout)}
+				|&nbsp; points (which is a low score).
+			p If <b>time runs out</b> before you reach an agreement, you get  
+				span.score #{sprintf(format, 1*agent.utility_space_object.reservation)}
+				|&nbsp; points (which is also quite low).
+			p Additionally, every <b>#{turnLengthInSeconds} seconds</b>, you lose a small number of points 
+				span.score (#{sprintf(format, 1*agent.utility_space_object.timeeffect)})
+				|.
+				
