@@ -41,16 +41,30 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		}
 		var mergedAction = deepmerge.deepMergeArray(actions);
 		socket.broadcast.to(game.gameid).emit('negoactions', mergedAction); // forward the offer to the other player
-		
+
 		if (announce) {
 			if (translator && !("Reject" in mergedAction) && !("Accept" in mergedAction)) {  // use NLG to generate a nice-looking announcement:
 				var unmergedActions = deepmerge.unmerge(mergedAction).map(JSON.stringify);
-				translator.sendToTranslationServer(unmergedActions, /*forward=*/false);
+				translator.sendToTranslationServer(session_data.role, unmergedActions, /*forward=*/false);
 			} else {
 				for (var key in mergedAction) {
 					functions.announcement(socket, game, key, session_data, mergedAction[key]); // send ALL players a textual description of the offer
 				}
 			}
+
+			// Send the score to the human (Ido's suggestion):
+			/* NOTE: This doesn't work - it sends the utility to the OFFERER instead of to the RECEIVER!
+			if ("Offer" in mergedAction) {
+				var agreement = mergedAction.Offer;
+				// calculate new utility for the player:
+				var utilityWithoutDiscount = Math.round(agent.utility_space_object.getUtilityWithoutDiscount(agreement));
+				var timeFromStart = game.timer? game.timer.timeFromStartSeconds(): 0;
+				var turnsFromStart = game.turnsFromStart? game.turnsFromStart: 0;
+				var utilityWithDiscount = Math.round(agent.utility_space_object.getUtilityWithDiscount(utilityWithoutDiscount, turnsFromStart))
+				console.log("----- Utility of "+session_data.role+": "+utilityWithDiscount);
+				socket.emit('yourUtility', utilityWithDiscount);
+			} 
+			*/
 		}
 		else{ // this is a translation - write it to the log:
 			var translateData = {};
@@ -77,7 +91,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 	// A human chat-player sent an English chat message - send it to all other users, and translate to semantics:
 	socket.on('English', function (text) {
 		functions.announcement(socket, game, "Message", session_data, text);
-		if (translator) translator.sendToTranslationServer(text, /*forward=*/true);
+		if (translator) translator.sendToTranslationServer(session_data.role, text, /*forward=*/true);
 	});
 
 	var onTranslation = function(text, translations, forward) {

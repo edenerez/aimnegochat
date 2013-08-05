@@ -42,7 +42,7 @@ exports.Translator = function(translatorName) {
 	this.translationSocket = newTranslationSocket(translatorName);
 }
 
-exports.Translator.prototype.sendToTranslationServer = function(text, forward) {
+exports.Translator.prototype.sendToTranslationServer = function(classifierName, text, forward) {
 	if (!this.translationSocket.socket.connected && !this.translationSocket.socket.connecting && !this.translationSocket.socket.reconnecting) {
 		logWithTimestamp(this.translatorName+" tries to re-connect to translation server at "+HOST+":"+SETTINGS.port);
 		this.translationSocket.socket.reconnect();
@@ -50,6 +50,7 @@ exports.Translator.prototype.sendToTranslationServer = function(text, forward) {
 	logWithTimestamp(this.translatorName+" asks to "+(forward? "translate ": "generate ")+ JSON.stringify(text));
 	var multiple = !(text instanceof Array);
 	this.translationSocket.emit("translate", {
+		classifierName: classifierName,
 		text: text,
 		forward: forward,
 		multiple: multiple,
@@ -79,12 +80,12 @@ if (process.argv[1] === __filename) {
 	});
 	
 	translator1.translationSocket.on('connect', function() {
-		translator1.sendToTranslationServer("I agree to offer a wage of 20000 NIS and 10% pension without a car.", true);
-		translator1.sendToTranslationServer("{\"Offer\": {\"Pension Fund\": \"10%\"}}", false);
-		translator1.sendToTranslationServer(["{\"Offer\": {\"Pension Fund\": \"10%\"}}", "{\"Offer\": {\"Salary\": \"20,000 NIS\"}}"], false);
+		translator1.sendToTranslationServer("Employer", "I agree to offer a wage of 20000 NIS and 10% pension without a car.", true);
+		translator1.sendToTranslationServer("Employer", "{\"Offer\":{\"Pension Fund\":\"10%\"}}", false);
+		translator1.sendToTranslationServer("Employer", ["{\"Offer\":{\"Pension Fund\":\"10%\"}}", "{\"Offer\":{\"Salary\":\"20,000 NIS\"}}"], false);
 	});
-	translator2.sendToTranslationServer("I agree to your offer.", true);
-	translator2.sendToTranslationServer("{\"Accept\": \"previous\"}", false);
+	translator2.sendToTranslationServer("Employer", "I agree to your offer.", true);
+	translator2.sendToTranslationServer("Employer", "{\"Accept\":\"previous\"}", false);
 
 	// After several seconds, you should see 2 results:
 	//   "translator1 receives 3 translations to 'I offer...
