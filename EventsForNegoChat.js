@@ -125,6 +125,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 	socket.on('enterAgentBidToMapRoleToMapIssueToValue', function (data) {
 		for (issue in data.bid){
 			//functions.messageLog(socket, game, "Change", session_data, {issue: issue, value:data.bid[issue]});
+			game.playerChangesValue(data.role, issue, data.bid[issue]);
 			var currentIssueAgreed = game.arePlayerValuesEqual(issue);
 			var allIssuesAgreed = game.arePlayerValuesToAllIssuesEqual(allIssues);
 			io.sockets.in(game.gameid).emit('issueAgreed', {issue: issue, agreed: currentIssueAgreed, allAgreed: allIssuesAgreed});
