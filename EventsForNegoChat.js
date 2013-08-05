@@ -53,18 +53,31 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 			}
 
 			// Send the score to the human (Ido's suggestion):
-			/* NOTE: This doesn't work - it sends the utility to the OFFERER instead of to the RECEIVER!
+			/* NOTE: This doesn't work - it sends the utility to the OFFERER instead of to the RECEIVER!*/
 			if ("Offer" in mergedAction) {
+				var opponentRole;
+				for (role in functions.rols){
+					if (role !== session_data.role)
+						opponentRole = role;
+				}
+				try {
+					oppAgent = functions.getActualAgent(session_data.domain, opponentRole, session_data.personality);
+				} catch (error) {
+					console.error("\n\nERROR: Cannot initialize agent!");
+					console.dir(error);
+				// TODO: send error message to the client.
+				}
+
 				var agreement = mergedAction.Offer;
 				// calculate new utility for the player:
-				var utilityWithoutDiscount = Math.round(agent.utility_space_object.getUtilityWithoutDiscount(agreement));
+				var utilityWithoutDiscount = Math.round(oppAgent.utility_space_object.getUtilityWithoutDiscount(agreement));
 				var timeFromStart = game.timer? game.timer.timeFromStartSeconds(): 0;
 				var turnsFromStart = game.turnsFromStart? game.turnsFromStart: 0;
-				var utilityWithDiscount = Math.round(agent.utility_space_object.getUtilityWithDiscount(utilityWithoutDiscount, turnsFromStart))
-				console.log("----- Utility of "+session_data.role+": "+utilityWithDiscount);
-				socket.emit('yourUtility', utilityWithDiscount);
+				var utilityWithDiscount = Math.round(oppAgent.utility_space_object.getUtilityWithDiscount(utilityWithoutDiscount, turnsFromStart))
+				console.log("----- Utility of "+oppAgent.owner+": "+utilityWithDiscount);
+				socket.emit('yourUtilityFromPartnerOffer', utilityWithDiscount);
 			} 
-			*/
+			
 		}
 		else{ // this is a translation - write it to the log:
 			var translateData = {};

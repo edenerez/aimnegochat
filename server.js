@@ -956,7 +956,8 @@ io.sockets.on('connection', function (socket) {
 			gameServer.data.events.initializeEventHandlers(socket, game, session.data, io, finalResult, {
 				getActualAgent: getActualAgent,
 				messageLog: messageLog,
-				announcement: announcement
+				announcement: announcement,
+				rols : gameServers[session.data.gametype].requiredRoles
 			});
 		}
 	});  // end of identify event
