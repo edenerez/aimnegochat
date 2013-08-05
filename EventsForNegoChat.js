@@ -53,7 +53,6 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 			}
 
 			// Send the score to the human (Ido's suggestion):
-			/* NOTE: This doesn't work - it sends the utility to the OFFERER instead of to the RECEIVER!*/
 			if ("Offer" in mergedAction) {
 				var opponentRole;
 				for (role in functions.rols){
@@ -75,7 +74,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 				var turnsFromStart = game.turnsFromStart? game.turnsFromStart: 0;
 				var utilityWithDiscount = Math.round(oppAgent.utility_space_object.getUtilityWithDiscount(utilityWithoutDiscount, turnsFromStart))
 				console.log("----- Utility of "+oppAgent.owner+": "+utilityWithDiscount);
-				socket.emit('yourUtilityFromPartnerOffer', utilityWithDiscount);
+				socket.broadcast.to(game.gameid).emit('yourUtilityFromPartnerOffer', utilityWithDiscount);
 			} 
 			
 		}
