@@ -47,7 +47,7 @@ exports.Translator.prototype.sendToTranslationServer = function(classifierName, 
 		logWithTimestamp(this.translatorName+" tries to re-connect to translation server at "+HOST+":"+SETTINGS.port);
 		this.translationSocket.socket.reconnect();
 	}
-	logWithTimestamp(this.translatorName+" asks to "+(forward? "translate ": "generate ")+ JSON.stringify(text));
+	logWithTimestamp(this.translatorName+(this.translationSocket.socket.connected? "": " (UNCONNECTED) ")+" asks to "+(forward? "translate ": "generate ")+ JSON.stringify(text));
 	var multiple = !(text instanceof Array);
 	this.translationSocket.emit("translate", {
 		classifierName: classifierName,
