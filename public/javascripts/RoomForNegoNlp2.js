@@ -85,14 +85,14 @@ $(function() {
 	});
 
 	socket.on('yourUtilityFromPartnerOffer', function (data) {
-		addDataToHistoryTable({			
+		/*addDataToHistoryTable({			
 			proposerClass: "Game",
 			proposer: "Game",
 			action: "Score",
 			util: data,
 			bid: "If you accept this offer, you score will be: "+data,
 			answered: "no"
-		});
+		});*/
 	});
 		
 	socket.on('sign', function (data) {
