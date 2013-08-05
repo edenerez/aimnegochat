@@ -14,7 +14,7 @@ function Games(GamesModel) {
 
 Games.prototype = {
 
-  addGames: function(gametype, gameid, startTime, unverified) {
+  addGames: function(gametype, gameid, startTime, unverified, game) {
     var self = this;      
     if (self.PartitionKey == gameid){
       return;
@@ -23,7 +23,7 @@ Games.prototype = {
     item.PartitionKey = gameid;
     self.PartitionKey = item.PartitionKey;
     item.RowKey = uuid();
-    self.RowKey = item.RowKey;
+    game.RowKey = item.RowKey;
     item.gametype = gametype;
     item.startTime = JSON.stringify(startTime);
     item.active = true;
@@ -57,14 +57,14 @@ Games.prototype = {
   },
 
   
-  activeGames: function(gameid, endedIn, endTime) {
+  activeGames: function(gameid, endedIn, endTime, RowKey) {
     var self = this;
     var item = {};
-    if (!self.RowKey){
-      item.RowKey+uuid();
+    if (!RowKey){
+      item.RowKey = uuid();
       throw new Error("self does not contain RowKey: "+JSON.stringify(self));
     }
-    item.RowKey = self.RowKey;
+    item.RowKey = RowKey;
     item.PartitionKey = gameid;
     item.endTime = JSON.stringify(endTime);
     if (endedIn){

@@ -585,7 +585,7 @@ function gamesTable(gametype, game, unverified, action) //insert information to 
 {
 	if (action == "Connect"){
 		if (game.startTime){
-			games.addGames(gametype, game.gameid, game.startTime, unverified);
+			games.addGames(gametype, game.gameid, game.startTime, unverified, game);
 			for (user in game.mapRoleToUserid){
   				if ((!game.mapRoleToUserid[user].indexOf('agent')) || (!game.mapRoleToUserid[user].indexOf('EchoAgent'))){
 					player.addPlayer(game.gameid, game.mapRoleToUserid[user], user, 'agent', gametype);
@@ -619,8 +619,8 @@ function gamesTable(gametype, game, unverified, action) //insert information to 
 	if (action == "Disconnect" ){
 		if (game.startTime){
 			game.endGame();
-			finalAgreement.check = false; 
-			games.activeGames(game.gameid, game.endedIn, game.endTime);
+			finalAgreement.check = false;
+			games.activeGames(game.gameid, game.endedIn, game.endTime, game.RowKey);
 		}
 	}
 }
