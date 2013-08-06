@@ -946,7 +946,8 @@ io.sockets.on('connection', function (socket) {
 	
 		// A user disconnected - closed the window, unplugged the chord, etc..
 		socket.on('disconnect', function () {
-			announcement(socket, game, "Disconnect", session.data, "");
+			if (!session.data.silentEntry)
+				announcement(socket, game, "Disconnect", session.data, "");
 			socket.leave(game.gameid);
 			game.playerLeavesGame(session.data.userid, session.data.role);
 		});
