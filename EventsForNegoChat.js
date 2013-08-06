@@ -45,7 +45,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		if (announce) {
 			if (translator && !("Reject" in mergedAction) && !("Accept" in mergedAction)) {  // use NLG to generate a nice-looking announcement:
 				var unmergedActions = deepmerge.unmerge(mergedAction).map(JSON.stringify);
-				translator.sendToTranslationServer(session_data.role, unmergedActions, /*forward=*/false);
+				translator.sendToTranslationServer(session_data.role, unmergedActions, /*forward=*/false, onTranslation);
 			} else {
 				for (var key in mergedAction) {
 					functions.announcement(socket, game, key, session_data, mergedAction[key]); // send ALL players a textual description of the offer
@@ -103,11 +103,12 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 	// A human chat-player sent an English chat message - send it to all other users, and translate to semantics:
 	socket.on('English', function (text) {
 		functions.announcement(socket, game, "Message", session_data, text);
-		if (translator) translator.sendToTranslationServer(session_data.role, text, /*forward=*/true);
+		if (translator) translator.sendToTranslationServer(session_data.role, text, /*forward=*/true, onTranslation);
 	});
 
 	var onTranslation = function(text, translations, forward) {
 		if (forward) { // forward translation - from English to NegoActions
+			console.log("\tonTranslation: translate("+JSON.stringify(text)+") = "+JSON.stringify(translations));
 			if (!translations || translations.length==0) {
 				misunderstanding("I didn't understand your message: '"+text+"'. Please say this in other words");
 				return;
@@ -122,16 +123,16 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 			}
 			onNegoActions(actions, false, text);
 		} else {     // backward translation - from NegoActions to English
-			//console.log("BACKWARD TRANSLATION: "+JSON.stringify(text));
+			console.log("\tonTranslation: generate("+JSON.stringify(text)+") = "+JSON.stringify(translations));
 			//console.dir(translations);
 			functions.announcement(socket, game, "Message", session_data, translations.join(", "));
 		}
 	}
 
 	// The translator returned the semantic translation of the human's chat message
-	if (translator) translator.onTranslation(onTranslation);
+	// if (translator) translator.onTranslation(onTranslation);
 
-	// The human manually approved the translations of the translator 
+	// The human manually approved the translations of the translator. Relevant for the negotranslate game only.
 	socket.on('approveTranslations', function(request) {
 		onTranslation(request.text, request.translations, /*forward=*/true);
 	});
