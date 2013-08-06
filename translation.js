@@ -24,7 +24,7 @@ function newTranslationSocket(translatorName) {
 	});
 	
 	translationSocket.on('translation', function (result) {
-		logWithTimestamp(translatorName + " receives "+result.translations.length+" translations to "+JSON.stringify(result.text) + ": "+JSON.stringify(result.translations));
+		logWithTimestamp(translatorName + " receives "+result.translations.length+" translations from '"+result.classifierName+"' to "+JSON.stringify(result.text) + ": "+JSON.stringify(result.translations));
 	});
 
 	translationSocket.on('disconnect', function () { 
@@ -57,7 +57,7 @@ exports.Translator.prototype.sendToTranslationServer = function(classifierName, 
 		logWithTimestamp(this.translatorName+" tries to re-connect to translation server at "+HOST+":"+SETTINGS.port);
 		this.translationSocket.socket.reconnect();
 	}
-	logWithTimestamp(this.translatorName+(this.translationSocket.socket.connected? "": " (UNCONNECTED) ")+" asks to "+(forward? "translate ": "generate ")+ JSON.stringify(text));
+	logWithTimestamp(this.translatorName+(this.translationSocket.socket.connected? "": " (UNCONNECTED) ")+" asks '"+classifierName+"' to "+(forward? "translate ": "generate ")+ JSON.stringify(text));
 	var multiple = !(text instanceof Array);
 	
 	if (callback) {

@@ -45,40 +45,20 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		if (announce) {
 			if (translator && !("Reject" in mergedAction) && !("Accept" in mergedAction)) {  // use NLG to generate a nice-looking announcement:
 				var unmergedActions = deepmerge.unmerge(mergedAction).map(JSON.stringify);
-				translator.sendToTranslationServer(session_data.role, unmergedActions, /*forward=*/false, onTranslation);
+				translator.sendToTranslationServer(session_data.role, unmergedActions, /*forward=*/false, function(text,translations) {
+					console.log("\tonTranslation: generate("+JSON.stringify(text)+") = "+JSON.stringify(translations));
+					functions.announcement(socket, game, "Message", session_data, translations.join(", "));
+					if ("Offer" in mergedAction) // Send the score to the human (Ido's suggestion):
+						socket.broadcast.to(game.gameid).emit('yourUtilityFromPartnerOffer', utilityForOpponent(mergedAction.Offer));
+				});
 			} else {
 				for (var key in mergedAction) {
 					functions.announcement(socket, game, key, session_data, mergedAction[key]); // send ALL players a textual description of the offer
 				}
+				if ("Offer" in mergedAction) // Send the score to the human (Ido's suggestion):
+					socket.broadcast.to(game.gameid).emit('yourUtilityFromPartnerOffer', utilityForOpponent(mergedAction.Offer));
 			}
-
-			// Send the score to the human (Ido's suggestion):
-			if ("Offer" in mergedAction) {
-				var opponentRole;
-				for (role in functions.rols){
-					if (role !== session_data.role)
-						opponentRole = role;
-				}
-				try {
-					oppAgent = functions.getActualAgent(session_data.domain, opponentRole, session_data.personality);
-				} catch (error) {
-					console.error("\n\nERROR: Cannot initialize agent!");
-					console.dir(error);
-				// TODO: send error message to the client.
-				}
-
-				var agreement = mergedAction.Offer;
-				// calculate new utility for the player:
-				var utilityWithoutDiscount = Math.round(oppAgent.utility_space_object.getUtilityWithoutDiscount(agreement));
-				var timeFromStart = game.timer? game.timer.timeFromStartSeconds(): 0;
-				var turnsFromStart = game.turnsFromStart? game.turnsFromStart: 0;
-				var utilityWithDiscount = Math.round(oppAgent.utility_space_object.getUtilityWithDiscount(utilityWithoutDiscount, turnsFromStart))
-				console.log("----- Utility of "+oppAgent.owner+": "+utilityWithDiscount);
-				socket.broadcast.to(game.gameid).emit('yourUtilityFromPartnerOffer', utilityWithDiscount);
-			} 
-			
-		}
-		else{ // this is a translation - write it to the log:
+		} else { // this is a translation - write it to the log:
 			var translateData = {};
 			translateData.translate = mergedAction;
 			translateData.text = text;
@@ -122,10 +102,6 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 				return;
 			}
 			onNegoActions(actions, false, text);
-		} else {     // backward translation - from NegoActions to English
-			console.log("\tonTranslation: generate("+JSON.stringify(text)+") = "+JSON.stringify(translations));
-			//console.dir(translations);
-			functions.announcement(socket, game, "Message", session_data, translations.join(", "));
 		}
 	}
 
@@ -268,6 +244,35 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		}
 	});
 	
-
-
+	
+	/**
+	 * calculate the utility of my offer to the opponent - FOR INFORMATION TO THE OPPONENT ONLY (Ido's suggestion)
+	 * (the sender/agent is not allowed to know this information!)
+	 */
+	var utilityForOpponent = function(agreement) {
+					var opponentRole;
+					for (role in functions.rols){
+						if (role !== session_data.role)
+							opponentRole = role;
+					}
+					try {
+						oppAgent = functions.getActualAgent(session_data.domain, opponentRole, session_data.personality);
+					} catch (error) {
+						console.error("\n\nERROR: Cannot initialize agent!");
+						console.dir(error);
+					// TODO: send error message to the client.
+					}
+	
+					// calculate new utility for the player:
+					var utilityWithoutDiscount = Math.round(oppAgent.utility_space_object.getUtilityWithoutDiscount(agreement));
+					var timeFromStart = game.timer? game.timer.timeFromStartSeconds(): 0;
+					var turnsFromStart = game.turnsFromStart? game.turnsFromStart: 0;
+					var utilityWithDiscount = Math.round(oppAgent.utility_space_object.getUtilityWithDiscount(utilityWithoutDiscount, turnsFromStart))
+					console.log("----- Utility of "+oppAgent.owner+": "+utilityWithDiscount);
+					socket.broadcast.to(game.gameid).emit('yourUtilityFromPartnerOffer', utilityWithDiscount);
+	}
+	
 }
+
+
+
