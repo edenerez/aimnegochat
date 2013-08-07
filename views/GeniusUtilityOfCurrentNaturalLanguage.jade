@@ -13,12 +13,12 @@ block body
 				ul
 					for issue in agent.utility_space_object.issueByIndex
 						li Regarding <span class='issue'>#{issue.name}</span>, you may offer either&nbsp;
-							each item, i in issue.itemByIndex
+							each item, i in issue.valueByIndex
 								span.value #{item.value}&nbsp;
 								span.score (#{sprintf(format,item.evaluation * issue.weight * agent.utility_space_object.weightmultiplyer)})
-								if i < Object.keys(issue.itemByIndex).length-1
+								if i < Object.keys(issue.valueByIndex).length-1
 									span &nbsp; or &nbsp;
-								else if i == Object.keys(issue.itemByIndex).length-1
+								else if i == Object.keys(issue.valueByIndex).length-1
 									span &nbsp; or &nbsp;
 							|.
 			p If you <b>opt out</b> of the negotiation without an agreement, you get  
@@ -29,5 +29,9 @@ block body
 				|&nbsp; points (which is also quite low).
 			p Additionally, every <b>#{turnLengthInSeconds} seconds</b>, you lose a small number of points 
 				span.score (#{sprintf(format, 1*agent.utility_space_object.timeeffect)})
+				|.
+			p 
+				b The maximum score you can get is: 
+					span.score #{sprintf(format, agent.utility_space_object.getMaxUtility()-agent.utility_space_object.timeeffect)}
 				|.
 				

@@ -17,7 +17,7 @@ block body
 				for issue in agent.utility_space_object.issueByIndex
 					tr.utilityIssue
 						td(colspan="2") #{issue.name}
-					for item in issue.itemByIndex
+					for item in issue.valueByIndex
 						tr
 							td.utilityValue #{item.value}
 							td.utilityUtil #{sprintf(format,item.evaluation * issue.weight * agent.utility_space_object.weightmultiplyer)}

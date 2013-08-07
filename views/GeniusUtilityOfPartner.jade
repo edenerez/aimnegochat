@@ -16,11 +16,11 @@ block body
    for issue in agents[0].utility_space_object.issueByIndex
     tr.utilityIssue
      td(colspan="#{1+agents.length}") #{issue.name}
-    for item in issue.itemByIndex
+    for item in issue.valueByIndex
      tr
       td.utilityValue #{item.value}
       for agent in agents
-       td.utilityUtil #{sprintf(format, agent.utility_space_object.issueByIndex[issue.index].itemByIndex[item.index].evaluation * agent.utility_space_object.issueByIndex[issue.index].weight * agent.utility_space_object.weightmultiplyer)}
+       td.utilityUtil #{sprintf(format, agent.utility_space_object.issueByIndex[issue.index].valueByIndex[item.index].evaluation * agent.utility_space_object.issueByIndex[issue.index].weight * agent.utility_space_object.weightmultiplyer)}
 
    tr.utilityIssue
     td(colspan="#{1+agents.length}") Time Effect
