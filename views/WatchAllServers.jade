@@ -1,0 +1,16 @@
+extends layout
+block title
+  title#title Watch All Active Games 
+block body
+  h1 Watch All Games
+  script(src='/javascripts/sound.js')
+  script(src='/socket.io/socket.io.js')
+  script(type='text/javascript').
+    var socket = io.connect();
+    socket.emit('WatchAllServers');
+    $(document).ready(function() {
+      socket.on('newgame', function(newGameData) {
+        beep(/*type=*/1, /*millis=*/200);
+        $("body").append("<div style='border-top:solid 1px black; margin-top: 1em'>"+JSON.stringify(newGameData)+"</div>");
+      });
+    });

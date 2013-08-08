@@ -416,14 +416,6 @@ app.get('/:gametype/advanced/:role', getGameServer, function(req,res) {
 		}
 });
 
-app.get('/:gametype/watchgame/:gameid', getGameServer, function(req,res) {
-		setSessionForNewUser(req, res.locals.gameServer);	
-		console.log('Watch mode start. session = '+JSON.stringify(req.session.data).replace(/\n/g,","));
-		req.session.data.role = 'Watcher';
-		req.session.data.gameid = req.params.gameid;
-		req.session.data.silentEntry = true;
-		res.redirect('/'+req.params.gametype+'/play');
-});
 
 
 var entergameSemaphore = require('semaphore')(1);
@@ -464,12 +456,29 @@ app.get('/entergame', verifySessionData, function(req,res) {
 	res.redirect('/'+req.session.data.gametype+"/play");
 });
 
+// Watch a specific game:
+app.get('/:gametype/watchgame/:gameid', getGameServer, function(req,res) {
+		setSessionForNewUser(req, res.locals.gameServer);	
+		console.log('Watch mode start. session = '+JSON.stringify(req.session.data).replace(/\n/g,","));
+		req.session.data.role = 'Watcher';
+		req.session.data.gameid = req.params.gameid;
+		req.session.data.silentEntry = true;
+		res.redirect('/'+req.params.gametype+'/play');
+});
+
+// List all active games on a specific game-server (not updated automatically):
 app.get('/:gametype/listactive', getGameServer, function(req,res) {
-		res.render("MultiplayerGames",	{
-				title: 'Games on active server',
+		res.render("WatchAllGamesOnServer",	{
+				gametype: req.params.gametype,
+				title: 'Games active on server',
 				show_unverified_games: true,
 				timeToString: timer.timeToString, 
 				games: res.locals.gameServer.getGames()});
+});
+
+// Watch all active games on all servers:
+app.get('/watchall', function(req,res) {
+	res.render("WatchAllServers");
 });
 
 //////////////////
@@ -866,7 +875,20 @@ io.sockets.on('connection', function (socket) {
 	console.log("SOCKETIO: New client connects");
 	socket.on('disconnect', function () { console.log("SOCKETIO: Client disconnects"); });
 	
-	socket.on('start_session', function (session_data) {
+	socket.on('WatchAllServers', function() {
+		// each watcher sends this event when it connects. See WatchAll.jade
+		console.log("SOCKETIO: New WatchAllServers starts session");
+		socket.join('WatchAllServers');
+	});
+	
+	socket.on('WatchAllGamesOnServer', function(gametype) {
+		// each watcher sends this event when it connects. See WatchAll.jade
+		console.log("SOCKETIO: New WatchAllGamesOnServer for "+gametype+" starts session");
+		socket.join(gametype);
+	});
+
+	socket.on('start_session', function (session_data) { 
+		// each game client sends this event when it connects. See RoomForNegoChat.js
 		console.log("SOCKETIO: New client starts session: ");
 		console.dir(session_data);
 		
@@ -904,13 +926,19 @@ io.sockets.on('connection', function (socket) {
 			io.sockets.in(game.gameid).emit('status', {key: 'remainingTime', value: '-'});
 		} else {							 // game started!
 			if (!game.startLogged) {
-				console.log("games", {
+				var newGameData = {
 					gametype: session.data.gametype,
 					gameid: game.gameid,
 					startTime: game.startTime,
 					unverified: true,
 					mapRoleToUserid: game.mapRoleToUserid
-				});	// adds the 'timestamp' field
+				};
+				console.log("New game starts: "+JSON.stringify(newGameData));
+				
+				// send to the watch-all-ers:
+				io.sockets.in('WatchAllServers').emit('newgame', newGameData);
+				io.sockets.in(session.data.gametype).emit('newgame', newGameData);
+
 				game.startLogged = true;
 			}
 			io.sockets.in(game.gameid).emit('status', {key: 'phase', value: ''});

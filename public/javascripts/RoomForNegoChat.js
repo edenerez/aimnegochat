@@ -6,7 +6,7 @@
 
 // Wait for the DOM to load before taking action
 $(function() {
-	if (session_data) {              // the session data is inserted to the layout.jade template by the server.
+	if (session_data) {              // the session data is inserted to the layoutForChat.jade template by the server.
 		socket.emit('start_session', session_data);
 		role = session_data.role;
 	} else {
