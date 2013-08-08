@@ -34,7 +34,7 @@ exports.Translator.prototype.sendToTranslationServer = function(requestObject, c
 			var result = JSON.parse(body);
 			logWithTimestamp(self.translatorName + " receives "+result.translations.length+" translations from '"+result.classifierName+"' to "+JSON.stringify(result.text) + ": "+JSON.stringify(result.translations));
 			if (callback)
-				callback(request.text, result.translations, request.forward);
+				callback(requestObject.text, result.translations);
 		} else {
 			console.log(url);
 			console.log("error="+error+" response="+JSON.stringify(response));
@@ -59,11 +59,11 @@ if (process.argv[1] === __filename) {
 	translator1.sendToTranslationServer({classifierName:"Employer", text:["{\"Offer\":{\"Pension Fund\":\"10%\"}}", "{\"Offer\":{\"Salary\":\"20,000 NIS\"}}"], forward:false, source: "translation.js unitest"});
 
 	translator1.sendToTranslationServer({classifierName:"Candidate", text:"I want a wage of 20000 NIS and 10% pension with car.", forward:true, source: "translation.js unitest"}, 
-		function(text, translations, forward) {
+		function(text, translations) {
 			console.log("Callback called! "+JSON.stringify(translations));
 		});
 	translator1.sendToTranslationServer({classifierName:"Candidate", text:["{\"Offer\":{\"Pension Fund\":\"10%\"}}", "{\"Offer\":{\"Salary\":\"20,000 NIS\"}}"], forward:false, source: "translation.js unitest"}, 
-		function(text, translations, forward) {
+		function(text, translations) {
 			console.log("Callback called! "+JSON.stringify(translations));
 		});
 

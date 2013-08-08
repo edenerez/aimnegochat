@@ -40,7 +40,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 			return;
 		}
 		var mergedAction = deepmerge.deepMergeArray(actions);
-		socket.broadcast.to(game.gameid).emit('negoactions', mergedAction); // forward the offer to the other player
+		socket.broadcast.to(game.gameid).emit('negoactions', mergedAction); // pass the offer to the other player
 
 		if (announce) {
 			if (translator && !("Reject" in mergedAction) && !("Accept" in mergedAction)) {  // use NLG to generate a nice-looking announcement:
@@ -99,8 +99,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 				onTranslation);
 	});
 
-	var onTranslation = function(text, translations, forward) {
-		if (forward) { // forward translation - from English to NegoActions
+	var onTranslation = function(text, translations) {
 			console.log("\tonTranslation: translate("+JSON.stringify(text)+") = "+JSON.stringify(translations));
 			if (!translations || translations.length==0) {
 				misunderstanding("I didn't understand your message: '"+text+"'. Please say this in other words");
@@ -115,7 +114,6 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 				return;
 			}
 			onNegoActions(actions, false, text);
-		}
 	}
 
 	// The translator returned the semantic translation of the human's chat message
@@ -123,7 +121,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 
 	// The human manually approved the translations of the translator. Relevant for the negotranslate game only.
 	socket.on('approveTranslations', function(request) {
-		onTranslation(request.text, request.translations, /*forward=*/true);
+		onTranslation(request.text, request.translations);
 	});
 
 	
