@@ -125,6 +125,7 @@ function setSessionForNewUser(req, gameServer) {
 	
 	req.session.data.domain = (req.params.domain? req.params.domain: gameServer? gameServer.data.domain: null);
 	req.session.data.personality = (req.params.personality? req.params.personality: gameServer? gameServer.data.defaultPersonality: null);
+	req.session.data.remoteAddress = req.ip;
 	questionnaire.makeQestionnaire(req);
 }
 
@@ -986,7 +987,8 @@ io.sockets.on('connection', function (socket) {
 				getActualAgent: getActualAgent,
 				messageLog: messageLog,
 				announcement: announcement,
-				rols : gameServers[session.data.gametype].requiredRoles
+				rols : gameServers[session.data.gametype].requiredRoles,
+				accountName: accountName,
 			});
 		}
 	});  // end of identify event

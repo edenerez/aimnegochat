@@ -50,6 +50,8 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 					text: unmergedActions, 
 					forward: false,
 					source: session_data.gametype,
+					accountName: functions.accountName,
+					remoteAddress: session_data.remoteAddress,
 					},
 					function(text,translations) {
 						console.log("\tonTranslation: generate("+JSON.stringify(text)+") = "+JSON.stringify(translations));
@@ -95,6 +97,8 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 				text: text, 
 				forward: true,
 				source: session_data.gametype,
+				accountName: functions.accountName,
+				remoteAddress: session_data.remoteAddress,
 				}, 
 				onTranslation);
 	});
