@@ -13,7 +13,7 @@ function PlayerModel(storageClient, tableName, partitionKey) {
   this.storageClient.createTableIfNotExists(tableName, 
     function tableCreated(err) {
       if(err) {
-        console.log("Cannot create table: "+JSON.stringify(err));
+        console.log("Cannot create table: "+self.tableName+JSON.stringify(err));
         // throw err;
       }
     });
@@ -25,7 +25,7 @@ PlayerModel.prototype.add = function(item, callback) {
   self.storageClient.insertOrMergeEntity(self.tableName, item, 
     function entityInserted(error) {
       if(error){  
-        console.log("Cannot add player: "+JSON.stringify(error));
+        console.log("Cannot add player: "+self.tableName+JSON.stringify(error));
         callback(error + self.tableName);
       }
       callback(null);
@@ -38,7 +38,7 @@ PlayerModel.prototype.find = function(query, callback) {
   self.storageClient.queryEntities(query, 
     function entitiesQueried(error, entities){
       if(error) {
-        console.log("Cannot find table: "+JSON.stringify(error));
+        console.log("Cannot find table: "+self.tableName+JSON.stringify(error));
         callback(error + self.tableName);
       } else {
         callback(null, entities);
@@ -54,7 +54,7 @@ PlayerModel.prototype.findOne = function(query, callback) {
                                  query.rowKey, 
     function entitiesQueried(error, entity){
       if(error) {
-        console.log("Cannot find one in table: "+JSON.stringify(error));
+        console.log("Cannot find one in table: "+self.tableName+JSON.stringify(error));
         callback(error + self.tableName);
       } else {
         callback(null, entity);
@@ -68,7 +68,7 @@ PlayerModel.prototype.updateItem = function(item, callback) {
     self.storageClient.insertOrMergeEntity (self.tableName, item, 
     function entityInserted(error) {
       if(error){  
-        console.log("Cannot update to table: "+JSON.stringify(error));
+        console.log("Cannot update to table: "+self.tableName+JSON.stringify(error));
         callback(error + self.tableName);
       }
       callback(null);
@@ -80,7 +80,7 @@ PlayerModel.prototype.updateItem = function(item, callback) {
   self.storageClient.deleteEntity (self.tableName, item, 
     function entityDeleted(error) {
       if(error){  
-        console.log("Cannot delete from table: "+JSON.stringify(error));
+        console.log("Cannot delete from table: "+self.tableName+JSON.stringify(error));
         callback(error + this.tableName);
       }
       callback(null);

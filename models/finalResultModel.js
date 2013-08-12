@@ -22,7 +22,7 @@ FinalResultModel.prototype.add = function(item, callback) {
   self.storageClient.insertOrReplaceEntity(self.tableName, item, 
     function entityInserted(error) {
       if(error){  
-        console.log("Cannot add to table: "+JSON.stringify(error));
+        console.log("Cannot add to table: "+self.tableName+JSON.stringify(error));
         callback(error + self.tableName);
       }
       callback(null);
@@ -35,7 +35,7 @@ FinalResultModel.prototype.find = function(query, callback) {
   self.storageClient.queryEntities(query, 
     function entitiesQueried(error, entities){
       if(error) {
-        console.log("Cannot find table: "+JSON.stringify(error));
+        console.log("Cannot find table: "+self.tableName+JSON.stringify(error));
         callback(error + self.tableName);
       } else {
         callback(null, entities);
@@ -48,7 +48,7 @@ FinalResultModel.prototype.updateItem = function(item, callback) {
     self.storageClient.insertOrMergeEntity (self.tableName, item, 
     function entityInserted(error) {
       if(error){  
-        console.log("Cannot update to table: "+JSON.stringify(error));
+        console.log("Cannot update to table: "+self.tableName+JSON.stringify(error));
         callback(error + self.tableName);
       }
       callback(null);
@@ -60,7 +60,7 @@ FinalResultModel.prototype.updateItem = function(item, callback) {
   self.storageClient.deleteEntity (self.tableName, item, 
     function entityDeleted(error) {
       if(error){  
-        console.log("Cannot delete from table: "+JSON.stringify(error));
+        console.log("Cannot delete from table: "+self.tableName+JSON.stringify(error));
         callback(error + this.tableName);
       }
       callback(null);

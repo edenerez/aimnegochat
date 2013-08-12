@@ -41,7 +41,7 @@ QuestionnaireModel.prototype.find = function(query, callback) {
   self.storageClient.queryEntities(query, 
     function entitiesQueried(error, entities){
       if(error) {
-        console.log("Cannot find table: "+JSON.stringify(error));
+        console.log("Cannot find table: "+self.tableName+JSON.stringify(error));
         callback(error + self.tableName);
       } else {
         callback(null, entities);
@@ -57,7 +57,7 @@ QuestionnaireModel.prototype.findOne = function(query, callback) {
                                  query.rowKey, 
     function entitiesQueried(error, entity){
       if(error) {
-        callback(error);
+        callback(error +self.tableName);
       } else {
         callback(null, entity);
       }
@@ -70,7 +70,7 @@ QuestionnaireModel.prototype.updateItem = function(item, callback) {
     self.storageClient.insertOrMergeEntity (self.tableName, item, 
     function entityInserted(error) {
       if(error){  
-        console.log("Cannot update to table: "+JSON.stringify(error));
+        console.log("Cannot update to table: "+self.tableName+JSON.stringify(error));
         callback(error + this.tableName);
       }
       callback(null);
@@ -83,7 +83,7 @@ QuestionnaireModel.prototype.deleteItem = function(item, callback) {
   self.storageClient.deleteEntity (self.tableName, item, 
     function entityDeleted(error) {
       if(error){  
-        console.log("Cannot delete from table: "+JSON.stringify(error));
+        console.log("Cannot delete from table: "+self.tableName+JSON.stringify(error));
         callback(error + this.tableName);
       }
       callback(null);

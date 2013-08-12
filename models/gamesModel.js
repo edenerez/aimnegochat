@@ -22,7 +22,7 @@ GamesModel.prototype.add = function(item, callback) {
   self.storageClient.insertOrMergeEntity(self.tableName, item, 
     function entityInserted(error) {
       if(error){ 
-      console.log("Cannot add to table: "+JSON.stringify(err)); 
+      console.log("Cannot add to table: "+self.tableName+JSON.stringify(err)); 
         callback(error + this.tableName);
       }
       callback(null);
@@ -34,7 +34,7 @@ GamesModel.prototype.find = function(query, callback) {
   self.storageClient.queryEntities(query, 
     function entitiesQueried(error, entities){
       if(error) {
-        console.log("Cannot find table: "+JSON.stringify(error));
+        console.log("Cannot find table: "+self.tableName+JSON.stringify(error));
         callback(error + this.tableName);
       } else {
         callback(null, entities);
@@ -44,21 +44,21 @@ GamesModel.prototype.find = function(query, callback) {
 
 GamesModel.prototype.updateItem = function(item, callback) {
   if (!('PartitionKey' in item))
-    throw new Error("item does not contain PartitionKey: "+JSON.stringify(item));
+    throw new Error("item does not contain PartitionKey: "+self.tableName+JSON.stringify(item));
   if (!('RowKey' in item))
-    throw new Error("item does not contain RowKey: "+JSON.stringify(item));
+    throw new Error("item does not contain RowKey: "+self.tableName+JSON.stringify(item));
   var self = this;
   try {
     self.storageClient.insertOrMergeEntity (self.tableName, item,
       function entityInserted(error) {
         if(error){  
-        console.log("Cannot update to table: "+JSON.stringify(error));
+        console.log("Cannot update to table: "+self.tableName+JSON.stringify(error));
         callback(error + this.tableName);
         }
         callback(null);
       });
   } catch (err) {
-    console.error("Error trying to updateItem: "+JSON.stringify(item));
+    console.error("Error trying to updateItem: "+self.tableName+JSON.stringify(item));
     throw err;
   }
 };
@@ -69,7 +69,7 @@ GamesModel.prototype.updateItem = function(item, callback) {
   self.storageClient.deleteEntity (self.tableName, item, 
     function entityDeleted(error) {
       if(error){  
-        console.log("Cannot delete from table: "+self.tableName);
+        console.log("Cannot delete from table: "+self.tableName+self.tableName);
         callback(error + JSON.stringify(error));
       }
       callback(null);
