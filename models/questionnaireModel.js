@@ -2,7 +2,7 @@ var azure = require('azure');
  // , uuid = require('node-uuid');
 
 module.exports = QuestionnaireModel;
-
+var err = require('../error');
 
 function QuestionnaireModel(storageClient, tableName, partitionKey) {
   this.storageClient = storageClient;
@@ -11,9 +11,10 @@ function QuestionnaireModel(storageClient, tableName, partitionKey) {
 
 
   this.storageClient.createTableIfNotExists(tableName, 
-    function tableCreated(err) {
-      if(err) {
+    function tableCreated(error) {
+      if(error) {
         console.log("Cannot create table: "+ tableName +JSON.stringify(err));
+        err.writeJsonError("error", error, tableName, "Cannot create table");
         // throw err;
       }
     });
@@ -30,7 +31,8 @@ QuestionnaireModel.prototype.add = function(item, callback) {
     function entityInserted(error) {
       if(error){  
         console.log("Cannot add to table: "+ self.tableName+JSON.stringify(error));
-        callback(error + self.tableName);
+        err.writeJsonError("error", error, self.tableName, item);
+        //callback(error + self.tableName);
       }
       callback(null);
     });
@@ -42,7 +44,8 @@ QuestionnaireModel.prototype.find = function(query, callback) {
     function entitiesQueried(error, entities){
       if(error) {
         console.log("Cannot find table: "+self.tableName+JSON.stringify(error));
-        callback(error + self.tableName);
+        err.writeJsonError("error", error, self.tableName, item);
+        //callback(error + self.tableName);
       } else {
         callback(null, entities);
       }
@@ -57,7 +60,8 @@ QuestionnaireModel.prototype.findOne = function(query, callback) {
                                  query.rowKey, 
     function entitiesQueried(error, entity){
       if(error) {
-        callback(error +self.tableName);
+        err.writeJsonError("error", error, self.tableName, item);
+        //callback(error +self.tableName);
       } else {
         callback(null, entity);
       }
@@ -71,7 +75,8 @@ QuestionnaireModel.prototype.updateItem = function(item, callback) {
     function entityInserted(error) {
       if(error){  
         console.log("Cannot update to table: "+self.tableName+JSON.stringify(error));
-        callback(error + this.tableName);
+        err.writeJsonError("error", error, self.tableName, item);
+        //callback(error + this.tableName);
       }
       callback(null);
     });
@@ -84,7 +89,8 @@ QuestionnaireModel.prototype.deleteItem = function(item, callback) {
     function entityDeleted(error) {
       if(error){  
         console.log("Cannot delete from table: "+self.tableName+JSON.stringify(error));
-        callback(error + this.tableName);
+        err.writeJsonError("error", error, self.tableName, item);
+        //callback(error + this.tableName);
       }
       callback(null);
     });

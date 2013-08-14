@@ -14,6 +14,7 @@ block content
          th User Id
          th Type
          th Role
+         th link to scores
        - if (playerList !== undefined)
          each player in playerList 
           tr
@@ -21,6 +22,8 @@ block content
               a(href='/#{gametype},#{player.RowKey}/playerReport') #{player.RowKey}
             td #{player.type}
             td #{player.role}
+            td
+              a(href ='/#{gametype},#{player.RowKey}/scoreReport') score And Worker
    br
 
    h2 Game Action List

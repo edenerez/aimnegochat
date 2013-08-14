@@ -698,6 +698,11 @@ app.get('/:gametype,:RowKey/playerReport' , function (req,res){
 	gameReport.playerInfo (req,res,types);
 });
 
+app.get('/:gametype,:RowKey/scoreReport' , function (req,res){
+	//console.log("blblblblblblblblllllllllblblbkbkblblblbkbkldfghsidgfkawstnfxucawgflcgwdligncfgnbwyfdnkjscfegru");
+	gameReport.scoreInfo (req,res,types);
+});
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.get('/PreQuestionnaireDemography', function(req,res) {

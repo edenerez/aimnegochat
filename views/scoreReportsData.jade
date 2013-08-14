@@ -1,0 +1,45 @@
+extends shared
+
+block content
+ div.container
+   h1 Player #{player} Information (#{gametype.split('_')[1]})
+   br
+
+
+   h2 AMT-User Info
+   div.scrol
+     table(class="table table-striped table-bordered")
+       tr
+         th assisnmentid
+         th hitid
+         th workerid
+       - if (questionnaireList !== undefined) 
+         each questionnaire in questionnaireList
+          tr
+
+            td #{questionnaire.assignmentId}
+            td #{questionnaire.hitId}
+            td #{questionnaire.workerId}
+
+   h2 Final Result
+   div.scrol
+     table(class="table table-striped table-bordered")
+       tr
+         th Role
+         th Ended In
+         th Time From Start
+         th Turns From Start
+         th Utility Without Discount
+         th Utility With Discount
+       - if (FinalResultList !== undefined)
+         each FinalResult in FinalResultList 
+          tr
+            td #{FinalResult.role}
+            td #{FinalResult.endedIn}
+            td #{FinalResult.timeFromStart}
+            td #{FinalResult.turnsFromStart}
+            td #{FinalResult.utilityWithoutDiscount}
+            td #{FinalResult.utilityWithDiscount}
+   br   
+
+  

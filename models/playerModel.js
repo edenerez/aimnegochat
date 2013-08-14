@@ -1,6 +1,6 @@
 var azure = require('azure');
  // , uuid = require('node-uuid');
-
+var err = require('../error');
 module.exports = PlayerModel;
 
 
@@ -11,9 +11,10 @@ function PlayerModel(storageClient, tableName, partitionKey) {
 
 
   this.storageClient.createTableIfNotExists(tableName, 
-    function tableCreated(err) {
-      if(err) {
-        console.log("Cannot create table: "+self.tableName+JSON.stringify(err));
+    function tableCreated(error) {
+      if(error) {
+        console.log("Cannot create table: "+tableName+JSON.stringify(err));
+        err.writeJsonError("error", error, tableName, "Cannot create table");
         // throw err;
       }
     });
@@ -26,7 +27,8 @@ PlayerModel.prototype.add = function(item, callback) {
     function entityInserted(error) {
       if(error){  
         console.log("Cannot add player: "+self.tableName+JSON.stringify(error));
-        callback(error + self.tableName);
+        err.writeJsonError("error", error, self.tableName, item);
+        //callback(error + self.tableName);
       }
       callback(null);
     });
@@ -39,7 +41,8 @@ PlayerModel.prototype.find = function(query, callback) {
     function entitiesQueried(error, entities){
       if(error) {
         console.log("Cannot find table: "+self.tableName+JSON.stringify(error));
-        callback(error + self.tableName);
+        err.writeJsonError("error", error, self.tableName, item);
+        //callback(error + self.tableName);
       } else {
         callback(null, entities);
       }
@@ -55,7 +58,8 @@ PlayerModel.prototype.findOne = function(query, callback) {
     function entitiesQueried(error, entity){
       if(error) {
         console.log("Cannot find one in table: "+self.tableName+JSON.stringify(error));
-        callback(error + self.tableName);
+        err.writeJsonError("error", error, self.tableName, item);
+        //callback(error + self.tableName);
       } else {
         callback(null, entity);
       }
@@ -69,7 +73,8 @@ PlayerModel.prototype.updateItem = function(item, callback) {
     function entityInserted(error) {
       if(error){  
         console.log("Cannot update to table: "+self.tableName+JSON.stringify(error));
-        callback(error + self.tableName);
+        err.writeJsonError("error", error, self.tableName, item);
+        //callback(error + self.tableName);
       }
       callback(null);
     });
@@ -80,8 +85,9 @@ PlayerModel.prototype.updateItem = function(item, callback) {
   self.storageClient.deleteEntity (self.tableName, item, 
     function entityDeleted(error) {
       if(error){  
+        err.writeJsonError("error", error, self.tableName, item);
         console.log("Cannot delete from table: "+self.tableName+JSON.stringify(error));
-        callback(error + this.tableName);
+        //callback(error + this.tableName);
       }
       callback(null);
     });

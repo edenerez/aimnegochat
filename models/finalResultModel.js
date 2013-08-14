@@ -1,6 +1,6 @@
 var azure = require('azure');
  // , uuid = require('node-uuid');
-
+var err = require('../error');
 module.exports = FinalResultModel;
 
 
@@ -12,7 +12,9 @@ function FinalResultModel(storageClient, tableName) {
   this.storageClient.createTableIfNotExists(tableName, 
     function tableCreated(error) {
       if(error) {
-        throw error;
+        err.writeJsonError("error", error, tableName, "Cannot create table");
+        //throw error;
+      console.log("can't create table");
       }
     });
 };
@@ -22,8 +24,10 @@ FinalResultModel.prototype.add = function(item, callback) {
   self.storageClient.insertOrReplaceEntity(self.tableName, item, 
     function entityInserted(error) {
       if(error){  
+        
+        err.writeJsonError("error", error, self.tableName, item);
         console.log("Cannot add to table: "+self.tableName+JSON.stringify(error));
-        callback(error + self.tableName);
+        //callback(error + self.tableName);
       }
       callback(null);
     });
@@ -36,7 +40,8 @@ FinalResultModel.prototype.find = function(query, callback) {
     function entitiesQueried(error, entities){
       if(error) {
         console.log("Cannot find table: "+self.tableName+JSON.stringify(error));
-        callback(error + self.tableName);
+        err.writeJsonError("error", error, self.tableName, item);
+        //callback(error + self.tableName);
       } else {
         callback(null, entities);
       }
@@ -49,7 +54,8 @@ FinalResultModel.prototype.updateItem = function(item, callback) {
     function entityInserted(error) {
       if(error){  
         console.log("Cannot update to table: "+self.tableName+JSON.stringify(error));
-        callback(error + self.tableName);
+        err.writeJsonError("error", error, self.tableName, item);
+        //callback(error + self.tableName);
       }
       callback(null);
     });
@@ -60,8 +66,9 @@ FinalResultModel.prototype.updateItem = function(item, callback) {
   self.storageClient.deleteEntity (self.tableName, item, 
     function entityDeleted(error) {
       if(error){  
+        err.writeJsonError("error", error, self.tableName, item);
         console.log("Cannot delete from table: "+self.tableName+JSON.stringify(error));
-        callback(error + this.tableName);
+        //callback(error + this.tableName);
       }
       callback(null);
     });
