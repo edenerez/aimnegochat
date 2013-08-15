@@ -123,6 +123,7 @@ Report.prototype = {
                     questionnaireList: questionnaire, 
                     FinalResultList: finalResult,
                     player: key,
+                    gametypes: types,
                     gametype: gametype});
              });
         });

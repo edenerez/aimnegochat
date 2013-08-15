@@ -18,6 +18,7 @@ block content
          th Turns From Start
          th Utility Without Discount
          th Utility With Discount
+         th payment
          th workerid
        - if (FinalResultList !== undefined)
          each FinalResult in FinalResultList 
@@ -34,6 +35,7 @@ block content
               td #{FinalResult.turnsFromStart}
               td #{FinalResult.utilityWithoutDiscount}
               td #{FinalResult.utilityWithDiscount}
+              td #{FinalResult.utilityWithDiscount/4}
               td #{questionnaire.workerId}
    br   
 
