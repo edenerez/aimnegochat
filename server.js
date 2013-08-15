@@ -699,8 +699,11 @@ app.get('/:gametype,:RowKey/playerReport' , function (req,res){
 });
 
 app.get('/:gametype,:RowKey/scoreReport' , function (req,res){
-	//console.log("blblblblblblblblllllllllblblbkbkblblblbkbkldfghsidgfkawstnfxucawgflcgwdligncfgnbwyfdnkjscfegru");
 	gameReport.scoreInfo (req,res,types);
+});
+
+app.get('/:gametype/scoreReport2' , function (req,res){
+	gameReport.scoreInfo2 (req,res,types);
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

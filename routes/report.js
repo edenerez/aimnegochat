@@ -100,6 +100,34 @@ Report.prototype = {
    
      },
 
+     scoreInfo2: function(req, res, types) {
+      self = this;
+      var questionnaireModel = self.questionnaireModel;
+      var finalResultModel = self.finalResultModel;
+      var key = req.params.RowKey;
+      var gametype =  req.params.gametype;
+      var queryQuestionnaire = azure.TableQuery
+      .select()
+      .from(questionnaireModel.tableName)
+      
+      questionnaireModel.find(queryQuestionnaire, function itemsFound(error, questionnaire) {
+        var queryfinalResult = azure.TableQuery
+        .select()
+        .from(finalResultModel.tableName)
+        
+        finalResultModel.find(queryfinalResult, function itemsFound(error, finalResult) {
+                    res.render('scoreReportsData2',{
+                    title: 'Score Information', 
+                    questionnaireList: questionnaire, 
+                    FinalResultList: finalResult,
+                    player: key,
+                    gametype: gametype,
+                    gametypes: types});
+             });
+        });
+   
+     },
+
     playerInfo: function(req, res, types) {
       self = this;
       var questionnaireModel = self.questionnaireModel;

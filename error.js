@@ -23,24 +23,6 @@ if (!fs.appendFile) {
   console.log("Congratulations! you have Node "+process.version+", that supports appendFile.");
 }
 
-/**
- * reads a log file that contains a single JSON object.
- * @return the single object.
- */
-exports.readSingleJsonObjectSync = function(pathToLog) {
-  var json = fs.readFileSync(pathToLog, 'utf8');
-  return JSON.parse(json);
-}
-
-/**
- * reads a log file, where each line is an object in JSON format.
- * @return an array of all objects in the file.
- */
-exports.readJsonLogSync = function(pathToLog) {
-  var json = "["+fs.readFileSync(pathToLog, 'utf8').replace(/\n/g,",")+"]";
-  json = json.replace(/,\]/,"]");
-  return JSON.parse(json);
-}
 
 
 var cleanPathToLog = function(logFileName) {
@@ -55,23 +37,6 @@ var cleanPathToLog = function(logFileName) {
  * reads a log file, where each line is an object in JSON format.
  * @return an array of all objects in the file.
  */
-exports.readJsonLog = function(logFileName, callback) {
-  fs.readFile(cleanPathToLog(logFileName), 'utf8', function(err, data) {
-    if (err) {
-      callback({readFileError: err});
-    } else {
-      var json = "["+data.replace(/\n/g,",")+"]";
-      json = json.replace(/,\]/,"]");
-      var object;
-      try {
-      	object = JSON.parse(json)
-      } catch (ex) {
-        object = [{error: "Error parsing JSON object: "+json+": "+JSON.stringify(ex)}];
-      }
-      callback(object);
-    }
-  });
-}
 
 exports.writeJsonError = function(logFileName, object, tablename, item) {
     object.timestamp = new Date().toISOString();
@@ -79,21 +44,6 @@ exports.writeJsonError = function(logFileName, object, tablename, item) {
         if (err) throw (err);
     });
 }
-
-exports.writeEventLog = function(logFileName, event, object) {
-    var json;
-    try {
-      json = JSON.stringify(object);
-    } catch (ex) { // probably a circular-reference problem
-      json = JSON.stringify(jsonref.ref(object));
-    }
-    var msg = new Date().toISOString() + " " + event + " " + json+"\n";
-    console.log(msg.substr(0,exports.MAX_LENGTH_OF_CONSOLE_MESSAGE)+"... ");
-    fs.appendFile(cleanPathToLog(logFileName+".log"), msg, function (err) {
-        if (err) throw (err);
-    });
-}
-
 
 
 if (process.argv[1] === __filename) {
