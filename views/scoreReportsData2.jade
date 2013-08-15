@@ -2,7 +2,7 @@ extends shared
 
 block content
  div.container
-   h1 Player #{player} Information (#{gametype.split('_')[1]})
+   h1 Score Information (#{gametype})
    br
 
 
@@ -10,7 +10,8 @@ block content
    div.scrol
      table(class="table table-striped table-bordered")
        tr
-         
+         th Game Id
+         th Game Type
          th Role
          th Ended In
          th Time From Start
@@ -20,19 +21,20 @@ block content
          th workerid
        - if (FinalResultList !== undefined)
          each FinalResult in FinalResultList 
-          tr
-            
-            td #{FinalResult.role}
-            td #{FinalResult.endedIn}
-            td #{FinalResult.timeFromStart}
-            td #{FinalResult.turnsFromStart}
-            td #{FinalResult.utilityWithoutDiscount}
-            td #{FinalResult.utilityWithDiscount}
-            if (questionnaireList !== undefined)
-             each questionnaire in questionnaireList
-              if (questionnaire.RowKey == FinalResult.RowKey)
-               td #{questionnaire.workerId}
-            
+          each questionnaire in questionnaireList
+           if (questionnaireList !== undefined)
+            if (questionnaire.RowKey == FinalResult.RowKey)
+             tr
+              td
+               a(href='/#{gametype},#{FinalResult.PartitionKey}/gameReport') #{FinalResult.PartitionKey}
+              td #{questionnaire.gametype}
+              td #{FinalResult.role}
+              td #{FinalResult.endedIn}
+              td #{FinalResult.timeFromStart}
+              td #{FinalResult.turnsFromStart}
+              td #{FinalResult.utilityWithoutDiscount}
+              td #{FinalResult.utilityWithDiscount}
+              td #{questionnaire.workerId}
    br   
 
   

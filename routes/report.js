@@ -109,6 +109,8 @@ Report.prototype = {
       var queryQuestionnaire = azure.TableQuery
       .select()
       .from(questionnaireModel.tableName)
+      .where('gametype eq ?', gametype)
+      ;
       
       questionnaireModel.find(queryQuestionnaire, function itemsFound(error, questionnaire) {
         var queryfinalResult = azure.TableQuery
@@ -121,8 +123,7 @@ Report.prototype = {
                     questionnaireList: questionnaire, 
                     FinalResultList: finalResult,
                     player: key,
-                    gametype: gametype,
-                    gametypes: types});
+                    gametype: gametype});
              });
         });
    
