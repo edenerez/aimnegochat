@@ -111,10 +111,11 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 			}
 			try {
 				var actions = translations.map(JSON.parse);
-			} catch (ex) {
-				console.error("Cannot parse JSON");
-				console.dir(translations);
-				console.dir(ex);
+			} catch (err) {
+				var message = "The translation server sent '"+JSON.stringify(translations)+"', which is not valid JSON.";
+				console.error("Error: "+message+" The error message is: ");
+				console.dir(err);
+				misunderstanding(message);
 				return;
 			}
 			onNegoActions(actions, false, text);

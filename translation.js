@@ -16,6 +16,10 @@ exports.Translator = function(translatorName) {
 	this.translatorName = translatorName;
 }
 
+function stringifyIfNeeded(s) {
+	return (typeof s === 'string'? s: JSON.stringify(s));
+}
+
 /** 
  * Ask the server to translate a certain text.
  * @param request should contain the following fields: classifierName, text, forward.
@@ -29,16 +33,35 @@ exports.Translator.prototype.sendToTranslationServer = function(requestObject, c
 	var url = URL+"?request="+encodeURIComponent(JSON.stringify(requestObject));
 	var self=this;
 	request(url, function(error, response, body) {
+		var translations;
 		if (!error && response.statusCode == 200) {
 			console.dir(body);
 			var result = JSON.parse(body);
 			logWithTimestamp(self.translatorName + " receives "+result.translations.length+" translations from '"+result.classifierName+"' to "+JSON.stringify(result.text) + ": "+JSON.stringify(result.translations));
-			if (callback)
-				callback(requestObject.text, result.translations);
+			translations = result.translations;
 		} else {
 			console.log(url);
-			console.log("error="+error+" response="+JSON.stringify(response));
+			logWithTimestamp(self.translatorName + " receives error: "+error+", response="+JSON.stringify(response));
+			translations = requestObject.text;
+			
+			/*
+			if (requestObject.forward) {
+				translations = requestObject.text;
+			} else {
+				console.dir(requestObject.text);
+				if (Array.isArray(requestObject.text)) {
+					translations = requestObject.text.map(stringifyIfNeeded);
+				} else {
+					translations = stringifyIfNeeded(requestObject.text);
+				}
+			}
+			*/
+			if (!Array.isArray(translations))
+				translations = [translations];
+			logWithTimestamp(self.translatorName + " falls back to: "+translations.length+" translations from '"+self.classifierName+"' to "+JSON.stringify(requestObject.text) + ": "+JSON.stringify(translations));
 		}
+		if (callback)
+			callback(requestObject.text, translations);
 	});
 }
 
