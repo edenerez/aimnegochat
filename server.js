@@ -13,10 +13,8 @@ var express = require('express')
 	, url = require('url')
 	, fs = require('fs')
 	, util = require('util')
-	//, extend = require('xtend')
 	, amt = require('./amazonturk')
 	, multiplayer = require('./multiplayer')
-	//, logger = require('./logger')
 	, timer = require('./timer')
 	, useragent = require('useragent')
 	, net = require('net')
@@ -27,7 +25,8 @@ var cookieParser = express.cookieParser('biuailab')
 	;
 
 var configFileName = (process.argv[2]);
-//windows azure definitions 
+
+//windows azure definitions:
 var azure = require('azure')
 , nconf = require('nconf');
 nconf.env()
@@ -44,31 +43,26 @@ var partitionKey = nconf.get("PARTITION_KEY")
 var HOST = '127.0.0.1';
 var AGENT_PORT = 4001;
 var socktToAgentManager;
-//var agent = require('./AgentManager');
 var server = net.createServer();
 server.listen(AGENT_PORT, HOST);
 console.log('Server listening To Agent Manager ' + HOST +':'+ AGENT_PORT);
-//console.log('Server listening on ' + server.address().address +':'+ server.address().port);
 server.on('connection', function(sock) {
 	socktToAgentManager = sock;
-    //var agent = require('./AgentManager');
 	console.log("New agent manager connected");
-    
-    // Add a 'close' event handler to this instance of socket
-    sock.on('close', function(data) {
-    	socktToAgentManager = null;
-    	console.log("Agent mnager disconnected");
-        console.log('CLOSED: ' + sock.remoteAddress +' '+ sock.remotePort);
-    });
+	
+	// Add a 'close' event handler to this instance of socket
+	sock.on('close', function(data) {
+		socktToAgentManager = null;
+		console.log("Agent mnager disconnected");
+	    console.log('CLOSED: ' + sock.remoteAddress +' '+ sock.remotePort);
+	});
+	
+	sock.on('error', function(error){
+		console.log('error ecured '+ error);
+	})
 
-    sock.on('error', function(error){
-    	console.log('error ecured '+ error);
-    })
-
-    sock.on('data', function(data) {
-	console.log('INFO: ' + data);
-	// Close the client socket completely
-	//client.destroy();
+	sock.on('data', function(data) {
+		console.log('INFO: ' + data);
 	});
 });
 
@@ -794,10 +788,15 @@ app.get('/:gametype/play', getGameServer, function(req,res) {
 
 			}
 			//send the info. of player role, opponent role, agent name, game type and game id to the agent system.
-            setTimeout(function(){
-            	socktToAgentManager.write(JSON.stringify({gametype:req.params.gametype, opponentRole:opponentRole, role:agentRole, agent: agentType, gameid: req.session.data.gameid}));
-            },3000);
-            //socktToAgentManager.write(JSON.stringify({gametype:req.params.gametype, opponentRole:opponentRole, role:agentRole, agent: agentType, gameid: req.session.data.gameid}));
+			setTimeout(function(){
+				socktToAgentManager.write(JSON.stringify({
+					gametype:req.params.gametype, 
+					opponentRole:opponentRole, 
+					role:agentRole, 
+					agent: agentType, 
+					gameid: req.session.data.gameid}));
+			},3000);
+			//socktToAgentManager.write(JSON.stringify({gametype:req.params.gametype, opponentRole:opponentRole, role:agentRole, agent: agentType, gameid: req.session.data.gameid}));
 		}
 		
 		res.render(res.locals.gameServer.data.roomTemplateName,	{
