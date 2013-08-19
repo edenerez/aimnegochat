@@ -37,8 +37,13 @@ exports.Translator.prototype.sendToTranslationServer = function(requestObject, c
 		if (!error && response.statusCode == 200) {
 			console.dir(body);
 			var result = JSON.parse(body);
-			logWithTimestamp(self.translatorName + " receives "+result.translations.length+" translations from '"+result.classifierName+"' to "+JSON.stringify(result.text) + ": "+JSON.stringify(result.translations));
-			translations = result.translations;
+			if (!result.translations) {
+				logWithTimestamp("ERROR! "+self.translatorName + " receives no translations! "+JSON.stringify(result));
+				translations = [];
+			} else {
+				logWithTimestamp(self.translatorName + " receives "+result.translations.length+" translations from '"+result.classifierName+"' to "+JSON.stringify(result.text) + ": "+JSON.stringify(result.translations));
+				translations = result.translations;
+			}
 		} else {
 			console.log(url);
 			logWithTimestamp(self.translatorName + " receives error: "+error+", response="+JSON.stringify(response));
