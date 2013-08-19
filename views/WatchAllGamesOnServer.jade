@@ -46,6 +46,8 @@ block body
       socket.on('newgame', function(newGameData) {
         beep(/*type=*/1, /*millis=*/200);
         //$("body").append("<div style='border-top:solid 1px black; margin-top: 1em'>"+JSON.stringify(newGameData)+"</div>");
+        var watchUrl = '/'+newGameData.gametype+'/watchgame/'+newGameData.gameid;
+        window.open(watchUrl, "_blank");
         setTimeout("location.reload(true);", /*millis=*/200);
       });
     });
