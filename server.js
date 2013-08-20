@@ -37,13 +37,15 @@ nconf.env()
 var partitionKey = nconf.get("PARTITION_KEY")
 , accountName = nconf.get("STORAGE_NAME")
 , accountKey = nconf.get("STORAGE_KEY")
-, gamePort = nconf.get('PORT');
+, gamePort = nconf.get('PORT')
+, agentPort = nconf.get('AGENT_PORT');
+
 
 
 //adding the agent option.
 
 var HOST = '127.0.0.1';
-var AGENT_PORT = 4001;
+var AGENT_PORT = agentPort;
 var socktToAgentManager;
 var server = net.createServer();
 server.listen(AGENT_PORT, HOST);
@@ -133,7 +135,7 @@ function setSessionForNewUser(req, gameServer) {
 var app = express();
 app.configure(function(){
 	// Settings:
-	app.set('port', process.env.PORT || gamePort);
+	app.set('port', gamePort);
 	app.set('views', path.join(__dirname, 'views'));		// The view directory path
 	app.set('view engine', 'jade');						// The default engine extension to use when omitted
 	app.set('case sensitive routing', false);	// Enable case sensitivity, disabled by default, treating "/Foo" and "/foo" as same
