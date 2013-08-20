@@ -24,6 +24,9 @@ var cookieParser = express.cookieParser('biuailab')
 	, sessionStore = new express.session.MemoryStore()
 	;
 
+var kb = "KBAgent";
+var aat = "AATAgent";
+
 var configFileName = (process.argv[2]);
 
 //windows azure definitions:
@@ -34,7 +37,6 @@ nconf.env()
 var partitionKey = nconf.get("PARTITION_KEY")
 , accountName = nconf.get("STORAGE_NAME")
 , accountKey = nconf.get("STORAGE_KEY")
-, agentType = nconf.get('AGENT_TYPE')
 , gamePort = nconf.get('PORT');
 
 
@@ -186,7 +188,8 @@ gameServers['negomenus_JobCandidate'] = new multiplayer.GameServer(
 		 domain: 'Job',
 		 defaultPersonality: 'short-term',
 		 hasAgent: true,
-		 hasTranslator: false
+		 hasTranslator: false,
+		 agentType: kb
 		});
 gameServers['negomenus_Neighbours'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Alex','Deniz'],
@@ -196,7 +199,8 @@ gameServers['negomenus_Neighbours'] = new multiplayer.GameServer(
 		 domain: 'Neighbours',
 		 defaultPersonality: 'A',
 		 hasAgent: true,
-		 hasTranslator: false
+		 hasTranslator: false,
+		 agentType: kb
 		});
 gameServers['negochat_JobCandidate'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Employer', 'Candidate'], 
@@ -218,28 +222,30 @@ gameServers['negochat_Neighbours'] = new multiplayer.GameServer(
 		 hasAgent: false,
 		 hasTranslator: false
 		});
-gameServers['negonlp_JobCandidate'] = new multiplayer.GameServer(
-		/*requiredRoles=*/['Employer', 'Candidate'],
+/*gameServers['negonlp_JobCandidate'] = new multiplayer.GameServer(
+		/*requiredRoles=*//*['Employer', 'Candidate'],
 		{roomTemplateName: 'RoomForNegoNlp',
 		 maxTimeSeconds:   30*60,
 		 events: require('./EventsForNegoChat'),
 		 domain: 'Job',
 		 defaultPersonality: 'short-term',
 		 hasAgent: true,
-		 hasTranslator: true
+		 hasTranslator: true,
+		 agentType: kb
 		});
 gameServers['negonlp_Neighbours'] = new multiplayer.GameServer(
-		/*requiredRoles=*/['Alex','Deniz'],
+		/*requiredRoles=*//*['Alex','Deniz'],
 		{roomTemplateName: 'RoomForNegoNlp',
 		 maxTimeSeconds:   30*60,
 		 events: require('./EventsForNegoChat'),
 		 domain: 'Neighbours',
 		 defaultPersonality: 'A',
 		 hasAgent: true,
-		 hasTranslator: true
-		});
-gameServers['negotranslate_JobCandidate'] = new multiplayer.GameServer(
-		/*requiredRoles=*/['Employer', 'Candidate'],
+		 hasTranslator: true,
+		 agentType: kb
+		});*/
+/*gameServers['negotranslate_JobCandidate'] = new multiplayer.GameServer(
+		/*requiredRoles=*//*['Employer', 'Candidate'],
 		{roomTemplateName: 'RoomForNegoTranslate',
 		 maxTimeSeconds:   30*60,
 		 events: require('./EventsForNegoChat'),
@@ -249,7 +255,7 @@ gameServers['negotranslate_JobCandidate'] = new multiplayer.GameServer(
 		 hasTranslator: false
 		});
 gameServers['negotranslate_Neighbours'] = new multiplayer.GameServer(
-		/*requiredRoles=*/['Alex','Deniz'],
+		/*requiredRoles=*//*['Alex','Deniz'],
 		{roomTemplateName: 'RoomForNegoTranslate',
 		 maxTimeSeconds:   30*60,
 		 events: require('./EventsForNegoChat'),
@@ -257,7 +263,7 @@ gameServers['negotranslate_Neighbours'] = new multiplayer.GameServer(
 		 defaultPersonality: 'A',
 		 hasAgent: true,
 		 hasTranslator: false
-		});
+		});*/
 gameServers['negonlp2_JobCandidate'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Employer', 'Candidate'],
 		{roomTemplateName: 'RoomForNegoNlp2',
@@ -266,7 +272,19 @@ gameServers['negonlp2_JobCandidate'] = new multiplayer.GameServer(
 		 domain: 'Job',
 		 defaultPersonality: 'short-term',
 		 hasAgent: true,
-		 hasTranslator: true
+		 hasTranslator: true,
+		 agentType: kb
+		});
+gameServers['negonlp3_JobCandidate'] = new multiplayer.GameServer(
+		/*requiredRoles=*/['Employer', 'Candidate'],
+		{roomTemplateName: 'RoomForNegoNlp',
+		 maxTimeSeconds:   30*60,
+		 events: require('./EventsForNegoChat'),
+		 domain: 'Job',
+		 defaultPersonality: 'short-term',
+		 hasAgent: true,
+		 hasTranslator: true,
+		 agentType: aat
 		});
 
 /**
@@ -799,7 +817,7 @@ app.get('/:gametype/play', getGameServer, function(req,res) {
 					gametype:req.params.gametype, 
 					opponentRole:opponentRole, 
 					role:agentRole, 
-					agent: agentType, 
+					agent: res.locals.gameServer.data.agentType, 
 					gameid: req.session.data.gameid}));
 			},3000);
 			//socktToAgentManager.write(JSON.stringify({gametype:req.params.gametype, opponentRole:opponentRole, role:agentRole, agent: agentType, gameid: req.session.data.gameid}));
