@@ -101,8 +101,11 @@ $(function() {
 		var proposer = data.id + (data.you? " (You)": "");
 		$("<div>Signed by "+proposer+"</div>").appendTo("#signatures");
 		partiesThatSigned[proposer] = true;
-		if (Object.keys(partiesThatSigned).length>=2)
+		if (data.you)
+				alert("Your final score is " + data.score);
+		if (Object.keys(partiesThatSigned).length>=2){
 			bye();
+		}
 			
 		addDataToHistoryTable({			
 			proposerClass: data.id + (data.you? " You": " Partner"),

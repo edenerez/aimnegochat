@@ -591,7 +591,7 @@ function gamesTable(gametype, game, unverified, action) //insert information to 
 		if (game.startTime){
 			games.addGames(gametype, game.gameid, game.startTime, unverified, game);
 			for (user in game.mapRoleToUserid){
-  				if ((!game.mapRoleToUserid[user].indexOf('agent')) || (!game.mapRoleToUserid[user].indexOf('EchoAgent'))){
+  				if (game.mapRoleToUserid[user].match('Agent')){
 					player.addPlayer(game.gameid, game.mapRoleToUserid[user], user, 'agent', gametype);
 				}
 				else{
@@ -687,6 +687,12 @@ var gameReport = new GameReport (questionnaireModel
 app.get('/:gametype,:PartitionKey/gameReport' , function (req,res){
 	gameReport.gameInfo (req,res,types);
 });
+
+app.get('/:gametype,:PartitionKey/gameReportFile' , function (req,res){
+	gameReport.gameInfoFile (req,res,types);
+});
+
+
 
 app.get('/:gametype,:RowKey/playerReport' , function (req,res){
 	gameReport.playerInfo (req,res,types);

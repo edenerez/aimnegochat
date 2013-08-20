@@ -71,6 +71,60 @@ Report.prototype = {
         });
      },
 
+     gameInfoFile: function(req, res, types) {
+    self = this;
+    var questionnaireModel = self.questionnaireModel;
+    var finalResultModel = self.finalResultModel;
+    var playerModel = self.playerModel;
+    var finalAgreementModel = self.finalAgreementModel;
+    var key = req.params.PartitionKey;
+    var gametype =  req.params.gametype;
+    var queryGameActions = azure.TableQuery
+    .select()
+    .from(self.GameActionModel.tableName)
+    .where('PartitionKey eq ?' , key);
+    self.GameActionModel.find(queryGameActions, function itemsFound(error, gameActions) {
+      var queryFinalResults = azure.TableQuery
+      .select()
+      .from(finalResultModel.tableName)
+      .where('PartitionKey eq ?' , key);
+      finalResultModel.find(queryFinalResults, function itemsFound(error, finelResults) {
+           var queryFinalAgreements = azure.TableQuery
+          .select()
+          .from(finalAgreementModel.tableName)
+          .where('PartitionKey eq ?' , key);
+          finalAgreementModel.find(queryFinalAgreements, function itemsFound(error, finelAgreements) {
+               var queryPlayer = azure.TableQuery
+              .select()
+              .from(playerModel.tableName)
+              .where('PartitionKey eq ?' , key);
+              playerModel.find(queryPlayer, function itemsFound(error, player) {
+                    // Erel: sort gameActions by increasing timestamp, then by row key:
+                    //console.dir(gameActions);
+                    if (gameActions) gameActions.sort(function(a, b){
+                        var diff = new Date(a.Timestamp) - new Date(b.Timestamp);
+                        if (Math.abs(diff)<2000)  // Sometimes, later rows have an earlier timestamp! allow a tolerance of 2 seconds. 
+                           diff = parseInt(a.RowKey) - parseInt(b.RowKey);
+                        //if (a.RowKey=='7')
+                        //  console.log(JSON.stringify(a)+"\n"+JSON.stringify(b)+"\n"+diff);
+                        return diff;
+                    });                
+
+                    res.render('gameReportsData',{
+                      title: 'Game Action List', 
+                      GameActionList: gameActions, 
+                      playerList: player,
+                      gametype: gametype,
+                      gameid: key, 
+                      FinalResultList: finelResults,
+                      FinalAgreementList: finelAgreements,
+                      gametypes: types});
+                  });
+               });
+           });
+        });
+     },
+
 
     scoreInfo: function(req, res, types) {
       self = this;

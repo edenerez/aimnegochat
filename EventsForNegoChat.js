@@ -184,8 +184,8 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		session_data.mapRoleToFinalResult = finalResult;
 		//finalResultTable.addFinalResult(session_data);
 		functions.messageLog(socket, game, "Sign", session_data, finalResult);
-		socket.emit('sign', {id: session_data.role, agreement: agreement, you: true});
-		socket.broadcast.to(game.gameid).emit('sign', {id: session_data.role, agreement: agreement, you: false});
+		socket.emit('sign', {id: session_data.role, agreement: agreement, you: true , score: utilityWithDiscount});
+		socket.broadcast.to(game.gameid).emit('sign', {id: session_data.role, agreement: agreement, you: false, score: utilityWithDiscount});
 	});
 	
 
