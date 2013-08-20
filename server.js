@@ -32,8 +32,7 @@ var configFileName = (process.argv[2]);
 //windows azure definitions:
 var azure = require('azure')
 , nconf = require('nconf');
-nconf.env()
-.file({ file: configFileName});
+nconf.file({ file: configFileName});
 var partitionKey = nconf.get("PARTITION_KEY")
 , accountName = nconf.get("STORAGE_NAME")
 , accountKey = nconf.get("STORAGE_KEY")
@@ -888,7 +887,7 @@ var supportInternetExplorerOnAzure = (process.argv.length>=4 && process.argv[3] 
 
 
 io.configure(function () { 
-	io.set('log level', 1);
+	//io.set('log level', 0);
 	if (supportInternetExplorerOnAzure)
 		io.set("transports", ["xhr-polling"]);
 	io.set("polling duration", 10); 
