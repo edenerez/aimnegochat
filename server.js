@@ -25,7 +25,7 @@ var cookieParser = express.cookieParser('biuailab')
 	;
 
 var kb = "KBAgent";
-var aat = "AATAgent";
+var aat = "NegoChatAgent";
 
 var configFileName = (process.argv[2]);
 
@@ -223,8 +223,8 @@ gameServers['negochat_Neighbours'] = new multiplayer.GameServer(
 		 hasAgent: false,
 		 hasTranslator: false
 		});
-/*gameServers['negonlp_JobCandidate'] = new multiplayer.GameServer(
-		/*requiredRoles=*//*['Employer', 'Candidate'],
+gameServers['negonlp_JobCandidate'] = new multiplayer.GameServer(
+		/*requiredRoles=*/['Employer', 'Candidate'],
 		{roomTemplateName: 'RoomForNegoNlp',
 		 maxTimeSeconds:   30*60,
 		 events: require('./EventsForNegoChat'),
@@ -235,7 +235,7 @@ gameServers['negochat_Neighbours'] = new multiplayer.GameServer(
 		 agentType: kb
 		});
 gameServers['negonlp_Neighbours'] = new multiplayer.GameServer(
-		/*requiredRoles=*//*['Alex','Deniz'],
+		/*requiredRoles=*/['Alex','Deniz'],
 		{roomTemplateName: 'RoomForNegoNlp',
 		 maxTimeSeconds:   30*60,
 		 events: require('./EventsForNegoChat'),
@@ -244,7 +244,7 @@ gameServers['negonlp_Neighbours'] = new multiplayer.GameServer(
 		 hasAgent: true,
 		 hasTranslator: true,
 		 agentType: kb
-		});*/
+		});
 /*gameServers['negotranslate_JobCandidate'] = new multiplayer.GameServer(
 		/*requiredRoles=*//*['Employer', 'Candidate'],
 		{roomTemplateName: 'RoomForNegoTranslate',
@@ -276,9 +276,20 @@ gameServers['negonlp2_JobCandidate'] = new multiplayer.GameServer(
 		 hasTranslator: true,
 		 agentType: kb
 		});
-gameServers['negonlp3_JobCandidate'] = new multiplayer.GameServer(
+gameServers['negonlpnc_JobCandidate'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Employer', 'Candidate'],
 		{roomTemplateName: 'RoomForNegoNlp',
+		 maxTimeSeconds:   30*60,
+		 events: require('./EventsForNegoChat'),
+		 domain: 'Job',
+		 defaultPersonality: 'short-term',
+		 hasAgent: true,
+		 hasTranslator: true,
+		 agentType: aat
+		});
+gameServers['negonlp2nc_JobCandidate'] = new multiplayer.GameServer(
+		/*requiredRoles=*/['Employer', 'Candidate'],
+		{roomTemplateName: 'RoomForNegoNlp2',
 		 maxTimeSeconds:   30*60,
 		 events: require('./EventsForNegoChat'),
 		 domain: 'Job',
