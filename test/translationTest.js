@@ -79,6 +79,12 @@ describe('translator', function() {
 
 	
 	var datasetO = [
+	          		{semantic: {}, natural:""},
+	          		{semantic: null, natural:""},
+	          		{semantic: undefined, natural:""},
+	          		{semantic: "", natural:""},
+	          		{semantic: {"Greet":true}, natural:"hi, I am ready to start negotiating"},
+	          		{semantic: {"Reject":{"Salary": "20,000 NIS"}}, natural:"I reject your offer about {\"Salary\":\"20,000 NIS\"}"},
 	          		{semantic: {"Accept":{"Salary": "20,000 NIS"}}, natural:"I accept your offer about {\"Salary\":\"20,000 NIS\"}"},
 	          		{semantic: {"Offer":[{"Salary": "20,000 NIS"},{"Working Hours": "8 hours"}]}, natural:"so what about 20000 salary, and offer with 8 hours"},
 	          		{semantic: {"Accept":{"Salary": "20,000 NIS"}, "Offer":{"Working Hours": "8 hours"}}, natural:"I accept your offer about {\"Salary\":\"20,000 NIS\"}, but 8 hours"},
@@ -95,7 +101,8 @@ describe('translator', function() {
 				function(semanticActions,naturalLanguageString) {
 					//console.log("semanticActions="+JSON.stringify(semanticActions));
 					//console.log("naturalLanguageString="+JSON.stringify(naturalLanguageString));
-					semanticActions.should.eql(datum.semantic);
+					if (datum.semantic) semanticActions.should.eql(datum.semantic);
+					else semanticActions.should.eql({});
 					naturalLanguageString.should.eql(datum.natural);
 					done();
 				});

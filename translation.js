@@ -28,7 +28,7 @@ function stringifyIfNeeded(s) {
  * May contain additional fields that will be sent as is to the translation server.
  * @param callback [mandatory] - called when the translation arrives.
  */
-var sendToTranslationServer = module.exports.Translator.prototype.sendToTranslationServer = function(requestObject, callback) {
+module.exports.Translator.prototype.sendToTranslationServer = function(requestObject, callback) {
 	logWithTimestamp(this.translatorName+" asks '"+requestObject.classifierName+"' to "+(requestObject.forward? "translate ": "generate ")+ JSON.stringify(requestObject.text));
 	requestObject.multiple = !(requestObject.text instanceof Array);
 	
@@ -66,15 +66,51 @@ var sendToTranslationServer = module.exports.Translator.prototype.sendToTranslat
 module.exports.Translator.prototype.translate = function(text, requestObject, callback) {
 	requestObject.text = text;
 	requestObject.forward = true;
-	sendToTranslationServer(requestObject, callback);
+	this.sendToTranslationServer(requestObject, callback);
 }
+
+
+
+// copied from CommonSocketEvents.js
+var templates = {
+		'Reject': [
+			"I don't accept your offer",
+			"I reject your offer",
+			"Your offer is unacceptable"
+		],
+		'Accept': [
+			"I accept your offer",
+			"I am OK with your offer",
+			"Your offer is acceptable"
+		],
+		'Offer': [
+			"I offer",
+			"My offer is",
+			"I suggest"
+		],
+		'Quit': [
+			"I go home",
+			"I quit",
+			"I blow up the negotiation"
+		],
+		'Greet': [
+			"Hi there",
+			"Hello",
+			"Nice to meet you"
+		],
+	};
 
 /**
  * @param mergedAction an object (hash), whose fields are semantic actions.
  * @param requestObject an object (hash), whose fields are sent to the translation server as informative fields only.  
  */
 module.exports.Translator.prototype.generate = function(mergedAction, requestObject, callback) {
-	mergedActionClone = extend({}, mergedAction); 
+	if (!mergedAction || Object.keys(mergedAction).length==0) {
+		process.nextTick(callback.bind(null, {}, ""));
+		return;
+	}
+
+	mergedActionClone = extend({}, mergedAction);
 	
 	requestObject.forward = false;
 	if ("Reject" in mergedActionClone) {
@@ -86,7 +122,7 @@ module.exports.Translator.prototype.generate = function(mergedAction, requestObj
 		console.log("*** mergedActionClone="+JSON.stringify(mergedActionClone));
 		if (Object.keys(mergedActionClone).length>0)  { // there are more actions besides accept (e.g. offer):
 			requestObject.text = deepmerge.unmerge(mergedActionClone).map(JSON.stringify);
-			sendToTranslationServer(requestObject, function(semanticAction, translationsArray) {
+			this.sendToTranslationServer(requestObject, function(semanticAction, translationsArray) {
 				naturalLanguageString += ", but "+deepmerge.joinWithAnd(translationsArray);
 				callback(mergedAction, naturalLanguageString);
 			});
@@ -95,7 +131,7 @@ module.exports.Translator.prototype.generate = function(mergedAction, requestObj
 		}
 	} else {
 		requestObject.text = deepmerge.unmerge(mergedActionClone).map(JSON.stringify);
-		sendToTranslationServer(requestObject, function(semanticAction, translationsArray) {
+		this.sendToTranslationServer(requestObject, function(semanticAction, translationsArray) {
 			var naturalLanguageString = deepmerge.joinWithAnd(translationsArray);
 			callback(mergedAction, naturalLanguageString);
 		});
