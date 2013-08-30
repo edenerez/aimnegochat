@@ -81,6 +81,7 @@ describe('translator', function() {
 	var datasetO = [
 	          		{semantic: {"Accept":{"Salary": "20,000 NIS"}}, natural:"I accept your offer about {\"Salary\":\"20,000 NIS\"}"},
 	          		{semantic: {"Offer":[{"Salary": "20,000 NIS"},{"Working Hours": "8 hours"}]}, natural:"so what about 20000 salary, and offer with 8 hours"},
+	          		{semantic: {"Accept":{"Salary": "20,000 NIS"}, "Offer":{"Working Hours": "8 hours"}}, natural:"I accept your offer about {\"Salary\":\"20,000 NIS\"}, but 8 hours"},
 	          	];
 
 	datasetO.forEach(function(datum) {
@@ -92,8 +93,8 @@ describe('translator', function() {
 				randomSeed: 4,
 				}, 
 				function(semanticActions,naturalLanguageString) {
-					console.log("semanticActions="+JSON.stringify(semanticActions));
-					console.log("naturalLanguageString="+JSON.stringify(naturalLanguageString));
+					//console.log("semanticActions="+JSON.stringify(semanticActions));
+					//console.log("naturalLanguageString="+JSON.stringify(naturalLanguageString));
 					semanticActions.should.eql(datum.semantic);
 					naturalLanguageString.should.eql(datum.natural);
 					done();

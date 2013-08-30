@@ -83,7 +83,8 @@ module.exports.Translator.prototype.generate = function(mergedAction, requestObj
 	} else if ("Accept" in mergedActionClone) {
 		var naturalLanguageString = "I accept your offer about "+JSON.stringify(mergedActionClone.Accept);
 		delete mergedActionClone["Accept"];
-		if (Object.keys(mergedActionClone)>0)  { // there are more actions besides accept (e.g. offer):
+		console.log("*** mergedActionClone="+JSON.stringify(mergedActionClone));
+		if (Object.keys(mergedActionClone).length>0)  { // there are more actions besides accept (e.g. offer):
 			requestObject.text = deepmerge.unmerge(mergedActionClone).map(JSON.stringify);
 			sendToTranslationServer(requestObject, function(semanticAction, translationsArray) {
 				naturalLanguageString += ", but "+deepmerge.joinWithAnd(translationsArray);
