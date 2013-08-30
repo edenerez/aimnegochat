@@ -181,6 +181,11 @@ app.configure('development', function(){
 
 var gameServers = {};
 var types = {};
+
+
+/*
+ * These servers are for menu-driven negotiation between a human and the KBAgent: 
+ */
 gameServers['negomenus_JobCandidate'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Employer','Candidate'],
 		{roomTemplateName: 'RoomForNegoMenus',
@@ -203,6 +208,10 @@ gameServers['negomenus_Neighbours'] = new multiplayer.GameServer(
 		 hasTranslator: false,
 		 agentType: kb
 		});
+
+/*
+ * These servers are for chat-based negotiation between two humans: 
+ */
 gameServers['negochat_JobCandidate'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Employer', 'Candidate'], 
 		{roomTemplateName: 'RoomForNegoChat',
@@ -223,6 +232,10 @@ gameServers['negochat_Neighbours'] = new multiplayer.GameServer(
 		 hasAgent: false,
 		 hasTranslator: false
 		});
+
+/*
+ * These servers are for chat-driven negotiation between a human and the KBAgent: 
+ */
 gameServers['negonlp_JobCandidate'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Employer', 'Candidate'],
 		{roomTemplateName: 'RoomForNegoNlp',
@@ -235,7 +248,7 @@ gameServers['negonlp_JobCandidate'] = new multiplayer.GameServer(
 		 agentType: kb
 		});
 gameServers['negonlp_Neighbours'] = new multiplayer.GameServer(
-		/*requiredRoles=*/['Alex','Deniz'],
+		['Alex','Deniz'],
 		{roomTemplateName: 'RoomForNegoNlp',
 		 maxTimeSeconds:   30*60,
 		 events: require('./EventsForNegoChat'),
@@ -245,6 +258,7 @@ gameServers['negonlp_Neighbours'] = new multiplayer.GameServer(
 		 hasTranslator: true,
 		 agentType: kb
 		});
+
 /*gameServers['negotranslate_JobCandidate'] = new multiplayer.GameServer(
 		/*requiredRoles=*//*['Employer', 'Candidate'],
 		{roomTemplateName: 'RoomForNegoTranslate',
@@ -265,6 +279,11 @@ gameServers['negotranslate_Neighbours'] = new multiplayer.GameServer(
 		 hasAgent: true,
 		 hasTranslator: false
 		});*/
+
+
+/*
+ * These servers are for chat-driven negotiation between a human and the KBAgent, with an alternative GUI: 
+ */
 gameServers['negonlp2_JobCandidate'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Employer', 'Candidate'],
 		{roomTemplateName: 'RoomForNegoNlp2',
@@ -276,6 +295,10 @@ gameServers['negonlp2_JobCandidate'] = new multiplayer.GameServer(
 		 hasTranslator: true,
 		 agentType: kb
 		});
+
+/*
+ * These servers are for chat-driven negotiation between a human and the NegoChatAgent: 
+ */
 gameServers['negonlpnc_JobCandidate'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Employer', 'Candidate'],
 		{roomTemplateName: 'RoomForNegoNlp',
@@ -287,6 +310,10 @@ gameServers['negonlpnc_JobCandidate'] = new multiplayer.GameServer(
 		 hasTranslator: true,
 		 agentType: aat
 		});
+
+/*
+ * These servers are for chat-driven negotiation between a human and the NegoChatAgent, with an alternative GUI: 
+ */
 gameServers['negonlp2nc_JobCandidate'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Employer', 'Candidate'],
 		{roomTemplateName: 'RoomForNegoNlp2',
@@ -298,6 +325,9 @@ gameServers['negonlp2nc_JobCandidate'] = new multiplayer.GameServer(
 		 hasTranslator: true,
 		 agentType: aat
 		});
+
+
+
 
 /**
  * http://stackoverflow.com/questions/16649529/ending-an-http-request-prematurely/16650056?noredirect=1#16650056

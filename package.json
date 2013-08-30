@@ -18,7 +18,13 @@
     "semaphore": "~1.0.1",
     "node-uuid": "~1.4.0",
     "request": "*",
-    "should": "*",
-    "json-ref": "~1.0.0"
+    "json-ref": "~1.0.0",
+    "sprintf": "*"
+  },
+  "devDependencies": {
+	    "should": "*"
+  },
+  "scripts": {
+	  "test": "mocha"
   }
 }

@@ -76,39 +76,3 @@ var unmerge = exports.unmerge = function(mergedObject, targetArray) {
 	}
 	return targetArray;
 }
-
-
-//
-// UNITEST
-//
-
-if (process.argv[1] === __filename) {
-	require('should');
-	
-	// should merge: 
-	
-	deepMerge ({insist: "Car"},{insist: "Salary"}).
-		should.eql({insist: ["Salary","Car"]});
-
-	var a = {offer: {issue1: 'value1'}, accept: true};
-	var b = {offer: {issue2: 'value2'}, reject: false};
-	deepMerge(a,b).should.eql(
-		{offer:{issue2:"value2",issue1:"value1"}, reject:false, accept:true});
-
-	// should merge array: 
-
-	deepMergeArray(a).should.eql(a);
-	deepMergeArray([a]).should.eql(a);
-
-	// should unmerge: 
-		
-	unmerge({insist: ["Salary","Car"]}).
-		should.eql([{insist: "Salary"},{insist: "Car"}]);
-	
-	unmerge({offer:{issue2:"value2",issue1:"value1"}, reject:false, accept:true}).
-		should.eql([ 
-			{ offer: { issue2: 'value2' } },
-			{ offer: { issue1: 'value1' } },
-			{ reject: false },
-			{ accept: true } ] );
-}
