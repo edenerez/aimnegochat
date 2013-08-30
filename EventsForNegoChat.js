@@ -43,26 +43,22 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		socket.broadcast.to(game.gameid).emit('negoactions', mergedAction); // pass the offer to the other player
 
 		if (announce) {
-			if (translator && !("Reject" in mergedAction) && !("Accept" in mergedAction)) {  // use NLG to generate a nice-looking announcement:
-				var unmergedActions = deepmerge.unmerge(mergedAction).map(JSON.stringify);
-				translator.sendToTranslationServer({
+			if (translator) {  // use NLG to generate a nice-looking announcement:
+				translator.generate(mergedAction, {
 					classifierName: session_data.role, 
-					text: unmergedActions, 
-					forward: false,
 					source: session_data.gametype,
 					accountName: functions.accountName,
 					remoteAddress: session_data.remoteAddress,
 					},
-					function(text,translations) {
-						console.log("\tonTranslation: generate("+JSON.stringify(text)+") = "+JSON.stringify(translations));
-						functions.announcement(socket, game, "Message", session_data, translations.join(", "));
+					function(semanticActions,naturalLanguageString) {
+						console.log("\tonTranslation: generate("+JSON.stringify(semanticActions)+") = "+naturalLanguageString);
+						functions.announcement(socket, game, "Message", session_data, naturalLanguageString);
 						if ("Offer" in mergedAction) // Send the score to the human (Ido's suggestion):
 							socket.broadcast.to(game.gameid).emit('yourUtilityFromPartnerOffer', utilityForOpponent(mergedAction.Offer));
 					});
-			} else {
-				for (var key in mergedAction) {
+			} else { // no translator - just send JSON to the clients 
+				for (var key in mergedAction)
 					functions.announcement(socket, game, key, session_data, mergedAction[key]); // send ALL players a textual description of the offer
-				}
 				if ("Offer" in mergedAction) // Send the score to the human (Ido's suggestion):
 					socket.broadcast.to(game.gameid).emit('yourUtilityFromPartnerOffer', utilityForOpponent(mergedAction.Offer));
 			}
@@ -92,10 +88,8 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 	socket.on('English', function (text) {
 		functions.announcement(socket, game, "Message", session_data, text);
 		if (translator) 
-			translator.sendToTranslationServer({
+			translator.translate(text, {
 				classifierName: session_data.role, 
-				text: text, 
-				forward: true,
 				source: session_data.gametype,
 				accountName: functions.accountName,
 				remoteAddress: session_data.remoteAddress,
@@ -121,10 +115,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 			onNegoActions(actions, false, text);
 	}
 
-	// The translator returned the semantic translation of the human's chat message
-	// if (translator) translator.onTranslation(onTranslation);
-
-	// The human manually approved the translations of the translator. Relevant for the negotranslate game only.
+	// The human manually approved the translations of the translator . Relevant for the negotranslate game only.
 	socket.on('approveTranslations', function(request) {
 		onTranslation(request.text, request.translations);
 	});

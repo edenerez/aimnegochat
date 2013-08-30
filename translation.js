@@ -7,6 +7,8 @@ var HOST=process.env.TRANSLATION_SERVER_HOST || "http://irsrv2.cs.biu.ac.il";
 var PORT=process.env.TRANSLATION_SERVER_PORT || 9995;
 var URL=HOST+":"+PORT+"/get";
 var request = require('request');
+var extend = require('util')._extend;
+var deepmerge = require('./deepmerge');
 
 function logWithTimestamp(message) {
 	console.log(new Date().toISOString()+" "+message);
@@ -26,7 +28,7 @@ function stringifyIfNeeded(s) {
  * May contain additional fields that will be sent as is to the translation server.
  * @param callback [mandatory] - called when the translation arrives.
  */
-exports.Translator.prototype.sendToTranslationServer = function(requestObject, callback) {
+var sendToTranslationServer = module.exports.Translator.prototype.sendToTranslationServer = function(requestObject, callback) {
 	logWithTimestamp(this.translatorName+" asks '"+requestObject.classifierName+"' to "+(requestObject.forward? "translate ": "generate ")+ JSON.stringify(requestObject.text));
 	requestObject.multiple = !(requestObject.text instanceof Array);
 	
@@ -48,19 +50,6 @@ exports.Translator.prototype.sendToTranslationServer = function(requestObject, c
 			console.log(url);
 			logWithTimestamp(self.translatorName + " receives error: "+error+", response="+JSON.stringify(response));
 			translations = requestObject.text;
-			
-			/*
-			if (requestObject.forward) {
-				translations = requestObject.text;
-			} else {
-				console.dir(requestObject.text);
-				if (Array.isArray(requestObject.text)) {
-					translations = requestObject.text.map(stringifyIfNeeded);
-				} else {
-					translations = stringifyIfNeeded(requestObject.text);
-				}
-			}
-			*/
 			if (!Array.isArray(translations))
 				translations = [translations];
 			logWithTimestamp(self.translatorName + " falls back to: "+translations.length+" translations from '"+self.classifierName+"' to "+JSON.stringify(requestObject.text) + ": "+JSON.stringify(translations));
@@ -68,6 +57,48 @@ exports.Translator.prototype.sendToTranslationServer = function(requestObject, c
 		if (callback)
 			callback(requestObject.text, translations);
 	});
+}
+
+/**
+ * @param text a string.
+ * @param requestObject an object (hash), whose fields are sent to the translation server as informative fields only.  
+ */
+module.exports.Translator.prototype.translate = function(text, requestObject, callback) {
+	requestObject.text = text;
+	requestObject.forward = true;
+	sendToTranslationServer(requestObject, callback);
+}
+
+/**
+ * @param mergedAction an object (hash), whose fields are semantic actions.
+ * @param requestObject an object (hash), whose fields are sent to the translation server as informative fields only.  
+ */
+module.exports.Translator.prototype.generate = function(mergedAction, requestObject, callback) {
+	mergedActionClone = extend({}, mergedAction); 
+	
+	requestObject.forward = false;
+	if ("Reject" in mergedActionClone) {
+		var naturalLanguageString = "I reject your offer about "+JSON.stringify(mergedActionClone.Reject);
+		process.nextTick(callback.bind(null, mergedAction, naturalLanguageString));
+	} else if ("Accept" in mergedActionClone) {
+		var naturalLanguageString = "I accept your offer about "+JSON.stringify(mergedActionClone.Accept);
+		delete mergedActionClone["Accept"];
+		if (Object.keys(mergedActionClone)>0)  { // there are more actions besides accept (e.g. offer):
+			requestObject.text = deepmerge.unmerge(mergedActionClone).map(JSON.stringify);
+			sendToTranslationServer(requestObject, function(semanticAction, translationsArray) {
+				naturalLanguageString += ", but "+deepmerge.joinWithAnd(translationsArray);
+				callback(mergedAction, naturalLanguageString);
+			});
+		} else { // only accept:
+			process.nextTick(callback.bind(null, mergedAction, naturalLanguageString));
+		}
+	} else {
+		requestObject.text = deepmerge.unmerge(mergedActionClone).map(JSON.stringify);
+		sendToTranslationServer(requestObject, function(semanticAction, translationsArray) {
+			var naturalLanguageString = deepmerge.joinWithAnd(translationsArray);
+			callback(mergedAction, naturalLanguageString);
+		});
+	}
 }
 
 
