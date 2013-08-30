@@ -12,6 +12,9 @@ function bidToString(bid) {
 	return result;
 }
 
+
+// NOTE: These translation templates are used only when there is no translator.
+// Otherwise, the code in "translation.js" is used.
 var templates = {
 	'Reject': [
 		"I don't accept your offer",
@@ -27,11 +30,6 @@ var templates = {
 		"I offer",
 		"My offer is",
 		"I suggest"
-	],
-	'Quit': [
-		"I go home",
-		"I quit",
-		"I blow up the negotiation"
 	],
 	'Greet': [
 		"Hi there",
@@ -54,7 +52,7 @@ socket.on('announcement', function (data) {
 			proposer: data.id + (data.you? " (You)": ""),
 			action: data.action,
 			util: "",
-			bid: template + JSON.stringify(data.msg).replace(/\"/g," "),
+			bid: template + JSON.stringify(data.msg).replace(/[\"\\]/g," "),
 			answered: "no"
 		});			// in datatable.js
 });
