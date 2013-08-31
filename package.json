@@ -19,6 +19,7 @@
     "node-uuid": "~1.4.0",
     "request": "*",
     "json-ref": "~1.0.0",
+    "seed-random": "*",
     "sprintf": "*"
   },
   "devDependencies": {

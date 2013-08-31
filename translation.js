@@ -9,6 +9,8 @@ var URL=HOST+":"+PORT+"/get";
 var request = require('request');
 var extend = require('util')._extend;
 var deepmerge = require('./deepmerge');
+var sprintf = require('sprintf');
+var sprintf = require('sprintf');
 
 function logWithTimestamp(message) {
 	console.log(new Date().toISOString()+" "+message);
@@ -72,33 +74,26 @@ module.exports.Translator.prototype.translate = function(text, requestObject, ca
 
 
 // copied from CommonSocketEvents.js
-var templates = {
+var naturalLanguageGenerationTemplates = {
 		'Reject': [
-			"I don't accept your offer",
-			"I reject your offer",
-			"Your offer is unacceptable"
+			"I don't accept your offer about %s",
+			"I cannot agree to %s",
+			"Your offer %s is unacceptable"
 		],
 		'Accept': [
-			"I accept your offer",
-			"I am OK with your offer",
-			"Your offer is acceptable"
+			"I accept your offer about %s",
+			"I agree to %s",
+			"Your offer %s is acceptable"
 		],
-		'Offer': [
-			"I offer",
-			"My offer is",
-			"I suggest"
-		],
-		'Quit': [
-			"I go home",
-			"I quit",
-			"I blow up the negotiation"
-		],
-		'Greet': [
-			"Hi there",
-			"Hello",
-			"Nice to meet you"
-		],
-	};
+};
+
+var randomNaturalLanguageString = function(action, argument) {
+	var template = "";
+	var templatesSet = naturalLanguageGenerationTemplates[action];
+	if (templatesSet)
+		template = templatesSet[Math.floor((Math.random()*templatesSet.length))];
+	return sprintf(template, JSON.stringify(argument));
+}
 
 /**
  * @param mergedAction an object (hash), whose fields are semantic actions.
@@ -110,16 +105,20 @@ module.exports.Translator.prototype.generate = function(mergedAction, requestObj
 		return;
 	}
 
+	if (requestObject.randomSeed) {
+		var seedRandom = require('seed-random');
+		seedRandom(requestObject.randomSeed, true);
+	}
+	
 	mergedActionClone = extend({}, mergedAction);
 	
 	requestObject.forward = false;
 	if ("Reject" in mergedActionClone) {
-		var naturalLanguageString = "I reject your offer about "+JSON.stringify(mergedActionClone.Reject);
+		var naturalLanguageString = randomNaturalLanguageString("Reject", mergedActionClone.Reject);
 		process.nextTick(callback.bind(null, mergedAction, naturalLanguageString));
 	} else if ("Accept" in mergedActionClone) {
-		var naturalLanguageString = "I accept your offer about "+JSON.stringify(mergedActionClone.Accept);
+		var naturalLanguageString = randomNaturalLanguageString("Accept", mergedActionClone.Accept);
 		delete mergedActionClone["Accept"];
-		console.log("*** mergedActionClone="+JSON.stringify(mergedActionClone));
 		if (Object.keys(mergedActionClone).length>0)  { // there are more actions besides accept (e.g. offer):
 			requestObject.text = deepmerge.unmerge(mergedActionClone).map(JSON.stringify);
 			this.sendToTranslationServer(requestObject, function(semanticAction, translationsArray) {
