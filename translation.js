@@ -9,12 +9,13 @@ var URL=HOST+":"+PORT+"/get";
 var request = require('request');
 var extend = require('util')._extend;
 var deepmerge = require('./deepmerge');
-var sprintf = require('sprintf');
-var sprintf = require('sprintf');
+var sprintf = require('sprintf').sprintf;
 
 function logWithTimestamp(message) {
 	console.log(new Date().toISOString()+" "+message);
 }
+
+logWithTimestamp(sprintf("%s", "translation.js loaded"));
 
 exports.Translator = function(translatorName) {
 	this.translatorName = translatorName;
