@@ -441,7 +441,7 @@ app.get('/:gametype/beginner/:role', getGameServer, function(req,res) {
 		} else {
 			setSessionForNewUser(req, res.locals.gameServer);
 			req.session.data.role = req.params.role;
-			res.redirect('/PreQuestionnaireDemography');
+			res.redirect('/'+req.params.gametype+'/prequestionnaireA');
 		}
 });
 
