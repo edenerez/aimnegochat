@@ -17,6 +17,11 @@ body.negochatstoragetest /*div#mainStatusRow */{
     margin: 30px;
 }
 
+p.wrongAnswer{
+  color: red;
+  background: yellow;
+}
+
 h1 {
 	text-align: center;
 }

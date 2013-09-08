@@ -5,7 +5,7 @@ block body
   div#analysisContainer
     form#questForm(action="#{action}",method="get",onsubmit="return ValidateRequiredFields();")
       h1 Negotiation tutorial
-      p 
+      p.wrongAnswer 
         b #{(query.mistake? 'Wrong answer in '+ query.wrong + '! Please try again.': '')}
       
       p Please read the <a target='_blank' href='http://biu-ai.com/Chat#{userRole}/'>tutorial presentation</a> (opens in a new window), then answer the questions below:
