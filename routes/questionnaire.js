@@ -82,7 +82,10 @@ Questionnaire.prototype = {
       if(err) {
         throw err;
       }
-      res.redirect('/ThankYou');
+      if (!req.session.data.assignmentId)
+        res.redirect('/ThankYou');
+      else
+        res.redirect('/ThankYouAmazon');
     });
   },
 

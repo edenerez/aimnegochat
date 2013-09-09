@@ -903,6 +903,12 @@ app.get('/ThankYou', function(req,res) {
 				AMTStatus: JSON.stringify(req.session.data)});
 });
 
+app.get('/ThankYouAmazon', function(req,res) {
+		res.render("ThankYouAmazon",	{
+				user: req.session.data,
+				AMTStatus: JSON.stringify(req.session.data)});
+});
+
 
 //
 // Step 4: define an HTTP server over the express application:

@@ -3,8 +3,5 @@ block title
   title Thank you for your time!
 block body
   form(action="#{user.turkSubmitTo}/mturk/externalSubmit",method="get")
-    h1 Thank you for your time! Click Finish to return to Amazon Turk:
-    input(type='hidden', name='assignmentId', value="#{user.assignmentId}");
-    input(type='hidden', name='hitId', value="#{user.hitId}");
-    input(type='hidden', name='workerId', value="#{user.workerId}");
-    input(type="submit", class="button", value="Finish")
+    h1 Thank you for participating!
+    
