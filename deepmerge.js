@@ -82,12 +82,14 @@ var unmerge = exports.unmerge = function(mergedObject, targetArray) {
 /**
  * Join an array, with commas between most elements, and "and" before the last element.
  */
-var joinWithAnd = exports.joinWithAnd = function (array, defaultObject) {
+var joinWithAnd = exports.joinWithAnd = function (array) {
 	return (
+			!array || array.length==0?
+					"":
 			array.length>1? 
 					array.slice(0,array.length-1).join(", ")+" and "+array[array.length-1]:
 			array.length==1?
 					array[0]:
-					JSON.stringify(defaultObject)
+					""
 			);
 }

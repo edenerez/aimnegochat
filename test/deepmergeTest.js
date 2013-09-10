@@ -43,6 +43,7 @@ describe('deep merge unit', function() {
 		dm.joinWithAnd(["x"]).should.equal("x");
 		dm.joinWithAnd(["x","y"]).should.equal("x and y");
 		dm.joinWithAnd(["x","y","z"]).should.equal("x, y and z");
-		dm.joinWithAnd([],false).should.equal("false");
+		dm.joinWithAnd([]).should.equal("");
+		dm.joinWithAnd(null).should.equal("");
 	})
 })
