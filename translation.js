@@ -133,6 +133,7 @@ module.exports.Translator.prototype.generate = function(mergedAction, requestObj
 		requestObject.text = deepmerge.unmerge(mergedActionClone).map(JSON.stringify);
 		this.sendToTranslationServer(requestObject, function(semanticAction, translationsArray) {
 			var naturalLanguageString = deepmerge.joinWithAnd(translationsArray);
+			if (!naturalLanguageString) naturalLanguageString = "";
 			callback(mergedAction, naturalLanguageString);
 		});
 	}

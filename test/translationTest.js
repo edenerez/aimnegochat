@@ -37,8 +37,8 @@ describe('translator', function() {
 	});
 
 	var datasetG = [
-	          		{semantic:[{"Accept":"previous"}], natural:["I'm agree to your offer"]},
-	          		{semantic:[{"Offer":{"Salary": "20,000 NIS"}},{"Offer":{"Working Hours": "8 hours"}}], natural:["so what about 20000 salary,","offer with 8 hours"]},
+	          		{semantic:[{"Accept":"previous"}], natural:["accept"]},
+	          		{semantic:[{"Offer":{"Salary": "20,000 NIS"}},{"Offer":{"Working Hours": "8 hours"}}], natural:["I offer 20000","offer with 8 hours"]},
 	          	];
 
 	datasetG.forEach(function(datum) {
@@ -83,10 +83,10 @@ describe('translator', function() {
 	          		{semantic: null, natural:""},
 	          		{semantic: undefined, natural:""},
 	          		{semantic: "", natural:""},
-	          		{semantic: {"Greet":true}, natural:"I am here to negotiate your contract provisions with you."},
+	          		{semantic: {"Greet":true}, natural:"fine, how are you?"},
 	          		{semantic: {"Reject":{"Salary": "20,000 NIS"}}, natural:"I cannot agree to {\"Salary\":\"20,000 NIS\"}"},
 	          		{semantic: {"Accept":{"Salary": "20,000 NIS"}}, natural:"I agree to {\"Salary\":\"20,000 NIS\"}"},
-	          		{semantic: {"Offer":[{"Salary": "20,000 NIS"},{"Working Hours": "8 hours"}]}, natural:"so what about 20000 salary, and offer with 8 hours"},
+	          		{semantic: {"Offer":[{"Salary": "20,000 NIS"},{"Working Hours": "8 hours"}]}, natural:"I offer 20000 and offer with 8 hours"},
 	          		{semantic: {"Accept":{"Salary": "20,000 NIS"}, "Offer":{"Working Hours": "8 hours"}}, natural:"I agree to {\"Salary\":\"20,000 NIS\"}, but I offer 8 hours"},
 	          	];
 
@@ -107,5 +107,18 @@ describe('translator', function() {
 					done();
 				});
 		});
+	});
+
+	it('handles generations of null items', function(done) {
+		translator.generate([], {
+			classifierName: "Employer", 
+			source: "unit-test",
+			remoteAddress: "127.0.0.1",
+			randomSeed: 4,
+			}, 
+			function(semanticActions,naturalLanguageString) {
+				naturalLanguageString.should.eql("");
+				done();
+			});
 	});
 })
