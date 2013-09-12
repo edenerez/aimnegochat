@@ -86,6 +86,10 @@ var naturalLanguageGenerationTemplates = {
 			"I agree to %s",
 			"Your offer %s is acceptable"
 		],
+
+		'ButOffer': '%s, but %s',
+		'AndOffer': '%s, and %s',
+		'CounterOffer': "%s. %s"
 };
 
 var randomNaturalLanguageString = function(action, argument) {
@@ -116,14 +120,29 @@ module.exports.Translator.prototype.generate = function(mergedAction, requestObj
 	requestObject.forward = false;
 	if ("Reject" in mergedActionClone) {
 		var naturalLanguageString = randomNaturalLanguageString("Reject", mergedActionClone.Reject);
-		process.nextTick(callback.bind(null, mergedAction, naturalLanguageString));
+		delete mergedActionClone["Reject"];
+		if (Object.keys(mergedActionClone).length>0)  { // there are more actions besides refect (e.g. counter-offer):
+			requestObject.text = deepmerge.unmerge(mergedActionClone).map(JSON.stringify);
+			this.sendToTranslationServer(requestObject, function(semanticAction, translationsArray) {
+				naturalLanguageString = sprintf(naturalLanguageGenerationTemplates["CounterOffer"], 
+						naturalLanguageString, 
+						deepmerge.joinWithAnd(translationsArray));
+				callback(mergedAction, naturalLanguageString);
+			});
+		} else { // only accept:
+			process.nextTick(callback.bind(null, mergedAction, naturalLanguageString));
+		}
 	} else if ("Accept" in mergedActionClone) {
 		var naturalLanguageString = randomNaturalLanguageString("Accept", mergedActionClone.Accept);
 		delete mergedActionClone["Accept"];
 		if (Object.keys(mergedActionClone).length>0)  { // there are more actions besides accept (e.g. offer):
+			var conjunction = mergedActionClone["conjunction"];
+			delete mergedActionClone["conjunction"];
 			requestObject.text = deepmerge.unmerge(mergedActionClone).map(JSON.stringify);
 			this.sendToTranslationServer(requestObject, function(semanticAction, translationsArray) {
-				naturalLanguageString += ", but "+deepmerge.joinWithAnd(translationsArray);
+				naturalLanguageString = sprintf(naturalLanguageGenerationTemplates[conjunction=='and'? "AndOffer": "ButOffer"], 
+						naturalLanguageString, 
+						deepmerge.joinWithAnd(translationsArray));
 				callback(mergedAction, naturalLanguageString);
 			});
 		} else { // only accept:

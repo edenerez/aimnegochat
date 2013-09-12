@@ -9,7 +9,6 @@ require('should');
 
 var translation = require('../translation');
 var translator = new translation.Translator("unitest-translator");
-//var dm = require('../deepmerge');
 
 
 
@@ -88,6 +87,9 @@ describe('translator', function() {
 	          		{semantic: {"Accept":{"Salary": "20,000 NIS"}}, natural:"I agree to {\"Salary\":\"20,000 NIS\"}"},
 	          		{semantic: {"Offer":[{"Salary": "20,000 NIS"},{"Working Hours": "8 hours"}]}, natural:"I offer 20000 and offer with 8 hours"},
 	          		{semantic: {"Accept":{"Salary": "20,000 NIS"}, "Offer":{"Working Hours": "8 hours"}}, natural:"I agree to {\"Salary\":\"20,000 NIS\"}, but I offer 8 hours"},
+	          		{semantic: {"Accept":{"Salary": "20,000 NIS"}, "Offer":{"Working Hours": "8 hours"}, "conjunction": "but"}, natural:"I agree to {\"Salary\":\"20,000 NIS\"}, but I offer 8 hours"},
+	          		{semantic: {"Accept":{"Salary": "20,000 NIS"}, "Offer":{"Working Hours": "8 hours"}, "conjunction": "and"}, natural:"I agree to {\"Salary\":\"20,000 NIS\"}, and I offer 8 hours"},
+	          		{semantic: {"Reject":{"Salary": "20,000 NIS"}, "Offer":{"Salary": "7,000 NIS"} }, natural:"I cannot agree to {\"Salary\":\"20,000 NIS\"}. can you work for 7,000 IS?"},
 	          	];
 
 	datasetO.forEach(function(datum) {
