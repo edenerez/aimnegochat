@@ -29,14 +29,18 @@ describe('deep merge unit', function() {
 
 	it('unmerges', function() {
 		dm.unmerge({insist: ["Salary","Car"]}).
-		should.eql([{insist: "Salary"},{insist: "Car"}]);
+			should.eql([{insist: "Salary"},{insist: "Car"}]);
 
+		dm.unmerge({offer:{issue2:"value2",issue1:"value1"}}).
+			should.eql([{ offer: { issue2: 'value2' } },
+			            { offer: { issue1: 'value1' } }]);
+		
 		dm.unmerge({offer:{issue2:"value2",issue1:"value1"}, reject:false, accept:true}).
-		should.eql([ 
-			{ offer: { issue2: 'value2' } },
-			{ offer: { issue1: 'value1' } },
-			{ reject: false },
-			{ accept: true } ] );
+			should.eql([ 
+			            { offer: { issue2: 'value2' } },
+			            { offer: { issue1: 'value1' } },
+			            { reject: false },
+			            { accept: true } ] );
 	});
 	
 	it('joins with and', function() {

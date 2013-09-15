@@ -6,10 +6,13 @@
 var HOST=process.env.TRANSLATION_SERVER_HOST || "http://irsrv2.cs.biu.ac.il";
 var PORT=process.env.TRANSLATION_SERVER_PORT || 9995;
 var URL=HOST+":"+PORT+"/get";
-var request = require('request');
-var extend = require('util')._extend;
-var deepmerge = require('./deepmerge');
-var sprintf = require('sprintf').sprintf;
+
+var request = require('request')
+  , extend = require('util')._extend
+  , deepmerge = require('./deepmerge') 
+  , sprintf = require('sprintf').sprintf
+  , async = require('async')
+  ;
 
 function logWithTimestamp(message) {
 	console.log(new Date().toISOString()+" "+message);
@@ -86,10 +89,16 @@ var naturalLanguageGenerationTemplates = {
 			"I agree to %s",
 			"Your offer %s is acceptable"
 		],
+		'StartNewIssue': [
+			"Now let's talk about the other issues",
+		],
+		'ChangeIssue': [
+   			"But I must change our previous agreement",
+   		],
 
-		'ButOffer': '%s, but %s',
-		'AndOffer': '%s, and %s',
-		'CounterOffer': "%s. %s"
+//		'ButOffer': '%s, but %s',
+//		'AndOffer': '%s, and %s',
+//		'CounterOffer': "%s. %s"
 };
 
 var randomNaturalLanguageString = function(action, argument) {
@@ -101,23 +110,62 @@ var randomNaturalLanguageString = function(action, argument) {
 }
 
 /**
- * @param mergedAction an object (hash), whose fields are semantic actions.
- * @param requestObject an object (hash), whose fields are sent to the translation server as informative fields only.  
+ * @param action an object (hash) with a SINGLE field (the action type).
+ * @param requestObject an object (hash), whose fields are sent to the translation server as informative fields only.
+ * @param callback (function) The callback gets two arguments (err, string)
  */
-module.exports.Translator.prototype.generate = function(mergedAction, requestObject, callback) {
+module.exports.Translator.prototype.generateSingleAction = function(requestObject, action, callback) {
+	var keys = Object.keys(action);
+	if (keys.length!=1) 
+		throw new Error("Expected an action with a single field, but got "+JSON.stringify(action));
+
+	var actionKey = keys[0];
+	var actionValue = action[actionKey];
+	if (actionKey in naturalLanguageGenerationTemplates) {
+		var naturalLanguageString = randomNaturalLanguageString(actionKey, actionValue);
+		process.nextTick(callback.bind(null/*this*/, null/*error*/, naturalLanguageString));
+	} else {
+		requestObject.text = deepmerge.unmerge(action).map(JSON.stringify);
+		this.sendToTranslationServer(requestObject, function(semanticAction, translationsArray) {
+			naturalLanguageString = deepmerge.joinWithAnd(translationsArray);
+			callback(null/*error*/, naturalLanguageString);
+		});
+	}
+}
+
+
+/**
+ * @param arrayOfActions an array that contains semantic actions.
+ * @param requestObject an object (hash), whose fields are sent to the translation server as informative fields only.
+ */
+module.exports.Translator.prototype.generate = function(arrayOfActions, requestObject, callback) {
+	if (!arrayOfActions || arrayOfActions.length==0) {
+		process.nextTick(callback.bind(null, {}, ""));
+		return;
+	}
+	requestObject.forward = false;
+	
+	async.map(arrayOfActions, this.generateSingleAction.bind(this, requestObject), function(err, translations) {
+		//console.log("*** translations="+JSON.stringify(translations));
+		callback(arrayOfActions, translations.join(". "));
+	});
+}
+
+
+/**
+ * @param mergedAction an object (hash), whose fields are semantic actions.
+ * @param requestObject an object (hash), whose fields are sent to the translation server as informative fields only.
+ * @note this is an old function that uses objects. the new function uses arrays.  
+ */
+module.exports.Translator.prototype.generateOLD = function(mergedAction, requestObject, callback) {
 	if (!mergedAction || Object.keys(mergedAction).length==0) {
 		process.nextTick(callback.bind(null, {}, ""));
 		return;
 	}
-
-	if (requestObject.randomSeed) {
-		var seedRandom = require('seed-random');
-		seedRandom(requestObject.randomSeed, true);
-	}
+	requestObject.forward = false;
 	
 	mergedActionClone = extend({}, mergedAction);
 	
-	requestObject.forward = false;
 	if ("Reject" in mergedActionClone) {
 		var naturalLanguageString = randomNaturalLanguageString("Reject", mergedActionClone.Reject);
 		delete mergedActionClone["Reject"];

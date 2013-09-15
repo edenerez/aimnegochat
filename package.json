@@ -20,7 +20,8 @@
     "request": "*",
     "json-ref": "~1.0.0",
     "seed-random": "*",
-    "sprintf": "*"
+    "sprintf": "*",
+    "async": "*"
   },
   "devDependencies": {
     "should": "*"
