@@ -39,12 +39,14 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 			//misunderstanding("I didn't understand what you mean because the actions list is empty");
 			return;
 		}
-		var mergedAction = deepmerge.deepMergeArray(actions);
-		socket.broadcast.to(game.gameid).emit('negoactions', mergedAction); // pass the offer to the other player
+
+		//var mergedAction = deepmerge.deepMergeArray(actions);
+		//socket.broadcast.to(game.gameid).emit('negoactions', mergedAction); // pass the offer to the other player
+		socket.broadcast.to(game.gameid).emit('negoactions', actions); // pass the actions to the other player
 
 		if (announce) {
 			if (translator) {  // use NLG to generate a nice-looking announcement:
-				translator.generate(mergedAction, {
+				translator.generate(actions, {
 					classifierName: session_data.role, 
 					source: session_data.gametype,
 					accountName: functions.accountName,
@@ -53,18 +55,25 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 					function(semanticActions,naturalLanguageString) {
 						console.log("\tonTranslation: generate("+JSON.stringify(semanticActions)+") = "+naturalLanguageString);
 						functions.announcement(socket, game, "Message", session_data, naturalLanguageString);
-						if ("Offer" in mergedAction) // Send the score to the human (Ido's suggestion):
-							socket.broadcast.to(game.gameid).emit('yourUtilityFromPartnerOffer', utilityForOpponent(mergedAction.Offer));
+						for (var i in actions) {
+							if ("Offer" in actions[i]) // Send the score to the human (Ido's suggestion):
+								socket.broadcast.to(game.gameid).emit('yourUtilityFromPartnerOffer', utilityForOpponent(actions[i].Offer));
+						}
 					});
 			} else { // no translator - just send JSON to the clients 
-				for (var key in mergedAction)
-					functions.announcement(socket, game, key, session_data, mergedAction[key]); // send ALL players a textual description of the offer
-				if ("Offer" in mergedAction) // Send the score to the human (Ido's suggestion):
-					socket.broadcast.to(game.gameid).emit('yourUtilityFromPartnerOffer', utilityForOpponent(mergedAction.Offer));
+//				for (var key in mergedAction)
+//					functions.announcement(socket, game, key, session_data, mergedAction[key]); // send ALL players a textual description of the offer
+//				if ("Offer" in mergedAction) // Send the score to the human (Ido's suggestion):
+//					socket.broadcast.to(game.gameid).emit('yourUtilityFromPartnerOffer', utilityForOpponent(mergedAction.Offer));
+				for (var i in actions) {
+					functions.announcement(socket, game, key, session_data, actions[i]); // send ALL players a textual description of the action
+					if ("Offer" in actions[i]) // Send the score to the human (Ido's suggestion):
+						socket.broadcast.to(game.gameid).emit('yourUtilityFromPartnerOffer', utilityForOpponent(actions[i].Offer));
+				}
 			}
 		} else { // this is a translation - write it to the log:
 			var translateData = {};
-			translateData.translate = mergedAction;
+			translateData.translate = actions;
 			translateData.text = text;
 			functions.messageLog(socket, game, "Translation", session_data, translateData);
 		}
