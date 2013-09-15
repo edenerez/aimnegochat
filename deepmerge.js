@@ -5,12 +5,13 @@
  * @since 2013-02
  */
 
+var extend = require('util')._extend;
+
 /**
  * Merge "source" into "target". If fields have equal name, merge them recursively.
  * @return the merged object (target).
  */
 var deepMerge = exports.deepMerge = function (source, target) {
-	//console.log("  deepMerge "+JSON.stringify(source)+" into "+JSON.stringify(target));
 	for (var key in source) {
 		var value = source[key];
 		if (!(key in target)) {
@@ -19,20 +20,20 @@ var deepMerge = exports.deepMerge = function (source, target) {
 		} else {
 			// existing value for "key" - recursively deep merge:
 			if (value instanceof Object) {
-				deepMerge(value, target[key]);
+				target[key] = deepMerge(value, extend({}, target[key]));
 			} else if (value instanceof Array && target[key] instanceof Array) {
 				target[key] = target[key].concat(value);
 			} else if (target[key] instanceof Array) {
-				target[key].push(value);
+				target[key] = target[key].concat([value]);
 			} else if (value instanceof Array) {
-				var first = target[key];
-				target[key] = value;
-				target[key].push(first);
+				target[key] = value.concat([target[key]]);
 			} else {
 				target[key] = [target[key], value]; // create an array from old and new values
 			}
 		}
 	}
+//	console.log("source="+JSON.stringify(source)+"   target="+JSON.stringify(target));
+	
 	return target;
 }
 
@@ -46,7 +47,7 @@ var deepMergeArray = exports.deepMergeArray = function(sources) {
 		return sources; // nothing to merge
 	var merged = {};
 	for (var i=0; i<sources.length; ++i) 
-		merged = exports.deepMerge(sources[i], merged);
+		exports.deepMerge(sources[i], merged);
 	return merged;
 }
 

@@ -26,6 +26,19 @@ describe('deep merge unit', function() {
 		dm.deepMergeArray(a).should.eql(a);
 		dm.deepMergeArray([a]).should.eql(a);
 	});
+	
+	it('does not destroy the original array', function() {
+		var actions = [ { Offer: { 'Working Hours': '9 hours' } },
+		          { ChangeIssue: 'previous' },
+		          { Offer: { Salary: '20,000 NIS' } } ];
+		var mergedAction = dm.deepMergeArray(actions);
+		actions.should.eql([ { Offer: { 'Working Hours': '9 hours' } },
+			   		          { ChangeIssue: 'previous' },
+					          { Offer: { Salary: '20,000 NIS' } } ]);
+		mergedAction.should.eql({ 
+			       Offer: { 'Working Hours': '9 hours',  Salary: '20,000 NIS' } ,
+		           ChangeIssue: 'previous' });
+	});
 
 	it('unmerges', function() {
 		dm.unmerge({insist: ["Salary","Car"]}).
