@@ -115,10 +115,13 @@ var randomNaturalLanguageString = function(action, argument) {
  * @param callback (function) The callback gets two arguments (err, string)
  */
 module.exports.Translator.prototype.generateSingleAction = function(requestObject, action, callback) {
-	var keys = Object.keys(action);
-	if (keys.length!=1) 
-		throw new Error("Expected an action with a single field, but got "+JSON.stringify(action));
+	if (!(action instanceof Object) || Object.keys(action).length!=1) {
+		var error = "NLG error: Expected an action with a single field, but got "+JSON.stringify(action);
+		process.nextTick(callback.bind(null/*this*/, error, error));
+		return;
+	}
 
+	var keys = Object.keys(action);
 	var actionKey = keys[0];
 	var actionValue = action[actionKey];
 	if (actionKey in naturalLanguageGenerationTemplates) {

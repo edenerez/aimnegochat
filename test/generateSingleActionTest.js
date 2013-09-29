@@ -13,7 +13,33 @@ var translator = new translation.Translator("unitest-translator");
 var seedRandom = require('seed-random');
 seedRandom(4, true);
 
+var requestObject = {
+		classifierName: "Employer",
+		source: "unit-test",
+		remoteAddress: "127.0.0.1",
+		forward: false,
+		randomSeed: 4,
+		};
+
 describe('translator', function() {
+	var dataset0 = [
+	          		{semantic: []},
+	          		{semantic: {}},
+	          		{semantic: null},
+	          		{semantic: undefined},
+	          		{semantic: ""},
+	          	];
+
+	dataset0.forEach(function(datum) {
+		it.only('handles empty semantic actions', function(done) {
+			translator.generateSingleAction(requestObject, datum.semantic, 
+				function(semantic, translation) {
+					translation.should.match(/error/i);
+					done();
+				});
+		});
+	});
+	
 	var datasetG = [
 	          		{semantic:{"Accept":{Salary:20000}}, natural:"I accept your offer about {\"Salary\":20000}"},
 	          		{semantic:{"ChangeIssue":"previous"}, natural:"But I must change our previous agreement"},
@@ -24,13 +50,6 @@ describe('translator', function() {
 	          	];
 
 	datasetG.forEach(function(datum) {
-		var requestObject = {
-				classifierName: "Employer",
-				source: "unit-test",
-				remoteAddress: "127.0.0.1",
-				forward: false,
-				randomSeed: 4,
-				};
 		it('generates text from an array of semantic actions', function(done) {
 			translator.generateSingleAction(requestObject, datum.semantic, 
 				function(error, translation) {
