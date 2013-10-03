@@ -316,7 +316,7 @@ gameServers['negonlpnc_JobCandidate'] = new multiplayer.GameServer(
  */
 gameServers['negonlpncAMT_JobCandidate'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Employer', 'Candidate'],
-		{roomTemplateName: 'RoomForNegoNlp',
+		{roomTemplateName: 'RoomForNegoNlpAMT',
 		 maxTimeSeconds:   30*60,
 		 events: require('./EventsForNegoChat'),
 		 domain: 'Job',

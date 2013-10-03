@@ -1,0 +1,33 @@
+extends layoutForChat
+
+block roomScripts
+    script(src='/javascripts/RoomForNegoChat.js')
+    script(src='/javascripts/IssueValueMenus.js')
+
+block previewNotes 
+
+block mainGui
+    if (locals.agent)
+     div.mainSection <!-- row #3: explanations to the user; possible values and utils -->
+       div This is a simulation of <b>negotiation</b> #{domain_description}
+       ul
+        li You play the role of the <b>#{role}</b>.
+        li You communicate with your opponent using <b>chat</b> only.
+        li The negotiation relates to several <b>issues</b>. For each issue, there are several possible <b>values</b>.
+        li Your score depends on the <b>values</b> in the final agreement, and on <b>time</b>. Click "Your scores" for details.
+        li You will get a bonus in cents: <b>score/4</b>. 
+        li Your score can be higher than 600. An average score is 400, which means 1 dollar bonus.
+        li Note that the bonus is much higher than the base payment, so it pays to negotiate longer and get a better agreement! 
+
+        li Use the menus below as a draft. Your partner cannot see them - you communicate with <b>chat</b> only. 
+        li This draft is <b>not binding</b> until both of you sign it.
+       div &nbsp;  
+       include GeniusMenus
+       div
+        button(id='signAgreement',disabled='disabled',title="The sign button is enabled only when your draft is consistent with your partner's draft on all issues") Sign the agreement
+
+    div#mainChatRow.mainSection <!-- row #4: chat -->
+      p <b>Please write a complete, grammatically correct English sentence.</b>
+      p 
+        input#chatMessage(value="hi")
+        button#btnSendChat Say
