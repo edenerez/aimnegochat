@@ -31,7 +31,7 @@ describe('translator', function() {
 	          	];
 
 	dataset0.forEach(function(datum) {
-		it.only('handles empty semantic actions', function(done) {
+		it('handles empty semantic actions', function(done) {
 			translator.generateSingleAction(requestObject, datum.semantic, 
 				function(semantic, translation) {
 					translation.should.match(/error/i);
