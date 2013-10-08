@@ -3,7 +3,11 @@
  */
 
 
+<<<<<<< HEAD
 // var HOST=process.env.TRANSLATION_SERVER_HOST || "http://irsrv2.cs.biu.ac.il";
+=======
+//var HOST=process.env.TRANSLATION_SERVER_HOST || "http://irsrv2.cs.biu.ac.il";
+>>>>>>> ac3b058ac9c54c52a83f9ba5b7ff9cca97872461
 var HOST=process.env.TRANSLATION_SERVER_HOST || "http://168.144.151.151";
 var PORT=process.env.TRANSLATION_SERVER_PORT || 9995;
 var URL=HOST+":"+PORT+"/get";
@@ -118,6 +122,7 @@ var randomNaturalLanguageString = function(action, argument) {
 module.exports.Translator.prototype.generateSingleAction = function(requestObject, action, callback) {
 	if (!(action instanceof Object) || Object.keys(action).length!=1) {
 		var error = "NLG error: Expected an action with a single field, but got "+JSON.stringify(action);
+		console.error(error);
 		process.nextTick(callback.bind(null/*this*/, error, error));
 		return;
 	}
@@ -143,11 +148,15 @@ module.exports.Translator.prototype.generateSingleAction = function(requestObjec
  * @param requestObject an object (hash), whose fields are sent to the translation server as informative fields only.
  */
 module.exports.Translator.prototype.generate = function(arrayOfActions, requestObject, callback) {
-	if (!arrayOfActions || arrayOfActions.length==0) {
+	if (!arrayOfActions || arrayOfActions.length===0) {
+		console.warn("NLG warning: arrayOfActions is "+JSON.stringify(arrayOfActions));
 		process.nextTick(callback.bind(null, {}, ""));
 		return;
 	}
 	requestObject.forward = false;
+	
+	if (!Array.isArray(arrayOfActions))
+		arrayOfActions = [arrayOfActions];
 	
 	async.map(arrayOfActions, this.generateSingleAction.bind(this, requestObject), function(err, translations) {
 		//console.log("*** translations="+JSON.stringify(translations));

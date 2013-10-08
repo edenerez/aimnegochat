@@ -84,7 +84,7 @@ $(function() {
 		}
 	});
 
-	socket.on('yourUtilityFromPartnerOffer', function (data) {
+	/*socket.on('yourUtilityFromPartnerOffer', function (data) {
 		setTimeout(function() {
 			addDataToHistoryTable({			
 				proposerClass: "Game",
@@ -95,7 +95,7 @@ $(function() {
 				answered: "no"
 			});
 		}, 500);
-	});
+	});*/
 		
 	socket.on('sign', function (data) {
 		var proposer = data.id + (data.you? " (You)": "");
