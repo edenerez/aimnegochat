@@ -316,7 +316,7 @@ gameServers['negonlpnc_JobCandidate'] = new multiplayer.GameServer(
  */
 gameServers['negonlpncAMT_JobCandidate'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Employer', 'Candidate'],
-		{roomTemplateName: 'RoomForNegoNlpAMT',
+		{roomTemplateName: 'RoomForNegoNlp2',
 		 maxTimeSeconds:   30*60,
 		 events: require('./EventsForNegoChat'),
 		 domain: 'Job',
@@ -341,6 +341,18 @@ gameServers['negonlp2nc_JobCandidate'] = new multiplayer.GameServer(
 		 agentType: aat
 		});
 
+gameServers['negonlp2ncAMT_JobCandidate'] = new multiplayer.GameServer(
+		/*requiredRoles=*/['Employer', 'Candidate'],
+		{roomTemplateName: 'RoomForNegoNlp2',
+		 maxTimeSeconds:   30*60,
+		 events: require('./EventsForNegoChat'),
+		 domain: 'Job',
+		 defaultPersonality: 'short-term',
+		 hasAgent: true,
+		 hasTranslator: true,
+		 agentType: aat
+		});
+
 
 
 
@@ -351,6 +363,9 @@ gameServers['negonlp2nc_JobCandidate'] = new multiplayer.GameServer(
  */
 function getGameServer(req, res, next) {
 	var gametype          = req.params.gametype;
+	if(gametype == "negonlpncAMT_JobCandidate"){
+		gametype = req.params.gametype = "negonlp2ncAMT_JobCandidate";
+	}
 	res.locals.gameServer = gameServers[gametype];
 
 	if (!res.locals.gameServer)
@@ -456,6 +471,7 @@ app.get('/:gametype/beginner/:role', getGameServer, function(req,res) {
 		} else {
 			setSessionForNewUser(req, res.locals.gameServer);
 			req.session.data.role = req.params.role;
+
 			res.redirect('/'+req.params.gametype+'/prequestionnaireA');
 		}
 });
@@ -634,6 +650,10 @@ function messageLog(socket, game, action, user, data) {
 
 	gamesTable(user.gametype, game, true, action);
 }
+
+app.get('/:gametype,:RowKey,:PartitionKey/deleteGameAction', express.basicAuth('biu','biu'), function (req,res){
+	games.deleteItem(req, res);
+});
 
 app.get('/:gametype/listAllGameAction' ,function (req,res){
 	 gameAction.listAll(req,res,types);
