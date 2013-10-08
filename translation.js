@@ -1,13 +1,6 @@
 /**
  * Translate text to semantic representation using a classifier-based translation server.
  */
-
-
-<<<<<<< HEAD
-// var HOST=process.env.TRANSLATION_SERVER_HOST || "http://irsrv2.cs.biu.ac.il";
-=======
-//var HOST=process.env.TRANSLATION_SERVER_HOST || "http://irsrv2.cs.biu.ac.il";
->>>>>>> ac3b058ac9c54c52a83f9ba5b7ff9cca97872461
 var HOST=process.env.TRANSLATION_SERVER_HOST || "http://168.144.151.151";
 var PORT=process.env.TRANSLATION_SERVER_PORT || 9995;
 var URL=HOST+":"+PORT+"/get";
