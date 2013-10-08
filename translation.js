@@ -3,7 +3,8 @@
  */
 
 
-var HOST=process.env.TRANSLATION_SERVER_HOST || "http://irsrv2.cs.biu.ac.il";
+// var HOST=process.env.TRANSLATION_SERVER_HOST || "http://irsrv2.cs.biu.ac.il";
+var HOST=process.env.TRANSLATION_SERVER_HOST || "http://168.144.151.151";
 var PORT=process.env.TRANSLATION_SERVER_PORT || 9995;
 var URL=HOST+":"+PORT+"/get";
 
