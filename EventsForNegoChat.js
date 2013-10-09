@@ -49,6 +49,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 					classifierName: session_data.role, 
 					source: session_data.gametype,
 					accountName: functions.accountName,
+					gameid: game.gameid,
 					remoteAddress: session_data.remoteAddress,
 					},
 					function(semanticActions,naturalLanguageString) {
