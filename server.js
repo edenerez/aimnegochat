@@ -353,7 +353,7 @@ gameServers['negonlp2ncAMT_JobCandidate'] = new multiplayer.GameServer(
 		 agentType: aat
 		});
 
-gameServers['NegoChatDemo_JobCandidate'] = new multiplayer.GameServer(
+gameServers['NegoChatAgentDemo_JobCandidate'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Employer', 'Candidate'],
 		{roomTemplateName: 'RoomForNegoNlp',
 		 maxTimeSeconds:   30*60,
@@ -363,6 +363,18 @@ gameServers['NegoChatDemo_JobCandidate'] = new multiplayer.GameServer(
 		 hasAgent: true,
 		 hasTranslator: true,
 		 agentType: aat
+		});
+
+gameServers['KBAgentDemo_JobCandidate'] = new multiplayer.GameServer(
+		/*requiredRoles=*/['Employer', 'Candidate'],
+		{roomTemplateName: 'RoomForNegoNlp',
+		 maxTimeSeconds:   30*60,
+		 events: require('./EventsForNegoChat'),
+		 domain: 'Job',
+		 defaultPersonality: 'short-term',
+		 hasAgent: true,
+		 hasTranslator: true,
+		 agentType: kb
 		});
 
 
@@ -446,10 +458,14 @@ app.get('/', express.basicAuth('biu','biu'), function(req,res) {
 		res.render("index",	{serverStartTime: serverStartTime, gametypes: types}); //Object.keys(gameServers)
 });
 
-var demogametype = "NegoChatDemo_JobCandidate";
+// Links for demo:
+var demogametype = "NegoChatAgentDemo_JobCandidate";
 var demorole = "Employer"
-app.get('/demo/:beginneroradvanced', function (req,res){
-	res.redirect('/'+demogametype+'/'+req.params.beginneroradvanced+"/"+demorole);
+app.get('/ncdemo/:beginneroradvanced', function (req,res){
+	res.redirect('/NegoChatAgentDemo_JobCandidate/'+req.params.beginneroradvanced+"/"+demorole);
+});
+app.get('/kbdemo/:beginneroradvanced', function (req,res){
+	res.redirect('/KBAgentDemo_JobCandidate/'+req.params.beginneroradvanced+"/"+demorole);
 });
 
 //ariel
