@@ -460,12 +460,13 @@ app.get('/', express.basicAuth('biu','biu'), function(req,res) {
 
 // Links for demo:
 var demogametype = "NegoChatAgentDemo_JobCandidate";
-var demorole = "Employer"
-app.get('/ncdemo/:beginneroradvanced', function (req,res){
-	res.redirect('/NegoChatAgentDemo_JobCandidate/'+req.params.beginneroradvanced+"/"+demorole);
+var demobeginneroradvanced = "beginner";
+var demorole = "Employer";
+app.get('/ncdemo', function (req,res){
+	res.redirect('/NegoChatAgentDemo_JobCandidate/'+demobeginneroradvanced+"/"+demorole);
 });
-app.get('/kbdemo/:beginneroradvanced', function (req,res){
-	res.redirect('/KBAgentDemo_JobCandidate/'+req.params.beginneroradvanced+"/"+demorole);
+app.get('/kbdemo', function (req,res){
+	res.redirect('/KBAgentDemo_JobCandidate/'+demobeginneroradvanced+"/"+demorole);
 });
 
 //ariel
