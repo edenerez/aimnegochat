@@ -483,55 +483,31 @@ app.get('/:gametype/gametype', function (req,res){
 		});
 });
 
-// This is the entry point for an Amazon Turker with no role:
-//    It will select his role, then lead him to the preview or to the pre-questionnaire:
-app.get('/:gametype/beginner', getGameServer, function(req,res) {
-		
-		if (amt.isPreview(req.query)) {
-			 res.redirect('/'+req.params.gametype+'/preview');
-		} else {
-			setSessionForNewUser(req, res.locals.gameServer);
-			req.session.data.role = res.locals.gameServer.nextRole();
-			res.redirect('/'+req.params.gametype+'/prequestionnaireA');
-		}
-});
-
-// This is the entry point for an Amazon Turker with a pre-specified role:
+// This is the entry point for an Amazon Turker with or without a pre-specified role:
 //    It will lead him to the preview or to the pre-questionnaire:
-app.get('/:gametype/beginner/:role', getGameServer, function(req,res) {
-		
+app.get('/:gametype/beginner/:role?', getGameServer, function(req,res) {
 		if (amt.isPreview(req.query)) {
 			 res.redirect('/'+req.params.gametype+'/preview');
 		} else {
 			setSessionForNewUser(req, res.locals.gameServer);
-			req.session.data.role = req.params.role;
-
+			req.session.data.role = req.params.role?
+					req.params.role:
+					res.locals.gameServer.nextRole();	
 			res.redirect('/'+req.params.gametype+'/prequestionnaireA');
 		}
 });
 
-// This is the entry point for a developer with no role:
-//    It will select his role, then lead him directly to the game.
-app.get('/:gametype/advanced', getGameServer, function(req,res) {
-		
-		if (amt.isPreview(req.query)) {
-			 res.redirect('/'+req.params.gametype+'/preview');
-		} else {
-			setSessionForNewUser(req, res.locals.gameServer);
-			req.session.data.role = res.locals.gameServer.nextRole();
-			res.redirect('/entergame');
-		}
-});
-
-// This is the entry point for a developer with a pre-specified role:
+// This is the entry point for a developer with or without a pre-specified role:
 //    It will lead him directly to the game.
-app.get('/:gametype/advanced/:role', getGameServer, function(req,res) {
+app.get('/:gametype/advanced/:role?', getGameServer, function(req,res) {
 
 		if (amt.isPreview(req.query)) {
 			 res.redirect('/'+req.params.gametype+'/preview');
 		} else {
 			setSessionForNewUser(req, res.locals.gameServer);
-			req.session.data.role = req.params.role;			
+			req.session.data.role = req.params.role?
+					req.params.role:
+					res.locals.gameServer.nextRole();	
 			res.redirect('/entergame');
 		}
 });
