@@ -35,7 +35,6 @@ block body
      td #{game.endTime? game.endTime.toString().replace(/T/,' ').replace(/Z/,' UTC'): '-'}
      if (show_unverified_games)
       td <b>#{!game.endTime && game.missingRolesArray? game.missingRolesArray.join(", "): "-"}</b>
-      td #{!game.endTime && game.timer? timeToString(game.timer.currentTimeSeconds): '-'}
      td #{game.mapRoleToFinalResult? JSON.stringify(game.mapRoleToFinalResult): '-'}
  script(src='/javascripts/sound.js')
  script(src='/socket.io/socket.io.js')

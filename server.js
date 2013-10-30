@@ -512,7 +512,20 @@ app.get('/:gametype/advanced/:role?', getGameServer, function(req,res) {
 		}
 });
 
-
+// This is the entry point for an Amazon Turker with no role:
+//    It will select his role, then lead him to the preview or to the pre-questionnaire:
+app.get('/:gametype/demo', getGameServer, function(req,res) {
+		
+		setSessionForNewUser(req, res.locals.gameServer);
+		req.session.data.role = res.locals.gameServer.nextRole();
+		res.render("demoPage",	{
+				next_action:'/PreQuestionnaireExam',
+				query: req.query,
+				userRole: req.session.data.role,
+				requiredRoles: gameServers[req.session.data.gametype].requiredRolesArray,
+				AMTStatus: JSON.stringify(req.session.data)});
+		
+});
 
 var entergameSemaphore = require('semaphore')(1);
 

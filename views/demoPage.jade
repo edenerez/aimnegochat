@@ -1,0 +1,16 @@
+extends layout
+block title
+  title Tutorial
+block body
+  div#analysisContainer
+    form#questForm(action="#{next_action}",method="get")
+      h3 Dear participant, 
+      h3  You are about to engage in a deliberation over the question whether to legalize the use of marijuana or not. Once you join the chat environment you'll be coupled with another participant, this might take a few minutes if you are the first player to join.
+      h3  During the deliberation phase, which is in a free chat environment, you and the other participant are asked to state your arguments in a clear fashion and refrain from irrelevant arguments. 
+      h3  When you feel you exhausted the deliberation with the other participant – please tell him that and exit the chat using the "opt out" button at the left bottom part of the chat page .
+      h3  For your participation you'll be awarded 30 cents  +  1 cent for every logical argument you use during the deliberation. 
+
+      h3  Best.
+
+      p
+        input(type="submit", class="button", value="Go and play")
