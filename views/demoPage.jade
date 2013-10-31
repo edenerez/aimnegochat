@@ -2,12 +2,22 @@ extends layout
 block title
   title Tutorial
 block body
-  div#analysisContainer
-    form#questForm(action="#{next_action}",method="get")
-      h3 Dear participant, 
- 
-
-      h3  Best.
-
-      p
-        input(type="submit", class="button", value="Go and play")
+  h1 Automated Negotiation Agents in English
+  img(style='float:right' src='/Enon_robot.jpg') 
+  p Come and chat with our top-quality negotiation agents!
+  p You are going to play a game of negotiation between an <b>employer</b> and a <b>job candidate</b>, about the job conditions of the candidate. 
+  p You can play either the employer or the candidate. The other role is played by one of our automated negotiators - <b>NegoChatAgent</b> or <b>KBAgent</b>.
+  p You negotiate by chatting in <b>natural language</b> (English). 
+  p To select a game, click one of the links below. The links lead to a page with detailed instructions. We even included an exam so that you can be sure you understood the rules.
+  p Happy negotiation! 
+  ul 
+    li 
+      a(href='/NegoChatAgentDemo_JobCandidate/demo/Employer') Play the <b>employer</b> against a <b>NegoChatAgent</b> candidate
+    li
+      a(href='/NegoChatAgentDemo_JobCandidate/demo/Candidate') Play the <b>candidate</b> against a <b>NegoChatAgent</b> employer
+    li
+      a(href='/KBAgentDemo_JobCandidate/demo/Employer') Play the <b>employer</b> against a <b>KBAgent</b> Candidate
+    li
+      a(href='/KBAgentDemo_JobCandidate/demo/Candidate') Play the <b>candidate</b> against a <b>KBAgent</b> Employer
+  p P.S. More details about the negotiation system and the agents will be published soon.
+   

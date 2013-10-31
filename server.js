@@ -462,6 +462,9 @@ app.get('/', express.basicAuth('biu','biu'), function(req,res) {
 var demogametype = "NegoChatAgentDemo_JobCandidate";
 var demobeginneroradvanced = "beginner";
 var demorole = "Employer";
+app.get('/demo', function (req,res){
+	res.render("demoPage");
+});
 app.get('/ncdemo', function (req,res){
 	res.redirect('/NegoChatAgentDemo_JobCandidate/'+demobeginneroradvanced+"/"+demorole);
 });
@@ -484,7 +487,7 @@ app.get('/:gametype/gametype', function (req,res){
 });
 
 // This is the entry point for an Amazon Turker with or without a pre-specified role:
-//    It will lead him to the preview or to the pre-questionnaire:
+//    It leads to the preview or to the pre-questionnaire:
 app.get('/:gametype/beginner/:role?', getGameServer, function(req,res) {
 		if (amt.isPreview(req.query)) {
 			 res.redirect('/'+req.params.gametype+'/preview');
@@ -497,8 +500,23 @@ app.get('/:gametype/beginner/:role?', getGameServer, function(req,res) {
 		}
 });
 
+//This is the entry point for the demo, with or without a pre-specified role:
+//	It leads directly to the presentation and exam.
+app.get('/:gametype/demo/:role?', getGameServer, function(req,res) {
+
+		if (amt.isPreview(req.query)) {
+			 res.redirect('/'+req.params.gametype+'/preview');
+		} else {
+			setSessionForNewUser(req, res.locals.gameServer);
+			req.session.data.role = req.params.role?
+					req.params.role:
+					res.locals.gameServer.nextRole();	
+			res.redirect('/'+req.params.gametype+'/PreQuestionnaireExam');
+		}
+});
+
 // This is the entry point for a developer with or without a pre-specified role:
-//    It will lead him directly to the game.
+//    It leads directly to the game.
 app.get('/:gametype/advanced/:role?', getGameServer, function(req,res) {
 
 		if (amt.isPreview(req.query)) {
@@ -510,21 +528,6 @@ app.get('/:gametype/advanced/:role?', getGameServer, function(req,res) {
 					res.locals.gameServer.nextRole();	
 			res.redirect('/entergame');
 		}
-});
-
-// This is the entry point for an Amazon Turker with no role:
-//    It will select his role, then lead him to the preview or to the pre-questionnaire:
-app.get('/:gametype/demo', getGameServer, function(req,res) {
-		
-		setSessionForNewUser(req, res.locals.gameServer);
-		req.session.data.role = res.locals.gameServer.nextRole();
-		res.render("demoPage",	{
-				next_action:'/PreQuestionnaireExam',
-				query: req.query,
-				userRole: req.session.data.role,
-				requiredRoles: gameServers[req.session.data.gametype].requiredRolesArray,
-				AMTStatus: JSON.stringify(req.session.data)});
-		
 });
 
 var entergameSemaphore = require('semaphore')(1);
