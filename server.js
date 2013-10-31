@@ -462,9 +462,6 @@ app.get('/', express.basicAuth('biu','biu'), function(req,res) {
 var demogametype = "NegoChatAgentDemo_JobCandidate";
 var demobeginneroradvanced = "beginner";
 var demorole = "Employer";
-app.get('/demo', function (req,res){
-	res.render("demoPage", {});
-});
 app.get('/ncdemo', function (req,res){
 	res.redirect('/NegoChatAgentDemo_JobCandidate/'+demobeginneroradvanced+"/"+demorole);
 });
@@ -472,10 +469,15 @@ app.get('/kbdemo', function (req,res){
 	res.redirect('/KBAgentDemo_JobCandidate/'+demobeginneroradvanced+"/"+demorole);
 });
 
+app.get('/demo', function(req,res) {
+	res.render("demoPage",	{users:users});
+});
+
 //ariel
 app.get('/users', function(req,res) {
 		res.render("Users",	{users:users});
 });
+
 
 app.get('/:gametype/gametype', function (req,res){
 	var gameType = req.params.gametype;
