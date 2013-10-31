@@ -470,7 +470,7 @@ app.get('/kbdemo', function (req,res){
 });
 
 app.get('/demo', function(req,res) {
-	res.render("demoPage",	{users:users});
+	res.render("demoPage");
 });
 
 //ariel
