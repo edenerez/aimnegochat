@@ -513,7 +513,7 @@ app.get('/:gametype/demo/:role?', getGameServer, function(req,res) {
 			req.session.data.role = req.params.role?
 					req.params.role:
 					res.locals.gameServer.nextRole();	
-			res.redirect('/'+req.params.gametype+'/PreQuestionnaireExam');
+			res.redirect('/PreQuestionnaireExam');
 		}
 });
 
