@@ -463,7 +463,7 @@ var demogametype = "NegoChatAgentDemo_JobCandidate";
 var demobeginneroradvanced = "beginner";
 var demorole = "Employer";
 app.get('/demo', function (req,res){
-	res.render("demoPage");
+	res.render("demoPage", {});
 });
 app.get('/ncdemo', function (req,res){
 	res.redirect('/NegoChatAgentDemo_JobCandidate/'+demobeginneroradvanced+"/"+demorole);
