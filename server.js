@@ -463,10 +463,12 @@ var demogametype = "NegoChatAgentDemo_JobCandidate";
 var demobeginneroradvanced = "beginner";
 var demorole = "Employer";
 app.get('/ncdemo', function (req,res){
-	res.redirect('/NegoChatAgentDemo_JobCandidate/'+demobeginneroradvanced+"/"+demorole);
+	//res.redirect('/NegoChatAgentDemo_JobCandidate/'+demobeginneroradvanced+"/"+demorole);
+	res.render("demoPage");
 });
 app.get('/kbdemo', function (req,res){
-	res.redirect('/KBAgentDemo_JobCandidate/'+demobeginneroradvanced+"/"+demorole);
+	//res.redirect('/KBAgentDemo_JobCandidate/'+demobeginneroradvanced+"/"+demorole);
+	res.render("demoPage");
 });
 
 app.get('/demo', function(req,res) {
