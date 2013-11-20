@@ -59,7 +59,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 							socket.broadcast.to(game.gameid).emit('yourUtilityFromPartnerOffer', utilityForOpponent(mergedAction.Offer));
 					});
 			} else { // no translator - just send JSON to the clients 
-				functions.announcement(socket, game, key, session_data, mergedAction); // send ALL players a textual description of the action
+				functions.announcement(socket, game, "Message", session_data, mergedAction); // send ALL players a textual description of the action
 				if ("Offer" in mergedAction) // Send the score to the human (Ido's suggestion):
 					socket.broadcast.to(game.gameid).emit('yourUtilityFromPartnerOffer', utilityForOpponent(mergedAction.Offer));
 			}
