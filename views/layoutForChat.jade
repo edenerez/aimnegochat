@@ -19,9 +19,23 @@ block body
     script(src='/javascripts/CommonSocketEvents.js')
     block roomScripts
 
+  if (locals.preview)
+    script(src='/javascripts/AMTtest.js')
+
   div#mainPanel
     if (locals.preview)
       div.mainSection#noJavascriptSupport This game works on Firefox and Chrome browsers only.
+      div.mainSection#noJavascriptSupport You can't play twice. For check if you can play, please insert your workerId and pres the button.
+        form(onClick='canIplay()') 
+           input(type='text', id='workerid')
+           input(type='button', value='check')
+           input(type="hidden", id="workers", value="#{wprkers}")
+        p#canPlay(Style="display: none") You can play! :)
+        p#cannotPlay(Style="display: none") You CAN NOT play!
+        P#present
+          
+
+
       block previewNotes
     
     block statusAndButtons

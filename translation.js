@@ -2,7 +2,7 @@
  * Translate text to semantic representation using a classifier-based translation server.
  */
 var HOST=process.env.TRANSLATION_SERVER_HOST || "http://168.144.151.151";
-var PORT=process.env.TRANSLATION_SERVER_PORT || 9995;
+var PORT=process.env.TRANSLATION_SERVER_PORT || 9996;
 var URL=HOST+":"+PORT+"/get";
 
 var request = require('request')

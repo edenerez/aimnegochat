@@ -18,6 +18,7 @@ block content
          th turnsFromStart
          th utilityWithoutDiscount
          th utilityWithDiscount
+         th country
          th Delete
        - if (FinalResultList !== undefined) 
          each FinalResult in FinalResultList
@@ -29,6 +30,7 @@ block content
             td #{FinalResult.turnsFromStart}
             td #{FinalResult.utilityWithoutDiscount}
             td #{FinalResult.utilityWithDiscount}
+            td #{FinalResult.country}
             td 
               a(href= "/#{gametype},#{FinalResult.RowKey},#{FinalResult.PartitionKey}/deleteFinalResult") deleteMe 
                   

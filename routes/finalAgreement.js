@@ -13,7 +13,7 @@ function FinalAgreement(FinalAgreementModel) {
 
 FinalAgreement.prototype = {
 
-  addFinalAgreement: function(issue, val, gameid) {
+  addFinalAgreement: function(issue, val, gameid,country) {
     var self = this; 
 
     var item = new Object();
@@ -22,6 +22,7 @@ FinalAgreement.prototype = {
     item.value = val;
     this.check = true;
     item.PartitionKey = gameid;
+    item.country = country;
     console.log(item);
     self.FinalAgreementModel.add(item, function itemAdded(error) {
       if(error) {
@@ -31,13 +32,13 @@ FinalAgreement.prototype = {
   },
   
   
-  listAll: function(req, res, types) {
+  listAll: function(req, res, types,country) {
     self = this;
     var query = azure.TableQuery
       .select()
       .from(self.FinalAgreementModel.tableName);
     self.FinalAgreementModel.find(query, function itemsFound(err, items) {
-      res.render('FinalAgreementsData',{title: 'Final Agreement List', FinalAgreementList: items, gametype: req.params.gametype, gametypes: types});
+      res.render('FinalAgreementsData',{title: 'Final Agreement List', FinalAgreementList: items, gametype: req.params.gametype, gametypes: types,country:country});
     });
   },
 

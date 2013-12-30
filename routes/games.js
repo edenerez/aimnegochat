@@ -28,6 +28,7 @@ Games.prototype = {
     item.startTime = JSON.stringify(startTime);
     item.active = true;
     item.unverified = JSON.stringify(unverified);
+    item.country = game.country;
    
     self.GamesModel.add(item, function itemAdded(error) {
       if(error) {
@@ -37,7 +38,7 @@ Games.prototype = {
   },
 
 
-  listAll: function(req, res,types) {
+  listAll: function(req, res,types,country) {
     var self = this;
     var query = azure.TableQuery
       .select()
@@ -52,7 +53,8 @@ Games.prototype = {
         title: 'Games List', 
         gamesList: items, 
         gametype: req.params.gametype,  
-        gametypes: types});
+        gametypes: types,
+        country:country});
     });
   },
 

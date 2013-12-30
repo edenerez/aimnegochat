@@ -40,5 +40,9 @@ block body
          tr
            td.label Name:
            td.field
-              input(name='item[yourname]')        
-      input(type="submit", class="button", value="Continue")
+              input(name='item[yourname]') 
+      if (canPlay)
+        input(type="submit", class="button", value="Continue")
+      else
+        p You played already and can't paly again. Please return the hit.
+

@@ -13,7 +13,7 @@ function FinalResult(FinalResultModel) {
 
 FinalResult.prototype = {
 
-  addFinalResult: function(results, userid, role, gameid) {
+  addFinalResult: function(results, userid, role, gameid, country) {
     var self = this; 
 
     var item = new Object();
@@ -24,6 +24,7 @@ FinalResult.prototype = {
     item.role = role;
     item.RowKey = userid;
     item.PartitionKey = gameid;
+    item.country = country;
     console.log(item);
     self.FinalResultModel.add(item, function itemAdded(error) {
       if(error) {
@@ -33,13 +34,13 @@ FinalResult.prototype = {
   },
   
   
-  listAll: function(req, res, types) {
+  listAll: function(req, res, types,country) {
     self = this;
     var query = azure.TableQuery
       .select()
       .from(self.FinalResultModel.tableName);
     self.FinalResultModel.find(query, function itemsFound(err, items) {
-      res.render('finalResultsData',{title: 'Final Result List', FinalResultList: items, gametype: req.params.gametype, gametypes: types});
+      res.render('finalResultsData',{title: 'Final Result List', FinalResultList: items, gametype: req.params.gametype, gametypes: types, country:country});
     });
   },
 

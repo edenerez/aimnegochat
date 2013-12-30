@@ -11,14 +11,14 @@ function Questionnaire(questionnaireModel) {
 }
 
 Questionnaire.prototype = {
-  listAll: function(req, res, types) {
+  listAll: function(req, res, types,country) {
     self = this;
     var query = azure.TableQuery
       .select()
       .from(self.questionnaireModel.tableName);
       //.where('datastatus eq ?', 0);
     self.questionnaireModel.find(query, function itemsFound(err, items) {
-      res.render('questionnaireData',{title: 'Questionnaire List', questionnaireList: items ,gametype: req.params.gametype,  gametypes: types});
+      res.render('questionnaireData',{title: 'Questionnaire List', questionnaireList: items ,gametype: req.params.gametype,  gametypes: types,country:country});
     });
   },
   
@@ -29,6 +29,7 @@ Questionnaire.prototype = {
     item.RowKey = req.session.data.userid;
     item.userid = req.session.data.userid;
     item.gametype = req.session.data.gametype;
+    item.country1 = req.session.data.country;
     item.browserType = req.session.data.browserType + req.session.data.browserVersion;
     //item.gameid = req.session.data.gameid ? req.session.data.gameid : NaN; // doesn't work either - why?
     item.assignmentId = req.session.data.assignmentId ? req.session.data.assignmentId : NaN; //null throw the program. undefine ignore it. mayby to put some string like "no amazonTurk"
@@ -64,7 +65,8 @@ Questionnaire.prototype = {
   },
   
   demographyQuestionnaire: function(req,res) {
-    res.render("PreQuestionnaireDemographyA", {gametype: req.params.gametype});
+    console.log("canPlay:" +req.session.data.canPlay)
+    res.render("PreQuestionnaireDemographyA", {gametype: req.params.gametype, canPlay: req.session.data.canPlay});
   },
 
   deleteQuestionnaireTable: function(req,res) {

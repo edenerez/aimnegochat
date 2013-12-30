@@ -15,6 +15,7 @@ block content
          th Start Time
          th End Time
          th Ended In
+         th country
          th Active
          th Delete
        - if (gamesList !== undefined) 
@@ -27,6 +28,7 @@ block content
               td #{games.startTime}
               td #{games.endTime}
               td #{games.endedIn}
+              td #{games.country}
               td
                 input(type="hidden", name="#{games.RowKey}", value="#{games.RowKey}")
                 input(type="checkbox", name="active", value="#{!games.active}", checked=games.active)
