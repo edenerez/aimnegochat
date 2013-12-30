@@ -19,6 +19,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 	} else {
 		try {
 			agent = functions.getActualAgent(session_data.domain, session_data.role, session_data.personality);
+			//console.dir()
 		} catch (error) {
 			console.error("\n\nERROR: Cannot initialize agent!");
 			console.dir(error);
@@ -35,8 +36,8 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 	var onNegoActions = function (actions, announce, text) {
 		console.log(session_data.role+" negoactions: "+JSON.stringify(actions));
 		console.log("-------------------------------------------");
-		if (!actions) {
-			//misunderstanding("I didn't understand what you mean because the actions list is empty");
+		if (!actions && session_data.gametype != "negochatWithAgent_JobCandidate") {
+			misunderstanding("I didn't understand what you mean because the actions list is empty");
 			return;
 		}
 
@@ -46,7 +47,10 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		if (announce) {
 			if (translator) {  // use NLG to generate a nice-looking announcement:
 				translator.generate(actions, {
-					classifierName: session_data.role, 
+					classifierName: session_data.role+"-"+session_data.country, 
+					country:session_data.country, 
+					agentType: session_data.agentType,
+					numAction: game.actionNumber,
 					source: session_data.gametype,
 					accountName: functions.accountName,
 					gameid: game.gameid,
@@ -68,6 +72,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 			translateData.translate = actions;
 			translateData.text = text;
 			functions.messageLog(socket, game, "Translation", session_data, translateData);
+			functions.messageLog(socket, game, "CorrectTranslation", session_data, "");
 		}
 	};
 
@@ -88,11 +93,24 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 	// A human chat-player sent an English chat message - send it to all other users, and translate to semantics:
 	socket.on('English', function (text) {
 		functions.announcement(socket, game, "Message", session_data, text);
+		/*console.log("classifierName: "+session_data.role+"-"+session_data.country+
+				"\ncountry: "+session_data.country+
+				"\nagentType: "+session_data.agentType+
+				"\nnumAction: "+game.actionNum+
+				"\nsource: "+session_data.gametype+
+				"\naccountName: "+functions.accountName+
+				"\ngameid: "+game.gameid+
+				"\nremoteAddress: "+session_data.remoteAddress+
+				"\n==========================================================")*/
 		if (translator) 
 			translator.translate(text, {
-				classifierName: session_data.role, 
+				classifierName: session_data.role+"-"+session_data.country, 
+				country:session_data.country, 
+				agentType: session_data.agentType,
+				numAction: game.actionNumber,
 				source: session_data.gametype,
 				accountName: functions.accountName,
+				gameid: game.gameid,
 				remoteAddress: session_data.remoteAddress,
 				}, 
 				onTranslation);
@@ -101,7 +119,11 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 	var onTranslation = function(text, translations) {
 			console.log("\tonTranslation: translate("+JSON.stringify(text)+") = "+JSON.stringify(translations));
 			if (!translations || translations.length==0) {
-				misunderstanding("I didn't understand your message: '"+text+"'. Please say this in other words");
+				console.log(session_data.gametype);
+				if(session_data.gametype != "negochatWithAgent_JobCandidate")
+					misunderstanding("I didn't understand your message: '"+text+"'. Please say this in other words");
+				functions.messageLog(socket, game, "Translation", session_data, "");
+				functions.messageLog(socket, game, "CorrectTranslation", session_data, "");
 				return;
 			}
 			try {
@@ -249,6 +271,14 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		functions.messageLog(socket, game, "Opt-out", session_data, "");
 		if (!partnerInitiative){//tell all other players in this game that their partner optout.
 			socket.broadcast.to(game.gameid).emit('yourPartnerOpt-out', "");
+			console.log("Shalom");
+			console.log("Shalom");
+			console.log("Shalom");
+			console.log("Shalom");
+			console.log("Shalom");
+			console.log("Shalom");
+			console.log("Shalom");
+			console.log("Shalom");
 		}
 	});
 	
