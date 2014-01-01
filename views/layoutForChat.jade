@@ -19,7 +19,7 @@ block body
     script(src='/javascripts/CommonSocketEvents.js')
     block roomScripts
 
-  if (locals.preview)
+
     script(src='/javascripts/AMTtest.js')
 
   div#mainPanel
@@ -33,12 +33,18 @@ block body
         p#canPlay(Style="display: none") You can play! :)
         p#cannotPlay(Style="display: none") You CAN NOT play!
         P#present
-          
+    
+                
 
 
       block previewNotes
     
     block statusAndButtons
+     if (!locals.preview)
+      div.mainSection#waiting 
+        span.key Please wait to your partner.   
+        span#value(Style="font-weight:bold; color: blue;") 5m, 00s  
+        p The waiting time is usually lower
       div.mainSection#mainStatusRow <!-- row #2: status and buttons -->
         table
           tr
@@ -47,7 +53,7 @@ block body
               span.value Status: #{locals.preview? "This is a preview only!": "Connecting..."}
             td#remainingTime
               span.key Remaining time:
-              span.value
+              span.value#gameTimer
             td
               button#UtilityOfCurrent.btnUtility Your scores
             td

@@ -292,6 +292,10 @@ div.mainSection {
 	border-color: #F00;
 	font-weight: bold;
 }
+#waiting{
+	border-color: #F00;
+font-weight: bold;
+}
 
 #mainStatusRow table {
 	width: 100%;

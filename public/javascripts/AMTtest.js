@@ -19,7 +19,31 @@ function canIplay(workers){
 		else{
 			document.getElementById("canPlay").style.display = "block";
 			document.getElementById("cannotPlay").style.display = "none";
+
 		}
 	}
 }
+
+
+var days, hours, minutes, seconds;
+
+var target_time = new Date(); // for now
+target_time.setMinutes(target_time.getMinutes()+5);
+target_time = target_time.getTime();
+//minutes = target_time.getMinutes(); // =>  30
+//seconds = target_time.getSeconds();
+setInterval(function () {
+	var countdown = document.getElementById("value");
+    curr_time = new Date().getTime();
+    var seconds_left = (target_time - curr_time) / 1000;
+    days = parseInt(seconds_left / 86400);
+	seconds_left = seconds_left % 86400;
+	 
+	hours = parseInt(seconds_left / 3600);
+	seconds_left = seconds_left % 3600;
+	  
+	minutes = parseInt(seconds_left / 60);
+	seconds = parseInt(seconds_left % 60);
+	countdown.innerHTML =  minutes + "m, " + seconds + "s";
+}, 1000);
 

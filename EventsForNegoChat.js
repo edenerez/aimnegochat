@@ -50,7 +50,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 					classifierName: session_data.role+"-"+session_data.country, 
 					country:session_data.country, 
 					agentType: session_data.agentType,
-					numAction: game.actionNumber,
+					numAction: game.actionNum,
 					source: session_data.gametype,
 					accountName: functions.accountName,
 					gameid: game.gameid,
@@ -102,18 +102,19 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 				"\ngameid: "+game.gameid+
 				"\nremoteAddress: "+session_data.remoteAddress+
 				"\n==========================================================")*/
-		if (translator) 
+		if (translator) {
 			translator.translate(text, {
 				classifierName: session_data.role+"-"+session_data.country, 
 				country:session_data.country, 
 				agentType: session_data.agentType,
-				numAction: game.actionNumber,
+				numAction: game.actionNum,
 				source: session_data.gametype,
 				accountName: functions.accountName,
 				gameid: game.gameid,
 				remoteAddress: session_data.remoteAddress,
 				}, 
 				onTranslation);
+		}
 	});
 
 	var onTranslation = function(text, translations) {
@@ -271,9 +272,6 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		functions.messageLog(socket, game, "Opt-out", session_data, "");
 		if (!partnerInitiative){//tell all other players in this game that their partner optout.
 			socket.broadcast.to(game.gameid).emit('yourPartnerOpt-out', "");
-			console.log("Shalom");
-			console.log("Shalom");
-			console.log("Shalom");
 			console.log("Shalom");
 			console.log("Shalom");
 			console.log("Shalom");

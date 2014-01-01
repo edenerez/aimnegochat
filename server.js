@@ -249,7 +249,7 @@ gameServers['negochat_JobCandidate'] = new multiplayer.GameServer(
 		});
 gameServers['negochatWithAgent_JobCandidate'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Employer', 'Candidate'], 
-		{roomTemplateName: 'RoomForNegoChat2',
+		{roomTemplateName: 'RoomForNegoNlpAMT',
 		 maxTimeSeconds:   30*60,
 		 events: require('./EventsForNegoChat'),
 		 domain: 'Job',
@@ -785,6 +785,12 @@ function gamesTable(gametype, game, unverified, action) //insert information to 
 				}
 			}
 		}
+		/*switch(action){
+			case "Sign": {game.endedIn = "Sign"; break;}
+			case "Opt-out": {game.endedIn = "Opt-out"; break;}
+			case "TimeOut": {game.endedIn = "TimeOut"; break;}
+			break;
+		}*/
 	}
 	if (action == "Disconnect" ){
 		if (game.startTime){
@@ -1198,7 +1204,7 @@ io.sockets.on('connection', function (socket) {
 							gameid: game.gameid,
 							country:game.country}));
 					}
-				},30000);
+				},300000);
 			
 
 
