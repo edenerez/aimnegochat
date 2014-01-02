@@ -93,7 +93,7 @@ exports.readAMTfile = function(){
 
 exports.isAMTworkerExcist = function(workerid){
  workers = (this.readAMTfile());
- console.log(workers);
+ //console.log(workers);
 // workers = workers.split("\n");
  var excist = false;
  for(worker in workers){

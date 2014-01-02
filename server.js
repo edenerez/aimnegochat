@@ -27,6 +27,7 @@ var cookieParser = express.cookieParser('biuailab')
 
 var kb = "KBAgent";
 var aat = "NegoChatAgent";
+var ca = "ChatAgent";
 
 var configFileName = (process.argv[2]);
 var country = (process.argv[3]);
@@ -132,7 +133,7 @@ function setSessionForNewUser(req, gameServer) {
 		}
 	}
 	req.session.data.canPlay = canPlay;
-		console.log("canPlay123456:" +req.session.data.canPlay);	
+		
 	if (req.params.role)
 		req.session.data.role = req.params.role;
 	// else -
@@ -415,6 +416,21 @@ gameServers['KBAgentDemo_JobCandidate'] = new multiplayer.GameServer(
 		 agentType: kb
 		});
 
+/*
+ * These servers are for chat-driven negotiation between a human and the ChatAgent: 
+ */
+gameServers['negonlpca_JobCandidate'] = new multiplayer.GameServer(
+		/*requiredRoles=*/['Employer', 'Candidate'],
+		{roomTemplateName: 'RoomForNegoNlp',
+		 maxTimeSeconds:   30*60,
+		 events: require('./EventsForNegoChat'),
+		 domain: 'Job',
+		 defaultPersonality: 'short-term',
+		 hasAgent: true,
+		 hasTranslator: true,
+		 agentType: ca
+		});
+
 
 
 /**
@@ -536,7 +552,7 @@ app.get('/:gametype/beginner/:role?', getGameServer, function(req,res) {
 		} else {
 			
 			setSessionForNewUser(req, res.locals.gameServer);
-			console.log("================================================")
+			//console.log("================================================")
 			req.session.data.role = req.params.role?
 					req.params.role:
 					res.locals.gameServer.nextRole();	
@@ -1204,7 +1220,7 @@ io.sockets.on('connection', function (socket) {
 							gameid: game.gameid,
 							country:game.country}));
 					}
-				},300000);
+				},270000);
 			
 
 
