@@ -21,8 +21,8 @@ block content
          th payment
          th workerid
        - if (FinalResultList !== undefined)
-         each FinalResult in FinalResultList 
-          each questionnaire in questionnaireList
+         each questionnaire in questionnaireList
+          each FinalResult in FinalResultList 
            if (questionnaireList !== undefined)
             if (questionnaire.RowKey == FinalResult.RowKey)
              tr
@@ -37,6 +37,20 @@ block content
               td #{FinalResult.utilityWithDiscount}
               td #{FinalResult.utilityWithDiscount/4}
               td #{questionnaire.workerId}
+            else
+              tr
+              td
+               a(href='/#{gametype},#{FinalResult.PartitionKey}/gameReport') #{FinalResult.PartitionKey}
+              td #{questionnaire.gametype}
+              td 
+              td 
+              td 
+              td 
+              td 
+              td 
+              td 
+              td #{questionnaire.workerId}
+
    br   
 
   

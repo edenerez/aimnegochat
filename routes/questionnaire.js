@@ -21,6 +21,17 @@ Questionnaire.prototype = {
       res.render('questionnaireData',{title: 'Questionnaire List', questionnaireList: items ,gametype: req.params.gametype,  gametypes: types,country:country});
     });
   },
+
+  listAllInfo: function(req, res, types,country) {
+    self = this;
+    var query = azure.TableQuery
+      .select()
+      .from(self.questionnaireModel.tableName);
+      //.where('datastatus eq ?', 0);
+    self.questionnaireModel.find(query, function itemsFound(err, items) {
+      res.render('questionnaireDataInfo',{title: 'Questionnaire List', questionnaireList: items ,gametype: req.params.gametype,  gametypes: types,country:country});
+    });
+  },
   
 
   makeQestionnaire: function(req, res){

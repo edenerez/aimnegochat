@@ -40,11 +40,11 @@ block body
       block previewNotes
     
     block statusAndButtons
-     if (!locals.preview)
+     if (!locals.preview && locals.gametype == "negochatWithAgent_JobCandidate")
       div.mainSection#waiting 
         span.key Please wait to your partner.   
         span#value(Style="font-weight:bold; color: blue;") 5m, 00s  
-        p 
+        p#message 
           |The waiting time is usually 
           u much
           |  lower

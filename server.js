@@ -693,6 +693,10 @@ app.get('/:gametype/listAllQuestionnaire' ,function (req,res){
 	 questionnaire.listAll(req,res,types,country);
 });
 
+app.get('/:gametype/listAllQuestionnaireInfo' ,function (req,res){
+	 questionnaire.listAllInfo(req,res,types,country);
+});
+
 app.get('/:gametype/prequestionnaireA', questionnaire.demographyQuestionnaire.bind(questionnaire));
 app.post('/:gametype/addquestionnaire', function (req,res){
 	if(!req.session.data){
@@ -894,6 +898,10 @@ app.get('/:gametype/scoreReport2' , function (req,res){
 	gameReport.scoreInfo2 (req,res,types);
 });
 
+app.get('/:gametype,:PartitionKey/downlaodAction' , function (req,res){
+	//csv.writeCsvLog('tryMe',req.params.GameActionList);
+	gameReport.downlaodInfo (req,res,types);
+});
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.get('/PreQuestionnaireDemography', function(req,res) {

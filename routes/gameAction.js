@@ -51,6 +51,8 @@ GameAction.prototype = {
     }
     item.PartitionKey = game.gameid;
     item.userid = user.userid;
+    item.gameType = user.gametype;
+    console.log( "=============== "+ user.gametype + " ================")
     item.role = user.role;
     item.remainingTime = game.timer? game.timer.remainingTimeSeconds().toString(): "-";
     item.action = action;
