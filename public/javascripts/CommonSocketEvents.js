@@ -67,8 +67,9 @@ socket.on('title', function (value) {
 // The server asks to change a status variable, with key and value.
 // Change the html of the relevant DOM element:
 socket.on('status', function (keyvalue) {
-		if(keyvalue.key == "remainingTime" && keyvalue.value != "-")
-			document.getElementById("waiting").style.display = "none";
+		var wait = document.getElementById("waiting");
+		if(keyvalue.key == "remainingTime" && keyvalue.value != "-" && wait)
+			wait.style.display = "none";
 		var pathToValue = "#"+keyvalue.key.replace(/[^a-z]/ig,"_")+" .value";
 		var element = $(pathToValue);
 		if (element) {

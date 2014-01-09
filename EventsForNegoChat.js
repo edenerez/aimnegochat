@@ -34,9 +34,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 	}
 
 	var onNegoActions = function (actions, announce, text) {
-		console.log(session_data.role+" negoactions: "+JSON.stringify(actions));
-		console.log("-------------------------------------------");
-		if (!actions && session_data.gametype != "negochatWithAgent_JobCandidate") {
+		if (!actions || session_data.gametype != "negochatWithAgent_JobCandidate") {
 			misunderstanding("I didn't understand what you mean because the actions list is empty");
 			return;
 		}
@@ -93,15 +91,6 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 	// A human chat-player sent an English chat message - send it to all other users, and translate to semantics:
 	socket.on('English', function (text) {
 		functions.announcement(socket, game, "Message", session_data, text);
-		/*console.log("classifierName: "+session_data.role+"-"+session_data.country+
-				"\ncountry: "+session_data.country+
-				"\nagentType: "+session_data.agentType+
-				"\nnumAction: "+game.actionNum+
-				"\nsource: "+session_data.gametype+
-				"\naccountName: "+functions.accountName+
-				"\ngameid: "+game.gameid+
-				"\nremoteAddress: "+session_data.remoteAddress+
-				"\n==========================================================")*/
 		if (translator) {
 			translator.translate(text, {
 				classifierName: session_data.role+"-"+session_data.country, 
@@ -272,7 +261,6 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		functions.messageLog(socket, game, "Opt-out", session_data, "");
 		if (!partnerInitiative){//tell all other players in this game that their partner optout.
 			socket.broadcast.to(game.gameid).emit('yourPartnerOpt-out', "");
-			console.log("Shalom");
 			console.log("Shalom");
 			console.log("Shalom");
 			console.log("Shalom");

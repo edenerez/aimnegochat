@@ -552,7 +552,6 @@ app.get('/:gametype/beginner/:role?', getGameServer, function(req,res) {
 		} else {
 			
 			setSessionForNewUser(req, res.locals.gameServer);
-			//console.log("================================================")
 			req.session.data.role = req.params.role?
 					req.params.role:
 					res.locals.gameServer.nextRole();	

@@ -11,6 +11,7 @@ block content
    form.scrol(action="/activeQuestionnaire", method="post")
      table(class="table table-striped table-bordered")
        tr
+         th time
          th Name
          th Gender
          th Age
@@ -42,6 +43,7 @@ block content
          each questionnaire in questionnaireList
           if (questionnaire.gametype == gametype || questionnaire.gametype == gametype.split("_")[0])
              tr
+               td #{questionnaire.Timestamp}
                td #{questionnaire.yourname}
                td #{questionnaire.gender}
                td #{questionnaire.age}
