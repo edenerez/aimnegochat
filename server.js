@@ -1241,8 +1241,8 @@ io.sockets.on('connection', function (socket) {
 							gameid: game.gameid,
 							country:game.country}));
 					}
-				},10000);
-				//},270000);
+				//},10000);
+				},270000);
 			
 
 
