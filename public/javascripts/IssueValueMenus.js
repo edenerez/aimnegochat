@@ -14,7 +14,7 @@ $(function() {
 			issue: $(this).attr('title'), 
 			value: $(this).val()});
 		if(isFirstChange){
-			alert("REMEMBER: the other player DOES NOT know what you do in the menus\nYou must write whatever you want to offer in the chat");
+			alert("REMEMBER: the other player DOES NOT know what you do in the menus\nYou must send whatever you want to offer by press the button");
 			isFirstChange = false;
 		}
 	});
