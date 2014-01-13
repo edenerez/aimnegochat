@@ -223,6 +223,18 @@ gameServers['negomenus_JobCandidate'] = new multiplayer.GameServer(
 		 hasTranslator: false,
 		 agentType: kb
 		});
+gameServers['negomenusWithAgent_JobCandidate'] = new multiplayer.GameServer(
+		/*requiredRoles=*/['Employer','Candidate'],
+		{roomTemplateName: 'RoomForNegoMenus',
+		 maxTimeSeconds:   30*60,
+		 events: require('./EventsForNegoChat'),
+		 domain: 'Job',
+		 defaultPersonality: 'short-term',
+		 hasAgent: false,
+		 hasTranslator: false,
+		 canConnect: true,
+		 agentType: kb
+		});
 gameServers['negomenus_Neighbours'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Alex','Deniz'],
 		{roomTemplateName: 'RoomForNegoMenus',
@@ -998,6 +1010,7 @@ app.get('/:gametype/play', getGameServer, function(req,res) {
 			}
 			//send the info. of player role, opponent role, agent name, game type and game id to the agent system.
 			setTimeout(function(){
+				//console.log("-----------------what is going on?--------------------------")
 				socktToAgentManager.write(JSON.stringify({
 					gametype:req.params.gametype, 
 					opponentRole:opponentRole, 
@@ -1207,6 +1220,7 @@ io.sockets.on('connection', function (socket) {
 				console.log(game.gameid);
 				console.log(session_data.gametype);
 				console.log(session_data.role);
+				console.dir(game);
 				console.log(game.missingRolesArray[0]);
 				setTimeout(function(){
 
@@ -1227,7 +1241,8 @@ io.sockets.on('connection', function (socket) {
 							gameid: game.gameid,
 							country:game.country}));
 					}
-				},270000);
+				},10000);
+				//},270000);
 			
 
 

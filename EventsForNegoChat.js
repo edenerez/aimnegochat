@@ -34,7 +34,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 	}
 
 	var onNegoActions = function (actions, announce, text) {
-		if (!actions || session_data.gametype != "negochatWithAgent_JobCandidate") {
+		if (!actions && session_data.gametype != "negochatWithAgent_JobCandidate") {
 			misunderstanding("I didn't understand what you mean because the actions list is empty");
 			return;
 		}
