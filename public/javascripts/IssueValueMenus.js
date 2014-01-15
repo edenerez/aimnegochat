@@ -14,7 +14,7 @@ $(function() {
 			issue: $(this).attr('title'), 
 			value: $(this).val()});
 		if(isFirstChange){
-			alert("REMEMBER: the other player DOES NOT know what you do in the menus\nYou must send whatever you want to offer by press the button");
+			alert("REMEMBER: the other player DOES NOT know what you do in the menus\nYou must write whatever you want to offer in the chat");
 			isFirstChange = false;
 		}
 	});
@@ -61,7 +61,7 @@ $(function() {
 		socket.emit("giveMeMyReservationUtility");
 	});
 
-	function enableGUI() { 
+	/*function enableGUI() { 
 		$('#btnSendChat').removeAttr('disabled');
 		$('#chatMessage').removeAttr('disabled');
 		//$('select.issue').removeAttr('disabled');
@@ -119,5 +119,5 @@ $(function() {
 			bid: "Signing the following agreement: "+JSON.stringify(data.agreement),
 			answered: "no"
 		});
-	});
+	});*/
 });

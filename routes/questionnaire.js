@@ -77,6 +77,8 @@ Questionnaire.prototype = {
   
   demographyQuestionnaire: function(req,res) {
     console.log("canPlay:" +req.session.data.canPlay)
+    if(req.session.data.canPlay)
+      req.session.data.canPlay = true;
     res.render("PreQuestionnaireDemographyA", {gametype: req.params.gametype, canPlay: req.session.data.canPlay});
   },
 

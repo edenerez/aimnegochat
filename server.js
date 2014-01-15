@@ -125,12 +125,10 @@ function setSessionForNewUser(req, gameServer) {
 		if (req.session.data.workerId){
 			if(logger.isAMTworkerExcist(req.session.data.workerId))
 				canPlay = false;
-			else{
-				logger.writeAMTworkerid("AMT",req.session.data.workerId);
 			}
 
-			console.log(canPlay);
-		}
+		console.log(canPlay);
+		
 	}
 	req.session.data.canPlay = canPlay;
 		
@@ -1010,7 +1008,7 @@ app.get('/:gametype/play', getGameServer, function(req,res) {
 			}
 			//send the info. of player role, opponent role, agent name, game type and game id to the agent system.
 			setTimeout(function(){
-				//console.log("-----------------what is going on?--------------------------")
+				
 				socktToAgentManager.write(JSON.stringify({
 					gametype:req.params.gametype, 
 					opponentRole:opponentRole, 
@@ -1151,6 +1149,8 @@ io.sockets.on('connection', function (socket) {
 		if (!session.data.gameid) // we can get here from a Java socket.io client, that doesn't go throught the "/entergame" URL
 			entergame(session);
 
+		logger.writeAMTworkerid("AMT",session.data.workerId);
+
 		game = gameServer.gameById(session.data.gameid);
 		if (!game) {
 			socket.emit('status', {key: 'phase', value: 'Status: Game over! Nobody is here!'});
@@ -1214,25 +1214,11 @@ io.sockets.on('connection', function (socket) {
 		}
 
 		if(gameServer.data.canConnect && socktToAgentManager){
-			//console.log(game.missingRolesArray)
 				console.log("agent server can connect!");
-				console.log(gameServer.data.agentType);
-				console.log(game.gameid);
-				console.log(session_data.gametype);
-				console.log(session_data.role);
-				console.dir(game);
-				console.log(game.missingRolesArray[0]);
-				setTimeout(function(){
+					setTimeout(function(){
 
 					if(game.missingRolesArray.length >0){
 						console.log("=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=")
-						console.log(JSON.stringify({
-							gametype:session_data.gametype, 
-							opponentRole:session.role, 
-							role:game.missingRolesArray[0], 
-							agent: gameServer.data.agentType, 
-							gameid: game.gameid,
-							country:game.country}));
 						socktToAgentManager.write(JSON.stringify({
 							gametype:session_data.gametype, 
 							opponentRole:session_data.role, 
