@@ -1149,7 +1149,8 @@ io.sockets.on('connection', function (socket) {
 		if (!session.data.gameid) // we can get here from a Java socket.io client, that doesn't go throught the "/entergame" URL
 			entergame(session);
 
-		logger.writeAMTworkerid("AMT",session.data.workerId);
+		if(session.data.workerId)
+			logger.writeAMTworkerid("AMT",session.data.workerId);
 
 		game = gameServer.gameById(session.data.gameid);
 		if (!game) {
