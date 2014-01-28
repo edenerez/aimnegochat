@@ -28,6 +28,7 @@ var cookieParser = express.cookieParser('biuailab')
 var kb = "KBAgent";
 var aat = "NegoChatAgent";
 var ca = "ChatAgent";
+var na = "NewAgent";
 
 var configFileName = (process.argv[2]);
 var country = (process.argv[3]);
@@ -439,6 +440,20 @@ gameServers['negonlpca_JobCandidate'] = new multiplayer.GameServer(
 		 hasAgent: true,
 		 hasTranslator: true,
 		 agentType: ca
+		});
+/*
+ * These servers are for chat-driven negotiation between a human and the NewAgent: 
+ */
+gameServers['negonlpna_JobCandidate'] = new multiplayer.GameServer(
+		/*requiredRoles=*/['Employer', 'Candidate'],
+		{roomTemplateName: 'RoomForNegoNlp',
+		 maxTimeSeconds:   30*60,
+		 events: require('./EventsForNegoChat'),
+		 domain: 'Job',
+		 defaultPersonality: 'short-term',
+		 hasAgent: true,
+		 hasTranslator: true,
+		 agentType: na
 		});
 
 

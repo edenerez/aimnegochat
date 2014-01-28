@@ -70,7 +70,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 			translateData.translate = actions;
 			translateData.text = text;
 			functions.messageLog(socket, game, "Translation", session_data, translateData);
-			functions.messageLog(socket, game, "CorrectTranslation", session_data, "");
+			//functions.messageLog(socket, game, "CorrectTranslation", session_data, "");
 		}
 	};
 
@@ -113,7 +113,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 				if(session_data.gametype != "negochatWithAgent_JobCandidate")
 					misunderstanding("I didn't understand your message: '"+text+"'. Please say this in other words");
 				functions.messageLog(socket, game, "Translation", session_data, "");
-				functions.messageLog(socket, game, "CorrectTranslation", session_data, "");
+				//functions.messageLog(socket, game, "CorrectTranslation", session_data, "");
 				return;
 			}
 			try {
