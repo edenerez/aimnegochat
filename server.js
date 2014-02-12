@@ -51,35 +51,30 @@ var partitionKey = nconf.get("PARTITION_KEY")
 , agentPort = nconf.get('AGENT_PORT');
 
 
-
-//adding the agent option.
-
-var HOST = '127.0.0.1';
-var AGENT_PORT = agentPort;
+var client = new net.Socket();
+var port = agentPort;
 var socktToAgentManager;
-var server = net.createServer();
-server.listen(AGENT_PORT, HOST);
-console.log('Server listening To Agent Manager ' + HOST +':'+ AGENT_PORT);
-server.on('connection', function(sock) {
-	socktToAgentManager = sock;
-	console.log("New agent manager connected");
-	
-	// Add a 'close' event handler to this instance of socket
-	sock.on('close', function(data) {
-		socktToAgentManager = null;
-		console.log("Agent mnager disconnected");
-	    console.log('CLOSED: ' + sock.remoteAddress +' '+ sock.remotePort);
-	});
-	
-	sock.on('error', function(error){
-		console.log('error ecured '+ error);
-	})
-
-	sock.on('data', function(data) {
-		console.log('INFO: ' + data);
-	});
+//var country = (process.argv[3]);
+client.connect(port, 'localhost', function() {
+	socktToAgentManager = client;
+    console.log('CONNECTED TO: ' + 'localhost' + ':' + port);
 });
 
+client.on('data', function(data) {
+    console.log('INFO: ' + data);
+});
+
+client.on('error', function(error) {
+    console.log("agent manager isn't connect " + error);
+    //agent.socket.disconnect();
+    client.destroy();
+});
+
+client.on('close', function(error) {
+	socktToAgentManager = null;
+    console.log("closed connection " + error);
+    client.destroy();
+});
 
 // Step 0: Users and sessions:
 //
@@ -1284,3 +1279,5 @@ process.on('exit', function (){
 	console.log("events", "END", {port:app.get('port')});
 	console.log('Goodbye!');
 });
+
+
