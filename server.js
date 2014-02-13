@@ -451,6 +451,21 @@ gameServers['negonlpna_JobCandidate'] = new multiplayer.GameServer(
 		 agentType: na
 		});
 
+/*
+ * These servers are for chat-driven negotiation between a human and the NewAgent: 
+ */
+gameServers['negonlpnaAMT_JobCandidate'] = new multiplayer.GameServer(
+		/*requiredRoles=*/['Employer', 'Candidate'],
+		{roomTemplateName: 'RoomForNegoNlpAMT',
+		 maxTimeSeconds:   30*60,
+		 events: require('./EventsForNegoChat'),
+		 domain: 'Job',
+		 defaultPersonality: 'short-term',
+		 hasAgent: true,
+		 hasTranslator: true,
+		 agentType: na
+		});
+
 
 
 /**
