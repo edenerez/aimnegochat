@@ -247,6 +247,9 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 			};
 			game.endedIn = "Opt-out"
 			functions.messageLog(socket, game, "Opt-out", session_data, finalResult);
+			game.mapRoleToFinalResult[session_data.role] = finalResult;
+			session_data.mapRoleToFinalResult = finalResult;
+			//tell all other players in this game that their partner optout.
 			socket.broadcast.to(game.gameid).emit('yourPartnerOpt-out', "");
 			console.log("Shalom");
 			console.log("Shalom");
@@ -263,13 +266,16 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 			};
 			game.endedIn = "Opt-out";
 			functions.messageLog(socket, game, "Opt-out", session_data, finalResult);
+			game.mapRoleToFinalResult[session_data.role] = finalResult;
+			session_data.mapRoleToFinalResult = finalResult;
+			console.log("Shalom2");
+			console.log("Shalom2");
+			console.log("Shalom2");
+			console.log("Shalom2");
 		}
-		game.mapRoleToFinalResult[session_data.role] = finalResult;
-		session_data.mapRoleToFinalResult = finalResult;
+		//game.mapRoleToFinalResult[session_data.role] = finalResult;
+		//session_data.mapRoleToFinalResult = finalResult;
 		//functions.messageLog(socket, game, "Opt-out", session_data, finalResult);
-		if (!partnerInitiative){//tell all other players in this game that their partner optout.
-			console.log("***************************^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^*************************")
-		}
 	});
 	
 	
