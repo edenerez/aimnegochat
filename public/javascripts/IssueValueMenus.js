@@ -8,13 +8,15 @@ $(function() {
 			value: $(this).val()});
 	});
 	
+
 	// Send any changed value to the server:
 	$("select.issue").change(function() {
 		socket.emit('change', {
 			issue: $(this).attr('title'), 
 			value: $(this).val()});
 		if(isFirstChange){
-			alert("REMEMBER: the other player DOES NOT know what you do in the menus\nYou must write whatever you want to offer in the chat");
+			//alert("REMEMBER: the other player DOES NOT know what you do in the menus\nYou must write whatever you want to offer in the chat");
+			show_popup();
 			isFirstChange = false;
 		}
 	});
@@ -121,3 +123,12 @@ $(function() {
 		});
 	});*/
 });
+
+function show_popup()
+{
+	document.getElementById("announcement").style.display = "block";
+}
+function hide_popup()
+{
+	document.getElementById("announcement").style.display = "none";
+}

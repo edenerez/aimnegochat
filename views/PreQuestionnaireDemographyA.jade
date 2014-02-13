@@ -2,8 +2,9 @@ extends layout
 block title
   title Demographic Questionnaire
 block body
+
   div#analysisContainer
-    form#questForm(action="/#{gametype}/addquestionnaire", method="post")
+    form#questForm(action="/#{gametype}/addquestionnaire", onsubmit="return validateForm()", method="post")
       h1 Pre-negotiation questionnaire
       p The experiment will begin with a questionnaire. Please answer the questions on this page. Press Continue when finished.
 
@@ -37,10 +38,19 @@ block body
            td.label Country of birth:
            td.field
               input(name='item[birth_country]')
-         tr
+        tr
            td.label Name:
            td.field
-              input(name='item[yourname]') 
+              input(name='item[yourname]')
+        if (country == "israel") 
+          tr
+             td.label 
+              input#confirm(type="checkbox") 
+             td.field I consent to the IRB (
+              a(href='/irb') Institutional Review Board
+              ) form
+            
+           
       if (canPlay)
         input(type="submit", class="button", value="Continue")
       else

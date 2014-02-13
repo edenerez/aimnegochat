@@ -79,7 +79,7 @@ Questionnaire.prototype = {
     console.log("canPlay:" +req.session.data.canPlay)
     if(req.session.data.canPlay)
       req.session.data.canPlay = true;
-    res.render("PreQuestionnaireDemographyA", {gametype: req.params.gametype, canPlay: req.session.data.canPlay});
+    res.render("PreQuestionnaireDemographyA", {gametype: req.params.gametype, canPlay: req.session.data.canPlay, country:req.session.data.country});
   },
 
   deleteQuestionnaireTable: function(req,res) {

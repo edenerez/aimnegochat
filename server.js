@@ -549,6 +549,10 @@ app.get('/demo', function(req,res) {
 	res.render("demoPage");
 });
 
+app.get('/irb', function(req,res) {
+	res.render("ibr");
+});
+
 //ariel
 app.get('/users', function(req,res) {
 		res.render("Users",	{users:users});
@@ -816,6 +820,9 @@ function gamesTable(gametype, game, unverified, action) //insert information to 
 		if (len == 0){
 			for (role in game.mapRoleToFinalResult){
 				var a=0;
+				console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+				console.log(game.mapRoleToFinalResult[role]);
+				console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
 				finalResult.addFinalResult(game.mapRoleToFinalResult[role], game.mapRoleToUserid[role], role, game.gameid, game.country);
 				if (!finalAgreement.check){
 					for (agree in game.mapRoleToFinalResult[role].agreement){
