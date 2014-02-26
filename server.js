@@ -36,7 +36,7 @@ var gamePort;
 switch(country){
 	case "usa": gamePort = 4006; break;
 	case "israel": gamePort = 4004; break;
-	case "egypt": gamePort = 4000; break;
+	case "egypt": gamePort = 4002; break;
 	break;
 }
 
