@@ -31,8 +31,10 @@ $(function() {
 	socket.on('yourOptOutUtility', function (utility) {
 			if (iClicketOptOut){
 				if (confirm("Are you sure you want to leave the negotiation? Your utility will be " + utility)) {
-					socket.emit("opt-out", false);
-					bye();
+					setTimeout(function(){
+						socket.emit("opt-out", false);
+						bye();
+					},2000);
 				}
 			}
 			else{

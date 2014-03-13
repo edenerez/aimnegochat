@@ -117,7 +117,7 @@ function setSessionForNewUser(req, gameServer) {
 	var canPlay = true;
 	if(req.session.data.workerId){
 		
-		console.dir(req.session.data);
+		//console.dir(req.session.data);
 		if (req.session.data.workerId){
 			if(logger.isAMTworkerExcist(req.session.data.workerId))
 				canPlay = false;

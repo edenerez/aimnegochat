@@ -42,6 +42,8 @@ Questionnaire.prototype = {
     item.gametype = req.session.data.gametype;
     item.country1 = req.session.data.country;
     item.browserType = req.session.data.browserType + req.session.data.browserVersion;
+    if(!req.session.data.canPlay)
+      req.session.data.canPlay = true;
     //item.gameid = req.session.data.gameid ? req.session.data.gameid : NaN; // doesn't work either - why?
     item.assignmentId = req.session.data.assignmentId ? req.session.data.assignmentId : NaN; //null throw the program. undefine ignore it. mayby to put some string like "no amazonTurk"
     item.hitId = req.session.data.hitId ? req.session.data.hitId : NaN;

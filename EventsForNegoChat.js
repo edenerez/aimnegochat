@@ -253,6 +253,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 			socket.broadcast.to(game.gameid).emit('yourPartnerOpt-out', "");
 			console.log("Shalom");
 			console.log("Shalom");
+			functions.messageLog(socket, game, "Opt-out", session_data, finalResult);
 			console.log("Shalom");
 			console.log("Shalom");
 		}
@@ -270,6 +271,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 			session_data.mapRoleToFinalResult = finalResult;
 			console.log("Shalom2");
 			console.log("Shalom2");
+			functions.messageLog(socket, game, "Opt-out", session_data, finalResult);
 			console.log("Shalom2");
 			console.log("Shalom2");
 		}
