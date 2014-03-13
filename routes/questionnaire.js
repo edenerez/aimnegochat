@@ -79,9 +79,7 @@ Questionnaire.prototype = {
   
   demographyQuestionnaire: function(req,res) {
     //console.log("canPlay:" +req.session.data.canPlay)
-    if(!req.session.data)
-		if(!req.session.data.canPlay)
-			req.session.data.canPlay = true;
+    //if(!req.session.data)
     res.render("PreQuestionnaireDemographyA", {gametype: req.params.gametype, canPlay: req.session.data.canPlay, country:req.session.data.country});
   },
 

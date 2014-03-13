@@ -1,0 +1,236 @@
+""
+the agent threshold for the 1turn is 
+"529.457166"
+------------------------------------
+"28:30"
+couldn't find an acceptable bid with the current term 
+[]
+------------------------------------
+"28:30"
+and 
+{"Salary":"60,000 USD"}
+------------------------------------
+"28:30"
+the agent threshold for the 1turn is 
+"529.457166"
+------------------------------------
+"28:30"
+find another acceptable bid with the current term 
+{"bid":{"Salary":"120,000 USD","Job Description":"Project Manager","Leased Car":"With leased car","Pension Fund":"20%","Promotion Possibilities":"Slow promotion track","Working Hours":"8 hours"},"utilMe":630,"utilOppShort":230,"utilOppComp":390,"utilOppLong":345}
+------------------------------------
+"28:30"
+OPPONENT OFFER DENIED OFFERING SOMETHING ELSE! 
+[{"name":"Salary","value":"120,000 USD"}]
+------------------------------------
+"28:30"
+the agent new offer: 
+{"Salary":"120,000 USD"}
+------------------------------------
+"28:30"
+BASED ON THAT BID (line 496) 
+{"bid":{"Salary":"120,000 USD","Job Description":"Project Manager","Leased Car":"With leased car","Pension Fund":"20%","Promotion Possibilities":"Slow promotion track","Working Hours":"8 hours"},"utilMe":630,"utilOppShort":230,"utilOppComp":390,"utilOppLong":345}
+------------------------------------
+"28:30"
+============================ 
+""
+------------------------------------
+"28:00"
+the agent threshold for the 2turn is 
+"512.329756"
+------------------------------------
+"28:00"
+OPPONENT OFFER ACCEPTED! 
+{"Promotion Possibilities":"Fast promotion track","Salary":"60,000 USD","Leased Car":"With leased car"}
+------------------------------------
+"28:00"
+current agreement: 
+[{"name":"Promotion Possibilities","value":"Fast promotion track"},{"name":"Salary","value":"60,000 USD"},{"name":"Leased Car","value":"With leased car"}]
+------------------------------------
+"28:00"
+BASED ON THAT BID (line 447) 
+{"bid":{"Salary":"60,000 USD","Job Description":"Project Manager","Leased Car":"With leased car","Pension Fund":"20%","Promotion Possibilities":"Fast promotion track","Working Hours":"8 hours"},"utilMe":535,"utilOppShort":330,"utilOppComp":380,"utilOppLong":345}
+------------------------------------
+"28:00"
+============================ 
+""
+------------------------------------
+"28:00"
+they agreed on 
+[{"name":"Promotion Possibilities","value":"Fast promotion track"},{"name":"Salary","value":"60,000 USD"},{"name":"Leased Car","value":"With leased car"}]
+------------------------------------
+"28:00"
+the agent's offer is 
+[{"name":"Promotion Possibilities","value":"Fast promotion track"},{"name":"Salary","value":"60,000 USD"},{"name":"Leased Car","value":"With leased car"},{"name":"Job Description","value":"Project Manager"},{"name":"Pension Fund","value":"20%"},{"name":"Working Hours","value":"8 hours"}]
+------------------------------------
+"28:00"
+ BASED ON THAT BID (line 136) 
+{"bid":{"Salary":"60,000 USD","Job Description":"Project Manager","Leased Car":"With leased car","Pension Fund":"20%","Promotion Possibilities":"Fast promotion track","Working Hours":"8 hours"},"utilMe":535,"utilOppShort":330,"utilOppComp":380,"utilOppLong":345}
+------------------------------------
+"28:00"
+============================ 
+""
+------------------------------------
+"27:05"
+they agreed on 
+[{"name":"Promotion Possibilities","value":"Fast promotion track"},{"name":"Salary","value":"60,000 USD"},{"name":"Leased Car","value":"With leased car"}]
+------------------------------------
+"27:05"
+the agent's offer is 
+[{"name":"Promotion Possibilities","value":"Fast promotion track"},{"name":"Salary","value":"60,000 USD"},{"name":"Leased Car","value":"With leased car"},{"name":"Job Description","value":"Project Manager"},{"name":"Pension Fund","value":"20%"},{"name":"Working Hours","value":"8 hours"}]
+------------------------------------
+"27:05"
+ BASED ON THAT BID (line 136) 
+{"bid":{"Salary":"60,000 USD","Job Description":"Project Manager","Leased Car":"With leased car","Pension Fund":"20%","Promotion Possibilities":"Fast promotion track","Working Hours":"8 hours"},"utilMe":535,"utilOppShort":330,"utilOppComp":380,"utilOppLong":345}
+------------------------------------
+"27:05"
+============================ 
+""
+------------------------------------
+"26:40"
+couldn't find an acceptable bid with the current term 
+[{"name":"Promotion Possibilities","value":"Fast promotion track"},{"name":"Salary","value":"60,000 USD"},{"name":"Leased Car","value":"With leased car"}]
+------------------------------------
+"26:40"
+and 
+{"Job Description":"Programmer","Working Hours":"9 hours"}
+------------------------------------
+"26:40"
+the agent threshold for the 2turn is 
+"512.329756"
+------------------------------------
+"26:40"
+find another acceptable bid with the current term 
+{"bid":{"Salary":"60,000 USD","Job Description":"Project Manager","Leased Car":"With leased car","Pension Fund":"20%","Promotion Possibilities":"Fast promotion track","Working Hours":"8 hours"},"utilMe":535,"utilOppShort":330,"utilOppComp":380,"utilOppLong":345}
+------------------------------------
+"26:40"
+OPPONENT OFFER DENIED OFFERING SOMETHING ELSE! 
+[{"name":"Promotion Possibilities","value":"Fast promotion track"},{"name":"Salary","value":"60,000 USD"},{"name":"Leased Car","value":"With leased car"},{"name":"Job Description","value":"Project Manager"},{"name":"Working Hours","value":"8 hours"}]
+------------------------------------
+"26:40"
+the agent new offer: 
+{"Job Description":"Project Manager","Working Hours":"8 hours"}
+------------------------------------
+"26:40"
+BASED ON THAT BID (line 496) 
+{"bid":{"Salary":"60,000 USD","Job Description":"Project Manager","Leased Car":"With leased car","Pension Fund":"20%","Promotion Possibilities":"Fast promotion track","Working Hours":"8 hours"},"utilMe":535,"utilOppShort":330,"utilOppComp":380,"utilOppLong":345}
+------------------------------------
+"26:40"
+============================ 
+""
+------------------------------------
+"26:10"
+couldn't find an acceptable bid with the current term 
+[{"name":"Salary","value":"60,000 USD"}]
+------------------------------------
+"26:10"
+and 
+{"Promotion Possibilities":"Fast promotion track","Working Hours":"9 hours","Leased Car":"With leased car"}
+------------------------------------
+"26:10"
+the agent threshold for the 2turn is 
+"512.329756"
+------------------------------------
+"26:10"
+couldn't find an acceptable bid with the current term set the offer lower
+[]
+------------------------------------
+"26:10"
+and 
+{"Promotion Possibilities":"Fast promotion track","Working Hours":"9 hours","Leased Car":"With leased car"}
+------------------------------------
+"26:10"
+OPPONENT OFFER DENIED! 
+{"Promotion Possibilities":"Fast promotion track","Working Hours":"9 hours","Leased Car":"With leased car"}
+------------------------------------
+"26:10"
+BASED ON THAT BID (line 530) 
+undefined
+------------------------------------
+"26:10"
+============================ 
+""
+------------------------------------
+"26:00"
+the agent threshold for the 3turn is 
+"497.409992"
+------------------------------------
+"25:45"
+OPPONENT OFFER ACCEPTED! 
+{"Working Hours":"8 hours"}
+------------------------------------
+"25:45"
+current agreement: 
+[{"name":"Salary","value":"60,000 USD"},{"name":"Working Hours","value":"8 hours"}]
+------------------------------------
+"25:45"
+BASED ON THAT BID (line 447) 
+{"bid":{"Salary":"60,000 USD","Job Description":"Project Manager","Leased Car":"With leased car","Pension Fund":"20%","Promotion Possibilities":"Fast promotion track","Working Hours":"8 hours"},"utilMe":535,"utilOppShort":330,"utilOppComp":380,"utilOppLong":345}
+------------------------------------
+"25:45"
+============================ 
+""
+------------------------------------
+"25:45"
+they agreed on 
+[{"name":"Salary","value":"60,000 USD"},{"name":"Working Hours","value":"8 hours"}]
+------------------------------------
+"25:45"
+the agent's offer is 
+[{"name":"Salary","value":"60,000 USD"},{"name":"Working Hours","value":"8 hours"},{"name":"Job Description","value":"Project Manager"},{"name":"Pension Fund","value":"20%"},{"name":"Leased Car","value":"With leased car"},{"name":"Promotion Possibilities","value":"Fast promotion track"}]
+------------------------------------
+"25:45"
+ BASED ON THAT BID (line 136) 
+{"bid":{"Salary":"60,000 USD","Job Description":"Project Manager","Leased Car":"With leased car","Pension Fund":"20%","Promotion Possibilities":"Fast promotion track","Working Hours":"8 hours"},"utilMe":535,"utilOppShort":330,"utilOppComp":380,"utilOppLong":345}
+------------------------------------
+"25:45"
+============================ 
+""
+------------------------------------
+"25:05"
+they agreed on 
+[{"name":"Salary","value":"60,000 USD"},{"name":"Working Hours","value":"8 hours"}]
+------------------------------------
+"25:05"
+the agent's offer is 
+[{"name":"Salary","value":"60,000 USD"},{"name":"Working Hours","value":"8 hours"},{"name":"Job Description","value":"Project Manager"},{"name":"Pension Fund","value":"20%"},{"name":"Leased Car","value":"With leased car"},{"name":"Promotion Possibilities","value":"Fast promotion track"}]
+------------------------------------
+"25:05"
+ BASED ON THAT BID (line 136) 
+{"bid":{"Salary":"60,000 USD","Job Description":"Project Manager","Leased Car":"With leased car","Pension Fund":"20%","Promotion Possibilities":"Fast promotion track","Working Hours":"8 hours"},"utilMe":535,"utilOppShort":330,"utilOppComp":380,"utilOppLong":345}
+------------------------------------
+"25:05"
+============================ 
+""
+------------------------------------
+"24:55"
+OPPONENT OFFER ACCEPTED! 
+{"Leased Car":"With leased car","Promotion Possibilities":"Fast promotion track","Salary":"60,000 USD","Pension Fund":"20%"}
+------------------------------------
+"24:55"
+current agreement: 
+[{"name":"Working Hours","value":"8 hours"},{"name":"Leased Car","value":"With leased car"},{"name":"Promotion Possibilities","value":"Fast promotion track"},{"name":"Salary","value":"60,000 USD"},{"name":"Pension Fund","value":"20%"}]
+------------------------------------
+"24:55"
+BASED ON THAT BID (line 447) 
+{"bid":{"Salary":"60,000 USD","Job Description":"Project Manager","Leased Car":"With leased car","Pension Fund":"20%","Promotion Possibilities":"Fast promotion track","Working Hours":"8 hours"},"utilMe":535,"utilOppShort":330,"utilOppComp":380,"utilOppLong":345}
+------------------------------------
+"24:55"
+they agreed on 
+[{"name":"Working Hours","value":"8 hours"},{"name":"Leased Car","value":"With leased car"},{"name":"Promotion Possibilities","value":"Fast promotion track"},{"name":"Salary","value":"60,000 USD"},{"name":"Pension Fund","value":"20%"}]
+------------------------------------
+"24:55"
+the agent's offer is 
+[{"name":"Working Hours","value":"8 hours"},{"name":"Leased Car","value":"With leased car"},{"name":"Promotion Possibilities","value":"Fast promotion track"},{"name":"Salary","value":"60,000 USD"},{"name":"Pension Fund","value":"20%"},{"name":"Job Description","value":"Project Manager"}]
+------------------------------------
+"24:55"
+ BASED ON THAT BID (line 136) 
+{"bid":{"Salary":"60,000 USD","Job Description":"Project Manager","Leased Car":"With leased car","Pension Fund":"20%","Promotion Possibilities":"Fast promotion track","Working Hours":"8 hours"},"utilMe":535,"utilOppShort":330,"utilOppComp":380,"utilOppLong":345}
+------------------------------------
+"24:55"
+============================ 
+""
+------------------------------------
+"24:55"
+============================ 
+""
+------------------------------------

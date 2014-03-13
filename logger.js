@@ -105,7 +105,7 @@ exports.isAMTworkerExcist = function(workerid){
 
 exports.writeAMTworkerid = function(logFileName, object) {
     object.timestamp = new Date().toISOString();
-    fs.appendFile(cleanPathToLog(logFileName+".txt"), object+"\n", function (err) {
+    fs.appendFile(cleanPathToLog(logFileName+".txt"), object +"\n", function (err) {
         if (err) throw (err);
     });
 }

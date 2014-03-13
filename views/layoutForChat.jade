@@ -11,6 +11,7 @@ block body
   script(src='/javascripts/yahoo_yui_2.8.1/datatable/datatable-min.js')
   script var session_data = !{locals.session_data? JSON.stringify(session_data): "null"};
   script(src='/javascripts/datatable.js')
+  script(src='/javascripts/AMTtest2.js')
   script(src='/javascripts/UtilityButtons.js')
 
 
@@ -20,7 +21,7 @@ block body
     block roomScripts
 
 
-    script(src='/javascripts/AMTtest.js')
+    
 
   div#mainPanel
     if (locals.preview)
@@ -37,7 +38,7 @@ block body
                 
 
 
-      block previewNotes
+    block previewNotes
     
     block statusAndButtons
       if (!locals.preview && (locals.gametype == "negochatWithAgent_JobCandidate" || locals.gametype == "negomenusWithAgent_JobCandidate"))
