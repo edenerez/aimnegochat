@@ -78,9 +78,11 @@ Questionnaire.prototype = {
   },
   
   demographyQuestionnaire: function(req,res) {
-    //console.log("canPlay:" +req.session.data.canPlay)
-    //if(!req.session.data)
-    res.render("PreQuestionnaireDemographyA", {gametype: req.params.gametype, canPlay: req.session.data.canPlay, country:req.session.data.country});
+    console.log("canPlay1:" +req.session.data.canPlay1);
+    if(req.session.data.canPlay1 == true)
+      res.render("PreQuestionnaireDemographyA", {gametype: req.params.gametype, canPlay: true, country:req.session.data.country});
+    else
+      res.render("PreQuestionnaireDemographyA", {gametype: req.params.gametype, canPlay: false, country:req.session.data.country});
   },
 
   deleteQuestionnaireTable: function(req,res) {

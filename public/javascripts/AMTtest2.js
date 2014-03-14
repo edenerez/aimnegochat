@@ -10,7 +10,7 @@ function canIplay(){
 		var excist = false;
 		for(worker in workers){
 			mystring = workers[worker];
-			if(mystring == (workerid + "\n"))
+			if((mystring == (workerid + "\n")) || (mystring == workerid) || (mystring == (workerid + "\n\r")) || (mystring == (workerid + "\r")))
 				excist = true;
 		}
 		if(excist){

@@ -114,20 +114,19 @@ function setSessionForNewUser(req, gameServer) {
 	req.session.data.gametype = req.params.gametype;
 	req.session.data.country = country;
 	req.session.data.agentType = gameServer.data.agentType;
-	var canPlay = true;
-	if(req.session.data.workerId){
-		
-		//console.dir(req.session.data);
-		if (req.session.data.workerId){
-			if(logger.isAMTworkerExcist(req.session.data.workerId))
-				canPlay = false;
-			}
-
-		console.log(canPlay);
-		
+	//var canPlay = true;
+	req.session.data.canPlay1 = true;
+	if (req.session.data.workerId){
+		console.log("there is worker!")
+		if(logger.isAMTworkerExcist(req.session.data.workerId)){
+			req.session.data.canPlay1 = false;
+			console.log("false!!!!!!" + req.session.data.canPlay1)
+		}
 	}
-	req.session.data.canPlay = canPlay;
+	console.log(req.session.data.canPlay1);
 		
+	
+			
 	if (req.params.role)
 		req.session.data.role = req.params.role;
 	// else -
@@ -594,6 +593,7 @@ app.get('/:gametype/beginner/:role?', getGameServer, function(req,res) {
 			req.session.data.role = req.params.role?
 					req.params.role:
 					res.locals.gameServer.nextRole();	
+			console.log("false!!!!!!" + req.session.data.canPlay1)
 			res.redirect('/'+req.params.gametype+'/prequestionnaireA');
 		}
 });
@@ -608,7 +608,8 @@ app.get('/:gametype/demo/:role?', getGameServer, function(req,res) {
 			setSessionForNewUser(req, res.locals.gameServer);
 			req.session.data.role = req.params.role?
 					req.params.role:
-					res.locals.gameServer.nextRole();	
+					res.locals.gameServer.nextRole();
+			console.log("false!!!!!!" + req.session.data.canPlay1)	
 			res.redirect('/PreQuestionnaireExam');
 		}
 });
@@ -623,7 +624,8 @@ app.get('/:gametype/advanced/:role?', getGameServer, function(req,res) {
 			setSessionForNewUser(req, res.locals.gameServer);
 			req.session.data.role = req.params.role?
 					req.params.role:
-					res.locals.gameServer.nextRole();	
+					res.locals.gameServer.nextRole();
+
 			res.redirect('/entergame');
 		}
 });
