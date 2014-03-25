@@ -871,8 +871,9 @@ function gamesTable(gametype, game, unverified, action) //insert information to 
 		if (game.startTime){
 			game.endGame();
 			finalAgreement.check = false;
-			if(game.RowKey)
+			if(game.RowKey){
 				games.activeGames(game.gameid, game.endedIn, game.endTime, game.RowKey);
+			}
 		}
 	}
 }
