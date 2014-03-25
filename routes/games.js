@@ -64,7 +64,8 @@ Games.prototype = {
     var item = {};
     if (!RowKey){
       item.RowKey = uuid();
-      throw new Error("self does not contain RowKey: "+JSON.stringify(self));
+      return;
+      //throw new Error("self does not contain RowKey: "+JSON.stringify(self));
     }
     item.RowKey = RowKey;
     item.PartitionKey = gameid;

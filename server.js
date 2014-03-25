@@ -45,10 +45,22 @@ switch(country){
 var azure = require('azure')
 , nconf = require('nconf');
 nconf.file({ file: configFileName});
+
 var partitionKey = nconf.get("PARTITION_KEY")
 , accountName = nconf.get("STORAGE_NAME")
 , accountKey = nconf.get("STORAGE_KEY")
 , agentPort = nconf.get('AGENT_PORT');
+
+if(partitionKey == undefined || accountName == undefined || accountKey == undefined || agentPort == undefined){
+	console.log("================================================================");
+	console.log("================================================================");
+	console.log("");
+	console.log("the file " + configFileName + " or one of it's value is missing.");
+	console.log("");
+	console.log("================================================================");
+	console.log("================================================================");
+	process.exit(1);
+}
 
 
 var client = new net.Socket();
@@ -859,7 +871,8 @@ function gamesTable(gametype, game, unverified, action) //insert information to 
 		if (game.startTime){
 			game.endGame();
 			finalAgreement.check = false;
-			games.activeGames(game.gameid, game.endedIn, game.endTime, game.RowKey);
+			if(game.RowKey)
+				games.activeGames(game.gameid, game.endedIn, game.endTime, game.RowKey);
 		}
 	}
 }
