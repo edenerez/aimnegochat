@@ -104,7 +104,11 @@ var randomNaturalLanguageString = function(action, argument) {
 	var templatesSet = naturalLanguageGenerationTemplates[action];
 	if (templatesSet)
 		template = templatesSet[Math.floor((Math.random()*templatesSet.length))];
-	return sprintf(template, JSON.stringify(argument));
+	var acceptBid = "";
+	for(bid in argument){
+		acceptBid +=  argument[bid] + ", ";
+							}
+	return sprintf(template, acceptBid);
 }
 
 /**
@@ -141,6 +145,7 @@ module.exports.Translator.prototype.generateSingleAction = function(requestObjec
  * @param requestObject an object (hash), whose fields are sent to the translation server as informative fields only.
  */
 module.exports.Translator.prototype.generate = function(arrayOfActions, requestObject, callback) {
+
 	if (!arrayOfActions || arrayOfActions.length===0) {
 		console.warn("NLG warning: arrayOfActions is "+JSON.stringify(arrayOfActions));
 		process.nextTick(callback.bind(null, {}, ""));
