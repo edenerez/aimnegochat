@@ -1151,8 +1151,10 @@ io.configure(function () {
  * Tell the players in the game that a certain player has made a certain action.
  */
 function announcement(socket, game, action, user, data) {
-	socket.emit('announcement', {action: action, id: user.role, msg: data, you: true});
-	socket.broadcast.to(game.gameid).emit('announcement', {action: action, id: user.role,	msg: data, you: false});		
+	if(action != "AgentMessage"){
+		socket.emit('announcement', {action: action, id: user.role, msg: data, you: true});
+		socket.broadcast.to(game.gameid).emit('announcement', {action: action, id: user.role,	msg: data, you: false});		
+	}
 	messageLog(socket, game, action, user, data);
 }
 
@@ -1299,6 +1301,7 @@ io.sockets.on('connection', function (socket) {
 				announcement: announcement,
 				rols : gameServers[session.data.gametype].requiredRoles,
 				accountName: accountName,
+
 			});
 		}
 	});  // end of identify event

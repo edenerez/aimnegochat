@@ -76,6 +76,8 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 
 	// An agent or a human menu-player sent a list of negotiation actions:
 	socket.on('negoactions', function(actions) {
+
+		functions.announcement(socket, game, "AgentMessage", session_data, actions);
 		onNegoActions(actions, true);
 	});
 
