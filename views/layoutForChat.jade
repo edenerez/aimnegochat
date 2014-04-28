@@ -11,6 +11,7 @@ block body
   script(src='/javascripts/yahoo_yui_2.8.1/datatable/datatable-min.js')
   script var session_data = !{locals.session_data? JSON.stringify(session_data): "null"};
   script(src='/javascripts/datatable.js')
+  script(src='/javascripts/AMTtest2.js')
   script(src='/javascripts/UtilityButtons.js')
 
 
@@ -19,12 +20,35 @@ block body
     script(src='/javascripts/CommonSocketEvents.js')
     block roomScripts
 
+
+    
+
   div#mainPanel
     if (locals.preview)
       div.mainSection#noJavascriptSupport This game works on Firefox and Chrome browsers only.
-      block previewNotes
+      div.mainSection#noJavascriptSupport You can't play twice. For check if you can play, please insert your workerId and pres the button.
+        form(onClick='canIplay()') 
+           input(type='text', id='workerid')
+           input(type='button', value='check')
+           input(type="hidden", id="workers", value="#{wprkers}")
+        p#canPlay(Style="display: none") You can play! :)
+        p#cannotPlay(Style="display: none") You CAN NOT play!
+        P#present
+    
+                
+
+
+    block previewNotes
     
     block statusAndButtons
+      if (!locals.preview && (locals.gametype == "negochatWithAgent_JobCandidate" || locals.gametype == "negomenusWithAgent_JobCandidate"))
+        div.mainSection#waiting 
+          span.key Please wait to your partner.   
+          span#value(Style="font-weight:bold; color: blue;") 5m, 00s  
+          p#message 
+            |The waiting time is usually 
+            u much
+            |  lower
       div.mainSection#mainStatusRow <!-- row #2: status and buttons -->
         table
           tr
@@ -33,7 +57,7 @@ block body
               span.value Status: #{locals.preview? "This is a preview only!": "Connecting..."}
             td#remainingTime
               span.key Remaining time:
-              span.value
+              span.value#gameTimer
             td
               button#UtilityOfCurrent.btnUtility Your scores
             td

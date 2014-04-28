@@ -3,6 +3,7 @@
 var fs     = require('fs') 
   , jsonref = require('json-ref')
   , path = require('path')
+  , nl = require('os').EOL
   ;
 
 exports.MAX_LENGTH_OF_CONSOLE_MESSAGE = 75;
@@ -76,6 +77,36 @@ exports.readJsonLog = function(logFileName, callback) {
 exports.writeJsonLog = function(logFileName, object) {
     object.timestamp = new Date().toISOString();
     fs.appendFile(cleanPathToLog(logFileName+".json"), JSON.stringify(object)+"\n", function (err) {
+        if (err) throw (err);
+    });
+}
+
+exports.readAMTfile = function(){
+  var workersList = new Array();
+  var lines = fs.readFileSync('./logs/AMT.txt', 'utf8');//, function (err,data){
+  lines = lines.split("\n");
+  for(line in lines){
+      workersList.push(lines[line]);
+  }
+  return (workersList);
+}
+
+exports.isAMTworkerExcist = function(workerid){
+ workers = (this.readAMTfile());
+ console.log(workers);
+// workers = workers.split("\n");
+
+ var excist = false;
+ for(worker in workers){
+   if((workers[worker] == workerid) || (workers[worker] == workerid+"\n") || (workers[worker] == workerid+"\r") || (workers[worker] == workerid+"\n\r"))
+      excist = true;
+  }
+  return excist;
+}
+
+exports.writeAMTworkerid = function(logFileName, object) {
+    object.timestamp = new Date().toISOString();
+    fs.appendFile(cleanPathToLog(logFileName+".txt"), object +"\n", function (err) {
         if (err) throw (err);
     });
 }

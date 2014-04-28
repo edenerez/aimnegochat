@@ -15,7 +15,9 @@ block content
          th Player Id
          th Role
          th Type
+         th country
          th Active
+         th Delete
        - if (playerList !== undefined) 
          each player in playerList
           if (player.gametype == gametype || player.gametype == gametype.split("_")[0])
@@ -26,6 +28,7 @@ block content
                 a(href='/#{gametype},#{player.RowKey}/playerReport') #{player.RowKey}
               td #{player.role}
               td #{player.type}
+              td #{player.country}
               td
                 input(type="checkbox", name="active", value="#{!player.active}", checked=player.active)
               td 

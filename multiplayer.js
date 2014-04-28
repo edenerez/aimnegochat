@@ -111,6 +111,7 @@ Game = function(gametype, requiredRoles, hasTranslator) {
     this.actionNum = 0;
     this.hasTranslator = hasTranslator;
     this.endedIn;
+    this.country;
 };
 
 Game.prototype.isRoleInGame = function (role) {

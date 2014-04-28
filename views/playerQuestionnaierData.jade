@@ -18,6 +18,7 @@ block content
        th Data Status
        th Completed
        th Date
+       th country
        th Active
      - if (questionnaireList !== undefined) 
        each questionnaire in questionnaireList
@@ -35,6 +36,7 @@ block content
           - var month = questionnaire.Timestamp.getMonth() + 1;
           - var year  = questionnaire.Timestamp.getFullYear();
           td #{day + "/" + month + "/" + year}
+          td #{questionnaire.country}
           td
             input(type="hidden", name="#{questionnaire.RowKey}", value="#{questionnaire.RowKey}")
             input(type="checkbox", name="active", value="#{!questionnaire.active}", checked=questionnaire.active)

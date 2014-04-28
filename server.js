@@ -18,6 +18,7 @@ var express = require('express')
 	, timer = require('./timer')
 	, useragent = require('useragent')
 	, net = require('net')
+	, logger = require('./logger')
 	;
 
 var cookieParser = express.cookieParser('biuailab')
@@ -26,49 +27,66 @@ var cookieParser = express.cookieParser('biuailab')
 
 var kb = "KBAgent";
 var aat = "NegoChatAgent";
+var ca = "ChatAgent";
+var na = "NewAgent";
 
 var configFileName = (process.argv[2]);
+var country = (process.argv[3]);
+var gamePort;
+switch(country){
+	case "usa": gamePort = 4006; break;
+	case "israel": gamePort = 4004; break;
+	case "egypt": gamePort = 4002; break;
+	break;
+}
+
 
 //windows azure definitions:
 var azure = require('azure')
 , nconf = require('nconf');
 nconf.file({ file: configFileName});
+
 var partitionKey = nconf.get("PARTITION_KEY")
 , accountName = nconf.get("STORAGE_NAME")
 , accountKey = nconf.get("STORAGE_KEY")
-, gamePort = nconf.get('PORT')
 , agentPort = nconf.get('AGENT_PORT');
 
+if(partitionKey == undefined || accountName == undefined || accountKey == undefined || agentPort == undefined){
+	console.log("================================================================");
+	console.log("================================================================");
+	console.log("");
+	console.log("the file " + configFileName + " or one of it's value is missing.");
+	console.log("");
+	console.log("================================================================");
+	console.log("================================================================");
+	process.exit(1);
+}
 
 
-//adding the agent option.
-
-var HOST = '127.0.0.1';
-var AGENT_PORT = agentPort;
+var client = new net.Socket();
+var port = agentPort;
 var socktToAgentManager;
-var server = net.createServer();
-server.listen(AGENT_PORT, HOST);
-console.log('Server listening To Agent Manager ' + HOST +':'+ AGENT_PORT);
-server.on('connection', function(sock) {
-	socktToAgentManager = sock;
-	console.log("New agent manager connected");
-	
-	// Add a 'close' event handler to this instance of socket
-	sock.on('close', function(data) {
-		socktToAgentManager = null;
-		console.log("Agent mnager disconnected");
-	    console.log('CLOSED: ' + sock.remoteAddress +' '+ sock.remotePort);
-	});
-	
-	sock.on('error', function(error){
-		console.log('error ecured '+ error);
-	})
-
-	sock.on('data', function(data) {
-		console.log('INFO: ' + data);
-	});
+//var country = (process.argv[3]);
+client.connect(port, 'localhost', function() {
+	socktToAgentManager = client;
+    console.log('CONNECTED TO: ' + 'localhost' + ':' + port);
 });
 
+client.on('data', function(data) {
+    console.log('INFO: ' + data);
+});
+
+client.on('error', function(error) {
+    console.log("agent manager isn't connect " + error);
+    //agent.socket.disconnect();
+    client.destroy();
+});
+
+client.on('close', function(error) {
+	socktToAgentManager = null;
+    console.log("closed connection " + error);
+    client.destroy();
+});
 
 // Step 0: Users and sessions:
 //
@@ -106,8 +124,21 @@ function setSessionForNewUser(req, gameServer) {
 	req.session.data = req.query;  // for Amazon Turk users, the query contains the hit id, assignment id and worker id. 
 	req.session.data.userid = req.ip + ":" + new Date().toISOString();
 	req.session.data.gametype = req.params.gametype;
-	
+	req.session.data.country = country;
+	req.session.data.agentType = gameServer.data.agentType;
+	//var canPlay = true;
+	req.session.data.canPlay1 = true;
+	if (req.session.data.workerId){
+		console.log("there is worker!")
+		if(logger.isAMTworkerExcist(req.session.data.workerId)){
+			req.session.data.canPlay1 = false;
+			console.log("false!!!!!!" + req.session.data.canPlay1)
+		}
+	}
+	console.log(req.session.data.canPlay1);
 		
+	
+			
 	if (req.params.role)
 		req.session.data.role = req.params.role;
 	// else -
@@ -197,6 +228,18 @@ gameServers['negomenus_JobCandidate'] = new multiplayer.GameServer(
 		 hasTranslator: false,
 		 agentType: kb
 		});
+gameServers['negomenusWithAgent_JobCandidate'] = new multiplayer.GameServer(
+		/*requiredRoles=*/['Employer','Candidate'],
+		{roomTemplateName: 'RoomForNegoMenus',
+		 maxTimeSeconds:   30*60,
+		 events: require('./EventsForNegoChat'),
+		 domain: 'Job',
+		 defaultPersonality: 'short-term',
+		 hasAgent: false,
+		 hasTranslator: false,
+		 canConnect: true,
+		 agentType: kb
+		});
 gameServers['negomenus_Neighbours'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Alex','Deniz'],
 		{roomTemplateName: 'RoomForNegoMenus',
@@ -214,7 +257,7 @@ gameServers['negomenus_Neighbours'] = new multiplayer.GameServer(
  */
 gameServers['negochat_JobCandidate'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Employer', 'Candidate'], 
-		{roomTemplateName: 'RoomForNegoChat',
+		{roomTemplateName: 'RoomForNegoChat2',
 		 maxTimeSeconds:   30*60,
 		 events: require('./EventsForNegoChat'),
 		 domain: 'Job',
@@ -222,9 +265,22 @@ gameServers['negochat_JobCandidate'] = new multiplayer.GameServer(
 		 hasAgent: false,
 		 hasTranslator: false
 		});
+gameServers['negochatWithAgent_JobCandidate'] = new multiplayer.GameServer(
+		/*requiredRoles=*/['Employer', 'Candidate'], 
+		{roomTemplateName: 'RoomForNegoNlpAMT',
+		 maxTimeSeconds:   30*60,
+		 events: require('./EventsForNegoChat'),
+		 domain: 'Job',
+		 defaultPersonality: 'short-term',
+		 hasAgent: false,
+		 hasTranslator: true,
+		 canConnect: true,
+		 agentType: aat
+
+		});
 gameServers['negochat_Neighbours'] = new multiplayer.GameServer(
 		/*requiredRoles=*/['Alex','Deniz'],
-		{roomTemplateName: 'RoomForNegoChat',
+		{roomTemplateName: 'RoomForNegoChat2',
 		 maxTimeSeconds:   30*60,
 		 events: require('./EventsForNegoChat'),
 		 domain: 'Neighbours',
@@ -377,6 +433,50 @@ gameServers['KBAgentDemo_JobCandidate'] = new multiplayer.GameServer(
 		 agentType: kb
 		});
 
+/*
+ * These servers are for chat-driven negotiation between a human and the ChatAgent: 
+ */
+gameServers['negonlpca_JobCandidate'] = new multiplayer.GameServer(
+		/*requiredRoles=*/['Employer', 'Candidate'],
+		{roomTemplateName: 'RoomForNegoNlp',
+		 maxTimeSeconds:   30*60,
+		 events: require('./EventsForNegoChat'),
+		 domain: 'Job',
+		 defaultPersonality: 'short-term',
+		 hasAgent: true,
+		 hasTranslator: true,
+		 agentType: ca
+		});
+/*
+ * These servers are for chat-driven negotiation between a human and the NewAgent: 
+ */
+gameServers['negonlpna_JobCandidate'] = new multiplayer.GameServer(
+		/*requiredRoles=*/['Employer', 'Candidate'],
+		{roomTemplateName: 'RoomForNegoNlp',
+		 maxTimeSeconds:   30*60,
+		 events: require('./EventsForNegoChat'),
+		 domain: 'Job',
+		 defaultPersonality: 'short-term',
+		 hasAgent: true,
+		 hasTranslator: true,
+		 agentType: na
+		});
+
+/*
+ * These servers are for chat-driven negotiation between a human and the NewAgent: 
+ */
+gameServers['negonlpnaAMT_JobCandidate'] = new multiplayer.GameServer(
+		/*requiredRoles=*/['Employer', 'Candidate'],
+		{roomTemplateName: 'RoomForNegoNlpAMT',
+		 maxTimeSeconds:   30*60,
+		 events: require('./EventsForNegoChat'),
+		 domain: 'Job',
+		 defaultPersonality: 'short-term',
+		 hasAgent: true,
+		 hasTranslator: true,
+		 agentType: na
+		});
+
 
 
 /**
@@ -439,8 +539,8 @@ function getActualAgent(domainName, roleName, personality) {
 
 var genius = require('./genius');
 var domains = {};
-domains['Job'] = new genius.Domain(path.join(__dirname,'domains','JobCandiate','JobCanDomain.xml'));
-domains['Neighbours'] = new genius.Domain(path.join(__dirname,'domains','neighbours_alex_deniz','neighbours_domain.xml'));
+domains['Job'] = new genius.Domain(path.join(__dirname,'domains/'+country,'JobCandiate','JobCanDomain.xml'));
+domains['Neighbours'] = new genius.Domain(path.join(__dirname,'domains/'+country,'neighbours_alex_deniz','neighbours_domain.xml'));
 
 // Variables that will be available to all JADE templates:
 app.locals.turnLengthInSeconds = 2*60;
@@ -475,6 +575,10 @@ app.get('/demo', function(req,res) {
 	res.render("demoPage");
 });
 
+app.get('/irb', function(req,res) {
+	res.render("ibr");
+});
+
 //ariel
 app.get('/users', function(req,res) {
 		res.render("Users",	{users:users});
@@ -496,10 +600,12 @@ app.get('/:gametype/beginner/:role?', getGameServer, function(req,res) {
 		if (amt.isPreview(req.query)) {
 			 res.redirect('/'+req.params.gametype+'/preview');
 		} else {
+			
 			setSessionForNewUser(req, res.locals.gameServer);
 			req.session.data.role = req.params.role?
 					req.params.role:
 					res.locals.gameServer.nextRole();	
+			console.log("false!!!!!!" + req.session.data.canPlay1)
 			res.redirect('/'+req.params.gametype+'/prequestionnaireA');
 		}
 });
@@ -514,7 +620,8 @@ app.get('/:gametype/demo/:role?', getGameServer, function(req,res) {
 			setSessionForNewUser(req, res.locals.gameServer);
 			req.session.data.role = req.params.role?
 					req.params.role:
-					res.locals.gameServer.nextRole();	
+					res.locals.gameServer.nextRole();
+			console.log("false!!!!!!" + req.session.data.canPlay1)	
 			res.redirect('/PreQuestionnaireExam');
 		}
 });
@@ -529,7 +636,8 @@ app.get('/:gametype/advanced/:role?', getGameServer, function(req,res) {
 			setSessionForNewUser(req, res.locals.gameServer);
 			req.session.data.role = req.params.role?
 					req.params.role:
-					res.locals.gameServer.nextRole();	
+					res.locals.gameServer.nextRole();
+
 			res.redirect('/entergame');
 		}
 });
@@ -563,6 +671,7 @@ function entergame(session) {
 		}
 		users[session.data.userid].gameid = session.data.gameid;
 		game.playerEntersGame(session.data.userid, session.data.role);
+		game.country =country;
 		entergameSemaphore.leave();
 	});
 }
@@ -610,7 +719,7 @@ var playerModel = new PlayerModel(
 var player = new Player(playerModel);
 
 app.get('/:gametype/listAllPlayers' ,function (req,res){
-	 player.listAll(req,res,types);
+	 player.listAll(req,res,types,country);
 });
 
 app.get('/:gametype,:RowKey,:PartitionKey/deletePlayer', express.basicAuth('biu','biu'), function (req,res){
@@ -633,7 +742,11 @@ var questionnaireModel = new QuestionnaireModel(
 var questionnaire = new Questionnaire(questionnaireModel);
 
 app.get('/:gametype/listAllQuestionnaire' ,function (req,res){
-	 questionnaire.listAll(req,res,types);
+	 questionnaire.listAll(req,res,types,country);
+});
+
+app.get('/:gametype/listAllQuestionnaireInfo' ,function (req,res){
+	 questionnaire.listAllInfo(req,res,types,country);
 });
 
 app.get('/:gametype/prequestionnaireA', questionnaire.demographyQuestionnaire.bind(questionnaire));
@@ -686,7 +799,7 @@ app.get('/:gametype,:RowKey,:PartitionKey/deleteGameAction', express.basicAuth('
 });
 
 app.get('/:gametype/listAllGameAction' ,function (req,res){
-	 gameAction.listAll(req,res,types);
+	 gameAction.listAll(req,res,types,country);
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -703,7 +816,7 @@ var gamesModel = new GamesModel (
 var games = new Games(gamesModel);
 
 app.get('/:gametype/listAllGames' ,function (req,res){
-	 games.listAll(req,res,types);
+	 games.listAll(req,res,types,country);
 });
 
 app.get('/:gametype,:RowKey,:PartitionKey/deleteGame', express.basicAuth('biu','biu'), function (req,res){
@@ -717,10 +830,10 @@ function gamesTable(gametype, game, unverified, action) //insert information to 
 			games.addGames(gametype, game.gameid, game.startTime, unverified, game);
 			for (user in game.mapRoleToUserid){
   				if (game.mapRoleToUserid[user].match('Agent')){
-					player.addPlayer(game.gameid, game.mapRoleToUserid[user], user, 'agent', gametype);
+					player.addPlayer(game.gameid, game.mapRoleToUserid[user], user, 'agent', gametype, game.country);
 				}
 				else{
-					player.addPlayer(game.gameid, game.mapRoleToUserid[user], user, 'human', gametype);	
+					player.addPlayer(game.gameid, game.mapRoleToUserid[user], user, 'human', gametype, game.country);	
 				}
 			}
 		}
@@ -736,20 +849,31 @@ function gamesTable(gametype, game, unverified, action) //insert information to 
 		if (len == 0){
 			for (role in game.mapRoleToFinalResult){
 				var a=0;
-				finalResult.addFinalResult(game.mapRoleToFinalResult[role], game.mapRoleToUserid[role], role, game.gameid);
+				console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+				console.log(game.mapRoleToFinalResult[role]);
+				console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+				finalResult.addFinalResult(game.mapRoleToFinalResult[role], game.mapRoleToUserid[role], role, game.gameid, game.country);
 				if (!finalAgreement.check){
 					for (agree in game.mapRoleToFinalResult[role].agreement){
-						finalAgreement.addFinalAgreement(agree, game.mapRoleToFinalResult[role].agreement[agree], game.gameid);
+						finalAgreement.addFinalAgreement(agree, game.mapRoleToFinalResult[role].agreement[agree], game.gameid, game.country);
 					}
 				}
 			}
 		}
+		/*switch(action){
+			case "Sign": {game.endedIn = "Sign"; break;}
+			case "Opt-out": {game.endedIn = "Opt-out"; break;}
+			case "TimeOut": {game.endedIn = "TimeOut"; break;}
+			break;
+		}*/
 	}
 	if (action == "Disconnect" ){
 		if (game.startTime){
 			game.endGame();
 			finalAgreement.check = false;
-			games.activeGames(game.gameid, game.endedIn, game.endTime, game.RowKey);
+			if(game.RowKey){
+				games.activeGames(game.gameid, game.endedIn, game.endTime, game.RowKey);
+			}
 		}
 	}
 }
@@ -768,7 +892,7 @@ var finalResultModel = new FinalResultModel (
 var finalResult = new FinalResult(finalResultModel);
 
 app.get('/:gametype/listAllFinalResults' ,function (req,res){
-	 finalResult.listAll(req,res,types);
+	 finalResult.listAll(req,res,types,country);
 });
 
 app.get('/:gametype,:RowKey,:PartitionKey/deleteFinalResult', express.basicAuth('biu','biu'), function (req,res){
@@ -789,7 +913,7 @@ var finalAgreementModel = new FinalAgreementModel (
 var finalAgreement = new FinalAgreement(finalAgreementModel);
 
 app.get('/:gametype/listAllFinalAgreements' ,function (req,res){
-	 finalAgreement.listAll(req,res,types);
+	 finalAgreement.listAll(req,res,types,country);
 });
 
 app.get('/:gametype,:RowKey,:PartitionKey/deleteFinalAgreements', express.basicAuth('biu','biu'), function (req,res){
@@ -831,6 +955,10 @@ app.get('/:gametype/scoreReport2' , function (req,res){
 	gameReport.scoreInfo2 (req,res,types);
 });
 
+app.get('/:gametype,:PartitionKey/downlaodAction' , function (req,res){
+	//csv.writeCsvLog('tryMe',req.params.GameActionList);
+	gameReport.downlaodInfo (req,res,types);
+});
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.get('/PreQuestionnaireDemography', function(req,res) {
@@ -868,10 +996,18 @@ app.get('/Help/:gametype/:domain/:role', getGameServer, function(req,res) {
 });
 
 app.get('/PreQuestionnaireExam',verifySessionData, function(req,res) {
+		var countryToSend;
+		if (country == "egypt")
+			countryToSend = "EG";
+		else if(country == "israel")
+			countryToSend = "IL";
+		else
+			countryToSend = "US";
 		res.render("PreQuestionnaireExam",	{
 				action:'/VerifyQuestionnaire',
 				next_action:'/entergame',
 				query: req.query,
+				country: countryToSend,
 				userRole: req.session.data.role,
 				requiredRoles: gameServers[req.session.data.gametype].requiredRolesArray,
 				AMTStatus: JSON.stringify(req.session.data)});
@@ -920,12 +1056,14 @@ app.get('/:gametype/play', getGameServer, function(req,res) {
 			}
 			//send the info. of player role, opponent role, agent name, game type and game id to the agent system.
 			setTimeout(function(){
+				
 				socktToAgentManager.write(JSON.stringify({
 					gametype:req.params.gametype, 
 					opponentRole:opponentRole, 
 					role:agentRole, 
 					agent: res.locals.gameServer.data.agentType, 
-					gameid: req.session.data.gameid}));
+					gameid: req.session.data.gameid,
+					country:country}));
 			},3000);
 			//socktToAgentManager.write(JSON.stringify({gametype:req.params.gametype, opponentRole:opponentRole, role:agentRole, agent: agentType, gameid: req.session.data.gameid}));
 		}
@@ -937,15 +1075,18 @@ app.get('/:gametype/play', getGameServer, function(req,res) {
 				domain_description: domains[res.locals.gameServer.data.domain].description,
 				session_data: req.session.data,
 				AMTStatus: JSON.stringify(req.session.data),
+				canConnect: res.locals.gameServer.data.canConnect,
 				next_action:'/PostQuestionnaireA'});
 	   
 });
 
 app.get('/:gametype/preview', getGameServer, function(req,res) {
+		var workers = logger.readAMTfile();
 		var roleForPreview = res.locals.gameServer.requiredRolesArray[0];
 		var actualAgent = getActualAgent(res.locals.gameServer.data.domain, roleForPreview, res.locals.gameServer.data.defaultPersonality);
 		res.render(res.locals.gameServer.data.roomTemplateName,	{
 				preview: true,
+				wprkers: workers,
 				gametype: req.params.gametype, 
 				role: roleForPreview,
 				agent: actualAgent,
@@ -995,7 +1136,7 @@ httpserver.listen(app.get('port'), function(){
 
 var io = require('socket.io').listen(httpserver);
 
-var supportInternetExplorerOnAzure = (process.argv.length>=4 && process.argv[3] !== 'supportJava');
+var supportInternetExplorerOnAzure = (process.argv.length>=4 && process.argv[4] !== 'supportJava');
 
 
 io.configure(function () { 
@@ -1010,14 +1151,17 @@ io.configure(function () {
  * Tell the players in the game that a certain player has made a certain action.
  */
 function announcement(socket, game, action, user, data) {
-	socket.emit('announcement', {action: action, id: user.role, msg: data, you: true});
-	socket.broadcast.to(game.gameid).emit('announcement', {action: action, id: user.role,	msg: data, you: false});		
+	if(action != "AgentMessage"){
+		socket.emit('announcement', {action: action, id: user.role, msg: data, you: true});
+		socket.broadcast.to(game.gameid).emit('announcement', {action: action, id: user.role,	msg: data, you: false});		
+	}
 	messageLog(socket, game, action, user, data);
 }
 
 
 io.sockets.on('connection', function (socket) {
 	console.log("SOCKETIO: New client connects");
+
 	socket.on('disconnect', function () { console.log("SOCKETIO: Client disconnects"); });
 	
 	socket.on('WatchAllServers', function() {
@@ -1042,7 +1186,7 @@ io.sockets.on('connection', function (socket) {
 			console.error("Can't find game server "+session_data.gametype);
 			return;
 		}
-		
+
 		if (!session_data.domain)
 			session_data.domain = gameServer.data.domain;
 		if (!session_data.personality)
@@ -1054,6 +1198,9 @@ io.sockets.on('connection', function (socket) {
 			users[session.data.userid] = session.data;
 		if (!session.data.gameid) // we can get here from a Java socket.io client, that doesn't go throught the "/entergame" URL
 			entergame(session);
+
+		if(session.data.workerId)
+			logger.writeAMTworkerid("AMT",session.data.workerId);
 
 		game = gameServer.gameById(session.data.gameid);
 		if (!game) {
@@ -1116,7 +1263,28 @@ io.sockets.on('connection', function (socket) {
 					}
 				});
 		}
-	
+
+		if(gameServer.data.canConnect && socktToAgentManager){
+				console.log("agent server can connect!");
+					setTimeout(function(){
+
+					if(game.missingRolesArray.length >0){
+						console.log("=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=")
+						socktToAgentManager.write(JSON.stringify({
+							gametype:session_data.gametype, 
+							opponentRole:session_data.role, 
+							role:game.missingRolesArray[0], 
+							agent: gameServer.data.agentType, 
+							gameid: game.gameid,
+							country:game.country}));
+					}
+				//},10000);
+				},270000);
+			
+
+
+		}
+		
 		// A user disconnected - closed the window, unplugged the chord, etc..
 		socket.on('disconnect', function () {
 			if (!session.data.silentEntry)
@@ -1133,6 +1301,7 @@ io.sockets.on('connection', function (socket) {
 				announcement: announcement,
 				rols : gameServers[session.data.gametype].requiredRoles,
 				accountName: accountName,
+
 			});
 		}
 	});  // end of identify event
@@ -1151,3 +1320,5 @@ process.on('exit', function (){
 	console.log("events", "END", {port:app.get('port')});
 	console.log('Goodbye!');
 });
+
+

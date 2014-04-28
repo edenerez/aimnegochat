@@ -19,6 +19,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 	} else {
 		try {
 			agent = functions.getActualAgent(session_data.domain, session_data.role, session_data.personality);
+			//console.dir()
 		} catch (error) {
 			console.error("\n\nERROR: Cannot initialize agent!");
 			console.dir(error);
@@ -33,10 +34,8 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 	}
 
 	var onNegoActions = function (actions, announce, text) {
-		console.log(session_data.role+" negoactions: "+JSON.stringify(actions));
-		console.log("-------------------------------------------");
-		if (!actions) {
-			//misunderstanding("I didn't understand what you mean because the actions list is empty");
+		if (!actions && session_data.gametype != "negochatWithAgent_JobCandidate") {
+			misunderstanding("I didn't understand what you mean because the actions list is empty");
 			return;
 		}
 
@@ -46,7 +45,10 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		if (announce) {
 			if (translator) {  // use NLG to generate a nice-looking announcement:
 				translator.generate(actions, {
-					classifierName: session_data.role, 
+					classifierName: session_data.role+"-"+session_data.country, 
+					country:session_data.country, 
+					agentType: session_data.agentType,
+					numAction: game.actionNum,
 					source: session_data.gametype,
 					accountName: functions.accountName,
 					gameid: game.gameid,
@@ -59,7 +61,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 							socket.broadcast.to(game.gameid).emit('yourUtilityFromPartnerOffer', utilityForOpponent(mergedAction.Offer));
 					});
 			} else { // no translator - just send JSON to the clients 
-				functions.announcement(socket, game, key, session_data, mergedAction); // send ALL players a textual description of the action
+				functions.announcement(socket, game, "Message", session_data, mergedAction); // send ALL players a textual description of the action
 				if ("Offer" in mergedAction) // Send the score to the human (Ido's suggestion):
 					socket.broadcast.to(game.gameid).emit('yourUtilityFromPartnerOffer', utilityForOpponent(mergedAction.Offer));
 			}
@@ -68,11 +70,14 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 			translateData.translate = actions;
 			translateData.text = text;
 			functions.messageLog(socket, game, "Translation", session_data, translateData);
+			//functions.messageLog(socket, game, "CorrectTranslation", session_data, "");
 		}
 	};
 
 	// An agent or a human menu-player sent a list of negotiation actions:
 	socket.on('negoactions', function(actions) {
+
+		functions.announcement(socket, game, "AgentMessage", session_data, actions);
 		onNegoActions(actions, true);
 	});
 
@@ -88,20 +93,29 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 	// A human chat-player sent an English chat message - send it to all other users, and translate to semantics:
 	socket.on('English', function (text) {
 		functions.announcement(socket, game, "Message", session_data, text);
-		if (translator) 
+		if (translator) {
 			translator.translate(text, {
-				classifierName: session_data.role, 
+				classifierName: session_data.role+"-"+session_data.country, 
+				country:session_data.country, 
+				agentType: session_data.agentType,
+				numAction: game.actionNum,
 				source: session_data.gametype,
 				accountName: functions.accountName,
+				gameid: game.gameid,
 				remoteAddress: session_data.remoteAddress,
 				}, 
 				onTranslation);
+		}
 	});
 
 	var onTranslation = function(text, translations) {
 			console.log("\tonTranslation: translate("+JSON.stringify(text)+") = "+JSON.stringify(translations));
 			if (!translations || translations.length==0) {
-				misunderstanding("I didn't understand your message: '"+text+"'. Please say this in other words");
+				console.log(session_data.gametype);
+				if(session_data.gametype != "negochatWithAgent_JobCandidate")
+					misunderstanding("I didn't understand your message: '"+text+"'. Please say this in other words");
+				functions.messageLog(socket, game, "Translation", session_data, "");
+				//functions.messageLog(socket, game, "CorrectTranslation", session_data, "");
 				return;
 			}
 			try {
@@ -189,6 +203,7 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 		var turnsFromStart = game.turnsFromStart? game.turnsFromStart: 0;
 		var timeFromStart = game.timer? game.timer.timeFromStartSeconds(): 0;
 		var utilityWithDiscount = Math.round(agent.utility_space_object.getUtilityWithDiscount(utilityOptOut, turnsFromStart));
+		
 		socket.emit("yourOptOutUtility", utilityWithDiscount);
 	});
 
@@ -233,6 +248,16 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 				utilityWithDiscount:		 	utilityWithDiscount
 			};
 			game.endedIn = "Opt-out"
+			functions.messageLog(socket, game, "Opt-out", session_data, finalResult);
+			game.mapRoleToFinalResult[session_data.role] = finalResult;
+			session_data.mapRoleToFinalResult = finalResult;
+			//tell all other players in this game that their partner optout.
+			socket.broadcast.to(game.gameid).emit('yourPartnerOpt-out', "");
+			console.log("Shalom");
+			console.log("Shalom");
+			functions.messageLog(socket, game, "Opt-out", session_data, finalResult);
+			console.log("Shalom");
+			console.log("Shalom");
 		}
 		else{
 			var finalResult = {
@@ -243,13 +268,18 @@ exports.initializeEventHandlers = function(socket, game, session_data, io, final
 				utilityWithDiscount:		 	utilityWithDiscount
 			};
 			game.endedIn = "Opt-out";
+			functions.messageLog(socket, game, "Opt-out", session_data, finalResult);
+			game.mapRoleToFinalResult[session_data.role] = finalResult;
+			session_data.mapRoleToFinalResult = finalResult;
+			console.log("Shalom2");
+			console.log("Shalom2");
+			functions.messageLog(socket, game, "Opt-out", session_data, finalResult);
+			console.log("Shalom2");
+			console.log("Shalom2");
 		}
-		game.mapRoleToFinalResult[session_data.role] = finalResult;
-		session_data.mapRoleToFinalResult = finalResult;
-		functions.messageLog(socket, game, "Opt-out", session_data, "");
-		if (!partnerInitiative){//tell all other players in this game that their partner optout.
-			socket.broadcast.to(game.gameid).emit('yourPartnerOpt-out', "");
-		}
+		//game.mapRoleToFinalResult[session_data.role] = finalResult;
+		//session_data.mapRoleToFinalResult = finalResult;
+		//functions.messageLog(socket, game, "Opt-out", session_data, finalResult);
 	});
 	
 	

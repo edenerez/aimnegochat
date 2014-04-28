@@ -17,6 +17,7 @@ block content
          th User Id
          th Issue
          th Value
+         th country
          th Delete
        - if (GameActionList !== undefined) 
          each GameAction in GameActionList
@@ -29,5 +30,6 @@ block content
             td #{GameAction.userid}
             td #{GameAction.issue}
             td #{GameAction.value}
+            td #{GameAction.country}
             td 
               a(href= "/#{gametype},#{GameAction.RowKey},#{GameAction.PartitionKey}/deleteGameAction") deleteMe 

@@ -17,6 +17,14 @@ body.negochatstoragetest /*div#mainStatusRow */{
     margin: 30px;
 }
 
+#announcement{
+	border: black solid 2px;
+	color: red;
+	padding: 5px;
+	cursor: pointer;
+	font-size: larger;
+}
+
 p.wrongAnswer{
   color: red;
   background: yellow;
@@ -291,6 +299,10 @@ div.mainSection {
 #noJavascriptSupport {
 	border-color: #F00;
 	font-weight: bold;
+}
+#waiting{
+	border-color: #F00;
+font-weight: bold;
 }
 
 #mainStatusRow table {

@@ -28,14 +28,14 @@ GameAction.prototype = {
     });
   },
 
- listAll: function(req, res,types) {
+ listAll: function(req, res,types,country) {
     self = this;
     var query = azure.TableQuery
       .select()
       .from(self.GameActionModel.tableName);
       //.where('datastatus eq ?', 0);
     self.GameActionModel.find(query, function itemsFound(err, items) {
-      res.render('gamesActionsData',{title: 'Games Action', GameActionList: items, gametype: req.params.gametype,  gametypes: types});
+      res.render('gamesActionsData',{title: 'Games Action', GameActionList: items, gametype: req.params.gametype,  gametypes: types,country:country});
     });
   },
   
@@ -51,12 +51,15 @@ GameAction.prototype = {
     }
     item.PartitionKey = game.gameid;
     item.userid = user.userid;
+    item.gameType = user.gametype;
     item.role = user.role;
     item.remainingTime = game.timer? game.timer.remainingTimeSeconds().toString(): "-";
     item.action = action;
+    item.country = game.country;
 
     game.actionNum++;
     item.RowKey = game.actionNum.toString();
+   
     self.GameActionModel.add(item, function itemAdded(err) {
       if(err) {
         throw err;

@@ -31,6 +31,7 @@ block content
      table(class="table table-striped table-bordered")
        tr
          th Action's Number
+         th game type
          th Action
          th Remaining Time
          th Role
@@ -42,7 +43,8 @@ block content
            if (GameAction.role == "Employer")
             tr.employer
               td #{GameAction.RowKey}
-              td #{GameAction.action}
+              td #{GameAction.gameType}
+              td #{GameAction.action} 
               td #{GameAction.remainingTime}
               td #{GameAction.role}
               td #{GameAction.userid}
@@ -51,6 +53,7 @@ block content
            else
             tr
               td #{GameAction.RowKey}
+              td #{GameAction.gameType}
               td #{GameAction.action}
               td #{GameAction.remainingTime}
               td #{GameAction.role}
@@ -95,3 +98,5 @@ block content
               tr 
                   td #{FinalResult.issue}
                   td #{FinalResult.value}
+    div
+      a.downlaod(href= "/#{gametype},#{gameid}/downlaodAction") downlaod Action

@@ -2,11 +2,9 @@ extends layout
 block title
   title Natural Language Automated Negotiators
 block body
- div(style='font-size:16px')
-  h1 Automated Negotiation Agents in English
-  // img(style='float:right;width:300px;height:400px;margin:10px;',src='/Enon_robot.jpg')
-  // p(style='font-size:10px;float:right') Image credit: 
-    a(href='http://www.flickr.com/photos/granick/211744073/in/photostream/') Jennifer
+ img(src='images/handshake_human_robot_2_clipped_1by4.jpg',width='100%')
+ div(style='font-size:16px;padding:1em')
+  h1 Automated Negotiation Agents
   
   p Come and chat with our top-quality negotiation agents!
   p You are going to play a game of negotiation between an <b>employer</b> and a <b>job candidate</b>, about the job conditions of the candidate. 
@@ -17,11 +15,17 @@ block body
   //p Happy negotiation! 
   ul 
     li 
-      a(href='/NegoChatAgentDemo_JobCandidate/demo/Employer') Play the <b>employer</b> against a <b>NegoChatAgent</b> candidate
+      a(href='/NegoChatAgentDemo_JobCandidate/advanced/Employer') Play the <b>employer</b> against a <b>NegoChatAgent</b> candidate
     li
-      a(href='/NegoChatAgentDemo_JobCandidate/demo/Candidate') Play the <b>candidate</b> against a <b>NegoChatAgent</b> employer
+      a(href='/NegoChatAgentDemo_JobCandidate/advanced/Candidate') Play the <b>candidate</b> against a <b>NegoChatAgent</b> employer
     li
-      a(href='/KBAgentDemo_JobCandidate/demo/Employer') Play the <b>employer</b> against a <b>KBAgent</b> Candidate
+      a(href='/KBAgentDemo_JobCandidate/advanced/Employer') Play the <b>employer</b> against a <b>KBAgent</b> Candidate
     li
-      a(href='/KBAgentDemo_JobCandidate/demo/Candidate') Play the <b>candidate</b> against a <b>KBAgent</b> Employer
-  p P.S. More details about the negotiation system and the agents will be published soon.
+      a(href='/KBAgentDemo_JobCandidate/advanced/Candidate') Play the <b>candidate</b> against a <b>KBAgent</b> Employer
+  h2 Publications
+  ul
+    li <b>KBAgent</b>: Yinon Oshrat, Raz Lin and Sarit Kraus. "Facing the challenge of human-agent negotiations via effective general opponent modeling". in AAMAS 2009.
+    li <b>NegoChatAgent</b>: Avi Rosenfeld, Erel Segah-Halevi, Osnat Drein, Inon Zuckerman and Sarit Kraus. "NegoChat: A Chat-Based Negotiation Agent". in AAMAS 2014.
+  p(style='font-size:10px;float:right') Image credit: 
+    a(href='http://www.flickr.com/photos/granick/211744011/in/photostream/') Jennifer
+  
